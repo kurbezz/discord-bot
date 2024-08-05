@@ -1,5 +1,5 @@
 [package]
-name = "discord-to-telegram-messages-resender"
+name = "discord-bot"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,6 +8,6 @@ edition = "2021"
 [dependencies]
 once_cell = "1.19.0"
 tokio = { version = "1.35.1", features = ["rt-multi-thread", "macros", "time"] }
-serenity = { verstion = "0.12.1", features = ["collector"] }
-reqwest = { version = "0.11.23", features = ["json"] }
+serenity = { version = "0.12.1", features = ["collector"] }
+reqwest = { version = "0.12.5", features = ["json"] }
 chrono = "0.4.38"

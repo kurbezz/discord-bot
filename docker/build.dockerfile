@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN cargo build --release --bin discord-to-telegram-messages-resender
+RUN cargo build --release --bin discord-bot
 
 
 FROM debian:bullseye-slim
@@ -17,5 +17,5 @@ RUN update-ca-certificates
 
 WORKDIR /app
 
-COPY --from=builder /app/target/release/discord-to-telegram-messages-resender /usr/local/bin
-ENTRYPOINT ["/usr/local/bin/discord-to-telegram-messages-resender"]
+COPY --from=builder /app/target/release/discord-bot /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/discord-bot"]

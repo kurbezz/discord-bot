@@ -8,11 +8,15 @@ fn get_env(env: &'static str) -> String {
 
 pub struct Config {
     pub discord_bot_token: String,
+
     pub discord_guild_id: u64,
     pub discord_channel_id: u64,
+
     pub discord_bot_activity: String,
+
     pub discord_game_list_channel_id: u64,
     pub discord_game_list_message_id: u64,
+
     pub telegram_bot_token: String,
     pub telegram_channel_id: i128,
 }
