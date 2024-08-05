@@ -14,5 +14,6 @@ pub async fn send_to_telegram(msg: &str) {
         ]
     ).unwrap();
 
-    reqwest::get(url).await.expect("Error sending message to Telegram");
+    reqwest::Client::new().post(url)
+        .send().await.expect("Error sending message to Telegram");
 }

@@ -6,7 +6,6 @@ use serenity::model::channel::Message;
 use chrono::offset::FixedOffset;
 
 use crate::config;
-use crate::notifiers::telegram::send_to_telegram;
 use crate::utils::{add_game, delete_game, format_games_list, parse_games_list};
 
 pub mod commands;
@@ -105,15 +104,8 @@ impl EventHandler for Handler {
         }
     }
 
-    async fn message(&self, _ctx: Context, msg: Message) {
-        if msg.guild_id != Some(config::CONFIG.discord_guild_id.into()) {
-            return;
-        }
+    async fn message(&self, _ctx: Context, _msg: Message) {
 
-        if msg.channel_id == config::CONFIG.discord_channel_id {
-            send_to_telegram(&msg.content).await;
-            return;
-        }
     }
 
     async fn ready(&self, ctx: Context, _ready: serenity::model::gateway::Ready) {

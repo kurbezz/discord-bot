@@ -19,6 +19,10 @@ pub struct Config {
 
     pub telegram_bot_token: String,
     pub telegram_channel_id: i128,
+
+    pub twitch_client_id: String,
+    pub twitch_client_secret: String,
+    pub twitch_channel_id: String,
 }
 
 
@@ -33,6 +37,9 @@ impl Config {
             discord_game_list_message_id: get_env("DISCORD_GAME_LIST_MESSAGE_ID").parse().unwrap(),
             telegram_bot_token: get_env("TELEGRAM_BOT_TOKEN"),
             telegram_channel_id: get_env("TELEGRAM_CHANNEL_ID").parse().unwrap(),
+            twitch_client_id: get_env("TWITCH_CLIENT_ID"),
+            twitch_client_secret: get_env("TWITCH_CLIENT_SECRET"),
+            twitch_channel_id: get_env("TWITCH_CHANNEL_ID"),
         }
     }
 }
