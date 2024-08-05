@@ -93,9 +93,11 @@ impl EventHandler for Handler {
                     games
                         .iter()
                         .filter(|game| game.to_lowercase().contains(&query.to_lowercase()))
+                        .take(25)
                         .map(|game| {
                             AutocompleteChoice::new(game.to_string(), game.to_string())
-                        }).collect()
+                        })
+                        .collect()
                 );
 
                 let _ = interaction.create_response(&ctx.http, serenity::builder::CreateInteractionResponse::Autocomplete(autocompolete_response)).await.unwrap();
