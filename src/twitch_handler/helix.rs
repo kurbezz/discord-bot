@@ -966,8 +966,7 @@ impl<T: TokenStorage> Client<T> {
             .data)
     }
 
-    pub async fn get_stream(&mut self) -> Result<Stream> {
-        let broadcaster_id = self.get_token_user_id().await?;
+    pub async fn get_stream(&mut self, broadcaster_id: String) -> Result<Stream> {
         match self
             .get_streams(
                 vec![broadcaster_id].into(),

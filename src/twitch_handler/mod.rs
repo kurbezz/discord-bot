@@ -2,6 +2,7 @@ pub mod eventsub;
 pub mod helix;
 pub mod auth;
 
+use chrono::{DateTime, Utc};
 use futures::StreamExt;
 use async_trait::async_trait;
 use auth::Token;
@@ -35,7 +36,24 @@ impl TokenStorage {
 }
 
 
+#[derive(Clone)]
+pub struct State {
+    pub title: String,
+    pub game: String,
+    pub updated_at: DateTime<Utc>
+}
+
+
 pub struct TwitchBot {}
+
+
+pub async fn notify_game_change(_title: String, old_game: String, new_game: String) {
+    println!("Game changed: {} -> {}", old_game, new_game);
+}
+
+pub async fn notify_stream_online(title: String) {
+    println!("Stream online: {}", title);
+}
 
 
 impl TwitchBot {
@@ -54,6 +72,23 @@ impl TwitchBot {
             token
         ).await.unwrap();
 
+        let mut current_state: Option<State> = {
+            let stream = client.get_stream(config::CONFIG.twitch_channel_id.clone()).await;
+
+            match stream {
+                Ok(stream) => {
+                    Some(State {
+                        title: stream.title,
+                        game: stream.game_name,
+                        updated_at: chrono::offset::Utc::now()
+                    })
+                },
+                Err(_) => {
+                    None
+                }
+            }
+        };
+
         let mut eventsub_client = client.connect_eventsub(
             vec![
                 ("stream.online".to_string(), "1".to_string()),
@@ -64,11 +99,39 @@ impl TwitchBot {
         ).await.unwrap();
 
         println!("Connected to Twitch EventSub...");
-        client.refresh_token().await.unwrap();
+        client.validate_token().await.unwrap();
 
         loop {
+            println!("Polling Twitch EventSub...");
             if let Some(event) = eventsub_client.next().await {
-                println!("{:?}", event);
+                match event {
+                    eventsub::NotificationType::CustomRewardRedemptionAdd(_) => todo!(),
+                    eventsub::NotificationType::StreamOffline(_) => {},
+                    eventsub::NotificationType::ChannelUpdate(data) => {
+                        if let Some(state) = current_state {
+                            if state.game != data.title {
+                                notify_game_change(
+                                    data.title.clone(),
+                                    state.game.clone(),
+                                    data.title.clone()
+                                ).await;
+                            }
+                        }
+
+                        current_state = Some(State {
+                            title: data.title,
+                            game: data.category_name.clone(),
+                            updated_at: chrono::offset::Utc::now()
+                        });
+                    },
+                    eventsub::NotificationType::StreamOnline(_) => {
+                        if (chrono::offset::Utc::now() - current_state.as_ref().unwrap().updated_at).num_seconds() > 15 * 60 {
+                            notify_stream_online(current_state.as_ref().unwrap().title.clone()).await;
+                        }
+
+                        current_state.as_mut().unwrap().updated_at = chrono::offset::Utc::now();
+                    },
+                }
             }
 
             client.validate_token().await.unwrap();
