@@ -5,6 +5,7 @@ use serenity::prelude::*;
 use twitch_handler::{auth::{self}, helix};
 
 use tokio::join;
+use rustls;
 
 pub mod config;
 pub mod discord_handler;
@@ -58,5 +59,7 @@ async fn start_twitch_bot() {
 
 #[tokio::main]
 async fn main() {
+    rustls::crypto::ring::default_provider().install_default().expect("Failed to install rustls crypto provider");
+
     join!(start_discord_bot(), start_twitch_bot());
 }
