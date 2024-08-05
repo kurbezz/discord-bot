@@ -282,8 +282,8 @@ impl<T: auth::TokenStorage> helix::Client<T> {
                 .await
             {
                 Ok(..) => {}
-                Err(..) => {
-                    bail!("create_eventsub_subscription failed")
+                Err(err) => {
+                    bail!("create_eventsub_subscription failed {:?}", err);
                 }
             };
         }
