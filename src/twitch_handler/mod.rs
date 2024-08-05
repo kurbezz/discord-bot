@@ -113,7 +113,7 @@ impl TwitchBot {
                                 notify_game_change(
                                     data.title.clone(),
                                     state.game.clone(),
-                                    data.title.clone()
+                                    data.category_name.clone()
                                 ).await;
                             }
                         }
