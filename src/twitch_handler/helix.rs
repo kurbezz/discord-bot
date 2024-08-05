@@ -421,6 +421,7 @@ impl<T: TokenStorage> Client<T> {
         let res = self
             .request::<T2>(method, uri, data_json, data_form)
             .await?;
+
         Ok(res.json::<T1>().await?)
     }
 

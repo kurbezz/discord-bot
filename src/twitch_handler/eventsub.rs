@@ -267,10 +267,7 @@ impl<T: auth::TokenStorage> helix::Client<T> {
                     r#type: subtype,
                     version: version,
                     condition: helix::EventSubCondition {
-                        broadcaster_id: Some(broadcaster_id.clone()),
                         broadcaster_user_id: Some(broadcaster_id.clone()),
-                        moderator_user_id: Some(broadcaster_id.clone()),
-                        user_id: Some(broadcaster_id.clone()),
                         ..Default::default()
                     },
                     transport: helix::EventSubTransport {
