@@ -64,7 +64,7 @@ pub async fn notify_stream_online(title: String, game: String) {
 
 
 impl TwitchBot {
-    pub async fn start_twitch_eventsub() {
+    pub async fn start() {
         println!("Starting Twitch bot...");
 
         let token_storage = TokenStorage {
