@@ -108,7 +108,6 @@ impl TwitchBot {
         client.validate_token().await.unwrap();
 
         loop {
-            println!("Polling Twitch EventSub...");
             if let Some(event) = eventsub_client.next().await {
                 match event {
                     eventsub::NotificationType::CustomRewardRedemptionAdd(_) => todo!(),
