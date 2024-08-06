@@ -106,7 +106,7 @@ impl TwitchBot {
         ).await.unwrap();
         println!("Connected to Twitch EventSub...");
 
-        let (_chat_client, mut chat_stream) = client.connect_chat(vec![config::CONFIG.twitch_channel_id.clone()]).await.unwrap();
+        let (_chat_client, mut chat_stream) = client.connect_chat(vec!["hafmc".to_string()]).await.unwrap();
         println!("Connected to Twitch Chat...");
 
         client.validate_token().await.unwrap();
