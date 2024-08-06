@@ -2,12 +2,12 @@ pub mod eventsub;
 pub mod helix;
 pub mod auth;
 
-use chrono::{DateTime, Utc};
+use chrono::{format, DateTime, Utc};
 use futures::StreamExt;
 use async_trait::async_trait;
 use auth::Token;
 
-use crate::config;
+use crate::{config, notifiers::{discord::send_to_discord, telegram::send_to_telegram}};
 
 
 pub struct TokenStorage {
@@ -47,12 +47,18 @@ pub struct State {
 pub struct TwitchBot {}
 
 
-pub async fn notify_game_change(_title: String, old_game: String, new_game: String) {
-    println!("Game changed: {} -> {}", old_game, new_game);
+pub async fn notify_game_change(title: String, _old_game: String, new_game: String) {
+    let msg = format!("HafMC сменил игру на {} ({})!", new_game, title);
+
+    send_to_discord(&msg).await;
+    // send_to_telegram(&msg).await;
 }
 
-pub async fn notify_stream_online(title: String) {
-    println!("Stream online: {}", title);
+pub async fn notify_stream_online(title: String, game: String) {
+    let msg = format!("HafMC сейчас стримит {} ({})! \nПрисоединяйся: https://twitch.tv/hafmc", title, game);
+
+    send_to_discord(&msg).await;
+    // send_to_telegram(&msg).await;
 }
 
 
@@ -124,12 +130,33 @@ impl TwitchBot {
                             updated_at: chrono::offset::Utc::now()
                         });
                     },
-                    eventsub::NotificationType::StreamOnline(_) => {
-                        if (chrono::offset::Utc::now() - current_state.as_ref().unwrap().updated_at).num_seconds() > 15 * 60 {
-                            notify_stream_online(current_state.as_ref().unwrap().title.clone()).await;
-                        }
+                    eventsub::NotificationType::StreamOnline(data) => {
+                        if (chrono::offset::Utc::now() - current_state.as_ref().unwrap().updated_at).num_seconds() > 15 * 60 || current_state.is_none() {
+                            let new_state: Option<State> = {
+                                let stream = client.get_stream(config::CONFIG.twitch_channel_id.clone()).await;
 
-                        current_state.as_mut().unwrap().updated_at = chrono::offset::Utc::now();
+                                match stream {
+                                    Ok(stream) => {
+                                        Some(State {
+                                            title: stream.title,
+                                            game: stream.game_name,
+                                            updated_at: chrono::offset::Utc::now()
+                                        })
+                                    },
+                                    Err(_) => {
+                                        None
+                                    }
+                                }
+                            };
+
+                            match new_state {
+                                Some(state) => {
+                                    notify_stream_online(state.title.clone(), state.game.clone()).await;
+                                    current_state = Some(state);
+                                },
+                                None => {}
+                            }
+                        }
                     },
                 }
             }
