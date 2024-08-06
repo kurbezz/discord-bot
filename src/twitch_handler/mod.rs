@@ -169,7 +169,9 @@ impl TwitchBot {
                     Ok(v) => {
                         println!("{:?}", v);
                     },
-                    Err(_) => {},
+                    Err(err) => {
+                        eprintln!("{:?}", err);
+                    },
                 }
             }
 
