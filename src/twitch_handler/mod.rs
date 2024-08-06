@@ -1,6 +1,7 @@
 pub mod eventsub;
 pub mod helix;
 pub mod auth;
+pub mod chat;
 
 use chrono::{DateTime, Utc};
 use futures::StreamExt;
@@ -63,7 +64,7 @@ pub async fn notify_stream_online(title: String, game: String) {
 
 
 impl TwitchBot {
-    pub async fn start() {
+    pub async fn start_twitch_eventsub() {
         println!("Starting Twitch bot...");
 
         let token_storage = TokenStorage {
@@ -103,8 +104,11 @@ impl TwitchBot {
             ],
             config::CONFIG.twitch_channel_id.clone()
         ).await.unwrap();
-
         println!("Connected to Twitch EventSub...");
+
+        let (_chat_client, mut chat_stream) = client.connect_chat(vec![config::CONFIG.twitch_channel_id.clone()]).await.unwrap();
+        println!("Connected to Twitch Chat...");
+
         client.validate_token().await.unwrap();
 
         loop {
@@ -157,6 +161,15 @@ impl TwitchBot {
                             }
                         }
                     },
+                }
+            }
+
+            if let Some(event) = chat_stream.next().await {
+                match event {
+                    Ok(v) => {
+                        println!("{:?}", v);
+                    },
+                    Err(_) => {},
                 }
             }
 
