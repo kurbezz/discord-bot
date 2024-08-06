@@ -106,8 +106,8 @@ impl TwitchBot {
         ).await.unwrap();
         println!("Connected to Twitch EventSub...");
 
-        let (_chat_client, mut chat_stream) = client.connect_chat(vec!["hafmc".to_string()]).await.unwrap();
-        println!("Connected to Twitch Chat...");
+        // let (_chat_client, mut chat_stream) = client.connect_chat(vec!["hafmc".to_string()]).await.unwrap();
+        // println!("Connected to Twitch Chat...");
 
         client.validate_token().await.unwrap();
 
@@ -164,16 +164,16 @@ impl TwitchBot {
                 }
             }
 
-            if let Some(event) = chat_stream.next().await {
-                match event {
-                    Ok(v) => {
-                        println!("{:?}", v);
-                    },
-                    Err(err) => {
-                        eprintln!("{:?}", err);
-                    },
-                }
-            }
+            // if let Some(event) = chat_stream.next().await {
+            //     match event {
+            //         Ok(v) => {
+            //             println!("{:?}", v);
+            //         },
+            //         Err(err) => {
+            //             eprintln!("{:?}", err);
+            //         },
+            //     }
+            // }
 
             client.validate_token().await.unwrap();
         }
