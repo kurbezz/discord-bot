@@ -2,12 +2,12 @@ pub mod eventsub;
 pub mod helix;
 pub mod auth;
 
-use chrono::{format, DateTime, Utc};
+use chrono::{DateTime, Utc};
 use futures::StreamExt;
 use async_trait::async_trait;
 use auth::Token;
 
-use crate::{config, notifiers::{discord::send_to_discord, telegram::send_to_telegram}};
+use crate::{config, notifiers::discord::send_to_discord};
 
 
 pub struct TokenStorage {
@@ -48,7 +48,7 @@ pub struct TwitchBot {}
 
 
 pub async fn notify_game_change(title: String, _old_game: String, new_game: String) {
-    let msg = format!("HafMC сменил игру на {} ({})!", new_game, title);
+    let msg = format!("HafMC сменил игру на {} ({})! \nПрисоединяйся: https://twitch.tv/hafmc", new_game, title);
 
     send_to_discord(&msg).await;
     // send_to_telegram(&msg).await;
@@ -115,7 +115,7 @@ impl TwitchBot {
                     eventsub::NotificationType::StreamOffline(_) => {},
                     eventsub::NotificationType::ChannelUpdate(data) => {
                         if let Some(state) = current_state {
-                            if state.game.to_lowercase().trim() != data.category_name.to_lowercase().trim() {
+                            if state.game != data.category_name {
                                 notify_game_change(
                                     data.title.clone(),
                                     state.game.clone(),
@@ -130,7 +130,7 @@ impl TwitchBot {
                             updated_at: chrono::offset::Utc::now()
                         });
                     },
-                    eventsub::NotificationType::StreamOnline(data) => {
+                    eventsub::NotificationType::StreamOnline(_) => {
                         if (chrono::offset::Utc::now() - current_state.as_ref().unwrap().updated_at).num_seconds() > 15 * 60 || current_state.is_none() {
                             let new_state: Option<State> = {
                                 let stream = client.get_stream(config::CONFIG.twitch_channel_id.clone()).await;
