@@ -109,7 +109,7 @@ impl TwitchBot {
                     eventsub::NotificationType::StreamOffline(_) => {},
                     eventsub::NotificationType::ChannelUpdate(data) => {
                         if let Some(state) = current_state {
-                            if state.game.to_lowercase().trim() != data.title.to_lowercase().trim() {
+                            if state.game.to_lowercase().trim() != data.category_name.to_lowercase().trim() {
                                 notify_game_change(
                                     data.title.clone(),
                                     state.game.clone(),
