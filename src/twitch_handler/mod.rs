@@ -7,7 +7,7 @@ use futures::StreamExt;
 use async_trait::async_trait;
 use auth::Token;
 
-use crate::{config, notifiers::discord::send_to_discord};
+use crate::{config, notifiers::{discord::send_to_discord, telegram::send_to_telegram}};
 
 
 pub struct TokenStorage {
@@ -51,14 +51,14 @@ pub async fn notify_game_change(title: String, _old_game: String, new_game: Stri
     let msg = format!("HafMC сменил игру на {} ({})! \nПрисоединяйся: https://twitch.tv/hafmc", new_game, title);
 
     send_to_discord(&msg).await;
-    // send_to_telegram(&msg).await;
+    send_to_telegram(&msg).await;
 }
 
 pub async fn notify_stream_online(title: String, game: String) {
     let msg = format!("HafMC сейчас стримит {} ({})! \nПрисоединяйся: https://twitch.tv/hafmc", title, game);
 
     send_to_discord(&msg).await;
-    // send_to_telegram(&msg).await;
+    send_to_telegram(&msg).await;
 }
 
 
