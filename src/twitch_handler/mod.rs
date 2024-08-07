@@ -74,12 +74,16 @@ impl TwitchBot {
         };
         let token = token_storage.load().await.unwrap();
 
-        let mut client = helix::Client::from_token(
+        let mut client = match helix::Client::from_token(
             config::CONFIG.twitch_client_id.clone(),
             config::CONFIG.twitch_client_secret.clone(),
             token_storage,
             token
-        ).await.or_else(panic("Failed to create Twitch client"));
+        ).await {
+            Ok(v) => v,
+            Err(err) => panic!("{:?}", err),
+        };
+
 
         let mut current_state: Option<State> = {
             let stream = client.get_stream(config::CONFIG.twitch_channel_id.clone()).await;
