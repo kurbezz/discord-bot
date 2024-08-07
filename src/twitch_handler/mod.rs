@@ -3,6 +3,8 @@ pub mod helix;
 pub mod auth;
 pub mod chat;
 
+use core::panicking::panic;
+
 use chrono::{DateTime, Utc};
 use futures::StreamExt;
 use async_trait::async_trait;
@@ -77,7 +79,7 @@ impl TwitchBot {
             config::CONFIG.twitch_client_secret.clone(),
             token_storage,
             token
-        ).await.unwrap();
+        ).await.or_else(panic("Failed to create Twitch client"));
 
         let mut current_state: Option<State> = {
             let stream = client.get_stream(config::CONFIG.twitch_channel_id.clone()).await;
