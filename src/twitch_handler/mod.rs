@@ -3,8 +3,6 @@ pub mod helix;
 pub mod auth;
 pub mod chat;
 
-use core::panicking::panic;
-
 use chrono::{DateTime, Utc};
 use futures::StreamExt;
 use async_trait::async_trait;
