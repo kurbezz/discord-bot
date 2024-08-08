@@ -1,7 +1,6 @@
 pub mod eventsub;
 pub mod helix;
 pub mod auth;
-pub mod chat;
 
 use chrono::{DateTime, Utc};
 use futures::StreamExt;
@@ -64,25 +63,7 @@ pub async fn notify_stream_online(title: String, game: String) {
 
 
 impl TwitchBot {
-    pub async fn start() {
-        println!("Starting Twitch bot...");
-
-        let token_storage = TokenStorage {
-            filepath: "/secrets/twitch_token.json".to_string()
-        };
-        let token = token_storage.load().await.unwrap();
-
-        let mut client = match helix::Client::from_token(
-            config::CONFIG.twitch_client_id.clone(),
-            config::CONFIG.twitch_client_secret.clone(),
-            token_storage,
-            token
-        ).await {
-            Ok(v) => v,
-            Err(err) => panic!("{:?}", err),
-        };
-
-
+    pub async fn start_watch(mut client: helix::Client<TokenStorage>) {
         let mut current_state: Option<State> = {
             let stream = client.get_stream(config::CONFIG.twitch_channel_id.clone()).await;
 
@@ -99,9 +80,6 @@ impl TwitchBot {
                 }
             }
         };
-
-
-        client.validate_token().await.unwrap();
 
         loop {
             println!("Checking Twitch events...");
@@ -167,18 +145,28 @@ impl TwitchBot {
                 }
             }
 
-            // if let Some(event) = chat_stream.next().await {
-            //     match event {
-            //         Ok(v) => {
-            //             println!("{:?}", v);
-            //         },
-            //         Err(err) => {
-            //             eprintln!("{:?}", err);
-            //         },
-            //     }
-            // }
-
             client.validate_token().await.unwrap();
         }
+    }
+
+    pub async fn start() {
+        println!("Starting Twitch bot...");
+
+        let token_storage = TokenStorage {
+            filepath: "/secrets/twitch_token.json".to_string()
+        };
+        let token = token_storage.load().await.unwrap();
+
+        let mut client = match helix::Client::from_token(
+            config::CONFIG.twitch_client_id.clone(),
+            config::CONFIG.twitch_client_secret.clone(),
+            token_storage,
+            token
+        ).await {
+            Ok(v) => v,
+            Err(err) => panic!("{:?}", err),
+        };
+
+        client.validate_token().await.unwrap();
     }
 }
