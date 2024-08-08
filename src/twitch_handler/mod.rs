@@ -100,23 +100,21 @@ impl TwitchBot {
             }
         };
 
-        let mut eventsub_client = client.connect_eventsub(
-            vec![
-                ("stream.online".to_string(), "1".to_string()),
-                ("stream.offline".to_string(), "1".to_string()),
-                ("channel.update".to_string(), "2".to_string())
-            ],
-            config::CONFIG.twitch_channel_id.clone()
-        ).await.unwrap();
-        println!("Connected to Twitch EventSub...");
-
-        // let (_chat_client, mut chat_stream) = client.connect_chat(vec!["hafmc".to_string()]).await.unwrap();
-        // println!("Connected to Twitch Chat...");
 
         client.validate_token().await.unwrap();
 
         loop {
             println!("Checking Twitch events...");
+            let mut eventsub_client = client.connect_eventsub(
+                vec![
+                    ("stream.online".to_string(), "1".to_string()),
+                    ("stream.offline".to_string(), "1".to_string()),
+                    ("channel.update".to_string(), "2".to_string())
+                ],
+                config::CONFIG.twitch_channel_id.clone()
+            ).await.unwrap();
+
+
             if let Some(event) = eventsub_client.next().await {
                 match event {
                     eventsub::NotificationType::CustomRewardRedemptionAdd(_) => todo!(),
