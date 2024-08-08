@@ -116,6 +116,7 @@ impl TwitchBot {
         client.validate_token().await.unwrap();
 
         loop {
+            println!("Checking Twitch events...");
             if let Some(event) = eventsub_client.next().await {
                 match event {
                     eventsub::NotificationType::CustomRewardRedemptionAdd(_) => todo!(),
