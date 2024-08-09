@@ -19,14 +19,15 @@ class DiscordClient(discord.Client):
 
         self.tree = app_commands.CommandTree(self)
 
+    async def setup_hook(self):
+        self.tree.copy_global_to(guild=Object(id=config.DISCORD_GUILD_ID))
+        await self.tree.sync(guild=Object(id=config.DISCORD_GUILD_ID))
+
     async def on_ready(self):
         await self.change_presence(
             activity=discord.Game(config.DISCORD_BOT_ACTIVITY),
             status=discord.Status.online,
         )
-
-        self.tree.copy_global_to(guild=Object(id=config.DISCORD_GUILD_ID))
-        await self.tree.sync(guild=Object(id=config.DISCORD_GUILD_ID))
 
 
 client = DiscordClient()
