@@ -1,4 +1,4 @@
-from pydantic.env_settings import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Config(BaseSettings):
@@ -20,4 +20,4 @@ class Config(BaseSettings):
     TWITCH_CHANNEL_ID: str
 
 
-config = Config()
+config = Config()  # type: ignore
