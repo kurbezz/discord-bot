@@ -12,6 +12,7 @@ discord-py = "^2.4.0"
 twitchapi = "^4.2.1"
 pydantic = "^2.8.2"
 pydantic-settings = "^2.4.0"
+aiofiles = "^24.1.0"
 
 
 [build-system]

@@ -19,5 +19,7 @@ class Config(BaseSettings):
     TWITCH_CLIENT_SECRET: str
     TWITCH_CHANNEL_ID: str
 
+    SECRETS_FILE_PATH: str
+
 
 config = Config()  # type: ignore
