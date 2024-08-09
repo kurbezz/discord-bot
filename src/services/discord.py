@@ -63,6 +63,8 @@ async def add(
 
     await game_list_message.edit(content=str(game_list))
 
+    await interaction.response.send_message("Игра добавлена!", ephemeral=True)
+
 
 async def game_list_autocomplete(
     interaction: discord.Interaction,
@@ -94,6 +96,8 @@ async def delete(interaction: discord.Interaction, game: str):
     game_list.delete_game(game)
 
     await game_list_message.edit(content=str(game_list))
+
+    await interaction.response.send_message("Игра удалена!", ephemeral=True)
 
 
 async def start_discord_sevice():
