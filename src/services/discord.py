@@ -58,6 +58,7 @@ async def add(
         return
 
     if not isinstance(interaction.channel, Messageable):
+        print("Not a Messageable")
         return
 
     game_list_message = await interaction.channel.fetch_message(config.DISCORD_GAME_LIST_MESSAGE_ID)
@@ -92,6 +93,7 @@ async def delete(interaction: discord.Interaction, game: str):
         return
 
     if not isinstance(interaction.channel, Messageable):
+        print("Not a Messageable")
         return
 
     game_list_message = await interaction.channel.fetch_message(config.DISCORD_GAME_LIST_MESSAGE_ID)
