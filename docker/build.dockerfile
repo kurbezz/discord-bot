@@ -1,21 +1,28 @@
-FROM rust:bullseye AS builder
+FROM python:3.12-slim AS build
+
+ARG POETRY_EXPORT_EXTRA_ARGS=''
+
+WORKDIR /opt/venv
+RUN python -m venv /opt/venv && /opt/venv/bin/pip install --upgrade pip && /opt/venv/bin/pip install --no-cache-dir httpx poetry
+
+COPY ./pyproject.toml ./poetry.lock ./
+RUN --mount=type=ssh /opt/venv/bin/poetry export --without-hashes --with app ${POETRY_EXPORT_EXTRA_ARGS} > requirements.txt \
+    && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+
+FROM python:3.11-slim AS runtime
+
+RUN apt update && apt install -y --no-install-recommends netcat-traditional wkhtmltopdf && apt clean
+
+COPY ./src/ /app
+
+ENV PATH="/opt/venv/bin:$PATH"
+ENV VENV_PATH=/opt/venv
+
+COPY --from=build /opt/venv /opt/venv
 
 WORKDIR /app
 
-COPY . .
+EXPOSE 80
 
-RUN cargo build --release --bin discord-bot
-
-
-FROM debian:bullseye-slim
-
-RUN apt-get update \
-    && apt-get install -y openssl ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN update-ca-certificates
-
-WORKDIR /app
-
-COPY --from=builder /app/target/release/discord-bot /usr/local/bin
-ENTRYPOINT ["/usr/local/bin/discord-bot"]
+CMD ["python", "/app/main.py"]
