@@ -25,4 +25,4 @@ WORKDIR /app
 
 EXPOSE 80
 
-CMD ["python3.12", "/app/main.py"]
+CMD ["python", "main.py"]
