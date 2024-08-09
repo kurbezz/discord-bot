@@ -12,20 +12,24 @@ class GameItem(BaseModel):
     date: str | None
 
     def __str__(self) -> str:
-        # set timezone to Moscow
-        _date = self.date or datetime.now().strftime("%d.%m.%Y")
-        return f"* {self.name} ({self.customer}) | {_date}"
+        if self.date is not None:
+            return f"* {self.name} ({self.customer}) | {self.date}"
+        else:
+            return f"* {self.name} ({self.customer})"
 
     @classmethod
     def parse(cls, line: str) -> Self:
-        regex_result = re.search(r"^\* (.+) \((.+)\) \| (.+)$", line)
+        regex_result_with_date = re.search(r"^\* (.+) \((.+)\) \| (.+)$", line)
+        if regex_result_with_date is not None:
+            name, customer, date = regex_result_with_date.groups()
+            return cls(name=name, customer=customer, date=date)
 
-        if regex_result is None:
-            raise ValueError(f"Invalid game item: {line}")
+        regex_result_without_date = re.search(r"^\* (.+) \((.+)\)$", line)
+        if regex_result_without_date is not None:
+            name, customer = regex_result_without_date.groups()
+            return cls(name=name, customer=customer, date=None)
 
-        name, customer, date = regex_result.groups()
-
-        return cls(name=name, customer=customer, date=date)
+        raise ValueError(f"Invalid line: {line}")
 
 
 class Category(BaseModel):

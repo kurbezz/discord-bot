@@ -62,8 +62,9 @@ class TwitchService:
 
     @classmethod
     async def start(cls):
-        twith = await cls.authorize()
+        print("Starting Twitch service...")
 
+        twith = await cls.authorize()
         await cls(twith).run()
 
 
