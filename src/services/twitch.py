@@ -72,14 +72,14 @@ class TwitchService:
         print("on_stream_offline", event)
 
     async def run(self):
-        try:
-            eventsub = EventSubWebhook(
-                callback_url=config.TWITCH_CALLBACK_URL,
-                port=config.TWITCH_CALLBACK_PORT,
-                twitch=self.twitch,
-                message_deduplication_history_length=50
-            )
+        eventsub = EventSubWebhook(
+            callback_url=config.TWITCH_CALLBACK_URL,
+            port=config.TWITCH_CALLBACK_PORT,
+            twitch=self.twitch,
+            message_deduplication_history_length=50
+        )
 
+        try:
             await eventsub.unsubscribe_all()
 
             eventsub.start()
