@@ -58,6 +58,9 @@ class GameList:
         return cls(data=categories)
 
     def add_game(self, category: str, game_item: GameItem):
+        if game_item.date is None:
+            game_item.date = datetime.now().strftime("%d.%m.%Y")
+
         for category_item in self.data:
             if category_item.name == category:
                 category_item.games.append(game_item)
