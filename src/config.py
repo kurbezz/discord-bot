@@ -19,6 +19,11 @@ class Config(BaseSettings):
     TWITCH_CLIENT_SECRET: str
     TWITCH_CHANNEL_ID: str
 
+    TWITCH_ADMIN_USER_ID: str
+
+    TWITCH_CALLBACK_URL: str
+    TWITCH_CALLBACK_PORT: int = 80
+
     SECRETS_FILE_PATH: str
 
 

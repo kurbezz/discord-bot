@@ -1,8 +1,11 @@
-from asyncio import Lock
+from asyncio import Lock, sleep
 import json
+import uuid
 
+from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope
+from twitchAPI.object.eventsub import ChannelChatMessageEvent, StreamOnlineEvent, StreamOfflineEvent
 
 import aiofiles
 
@@ -59,9 +62,37 @@ class TwitchService:
 
         return twitch
 
-    @classmethod
-    async def run(cls):
-        pass
+    async def on_channel_chat_message(self, event: ChannelChatMessageEvent):
+        print("on_channel_chat_message", event)
+
+    async def on_stream_online(self, event: StreamOnlineEvent):
+        print("on_stream_online", event)
+
+    async def on_stream_offline(self, event: StreamOfflineEvent):
+        print("on_stream_offline", event)
+
+    async def run(self):
+        try:
+            eventsub = EventSubWebhook(
+                callback_url=config.TWITCH_CALLBACK_URL,
+                port=config.TWITCH_CALLBACK_PORT,
+                twitch=self.twitch,
+                message_deduplication_history_length=50
+            )
+
+            await eventsub.unsubscribe_all()
+
+            eventsub.start()
+
+            await eventsub.listen_channel_chat_message(config.TWITCH_CHANNEL_ID, config.TWITCH_ADMIN_USER_ID, self.on_channel_chat_message)
+            await eventsub.listen_stream_online(config.TWITCH_CHANNEL_ID, self.on_stream_online)
+            await eventsub.listen_stream_offline(config.TWITCH_CHANNEL_ID, self.on_stream_offline)
+
+            while True:
+                await sleep(1)
+        finally:
+            await eventsub.stop()
+            await self.twitch.close()
 
     @classmethod
     async def start(cls):
