@@ -33,7 +33,7 @@ class DiscordClient(discord.Client):
 client = DiscordClient()
 
 
-@client.tree.command(guild=Object(id=config.DISCORD_GUILD_ID))
+@client.tree.command()
 @app_commands.describe(
     category="Раздел",
     customer="Кто заказал",
@@ -84,7 +84,7 @@ async def game_list_autocomplete(
     return game_list.get_choices(current)
 
 
-@client.tree.command(guild=Object(id=config.DISCORD_GUILD_ID))
+@client.tree.command()
 @app_commands.describe(game="Игра")
 @app_commands.autocomplete(game=game_list_autocomplete)
 async def delete(interaction: discord.Interaction, game: str):
