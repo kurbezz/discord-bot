@@ -24,7 +24,9 @@ class DiscordClient(discord.Client):
             activity=discord.Game(config.DISCORD_BOT_ACTIVITY),
             status=discord.Status.online,
         )
-        await self.tree.sync()
+
+        self.tree.copy_global_to(guild=Object(id=config.DISCORD_GUILD_ID))
+        await self.tree.sync(guild=Object(id=config.DISCORD_GUILD_ID))
 
 
 client = DiscordClient()

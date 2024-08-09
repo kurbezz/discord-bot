@@ -1,6 +1,5 @@
 from asyncio import Lock, sleep
 import json
-import uuid
 
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
