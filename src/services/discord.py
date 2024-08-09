@@ -54,7 +54,7 @@ async def add(
     game: str,
     date: str | None = None
 ):
-    if interaction.channel is None or interaction.channel.id != config.DISCORD_CHANNEL_ID:
+    if interaction.channel is None or interaction.channel.id != config.DISCORD_GAME_LIST_CHANNEL_ID:
         await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
         return
 
@@ -90,7 +90,7 @@ async def game_list_autocomplete(
 @app_commands.describe(game="Игра")
 @app_commands.autocomplete(game=game_list_autocomplete)
 async def delete(interaction: discord.Interaction, game: str):
-    if interaction.channel is None or interaction.channel.id != config.DISCORD_CHANNEL_ID:
+    if interaction.channel is None or interaction.channel.id != config.DISCORD_GAME_LIST_CHANNEL_ID:
         await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
         return
 
