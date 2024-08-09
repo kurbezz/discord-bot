@@ -55,10 +55,11 @@ async def add(
     date: str | None = None
 ):
     if interaction.channel is None or interaction.channel.id != config.DISCORD_CHANNEL_ID:
+        await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
         return
 
     if not isinstance(interaction.channel, Messageable):
-        print("Not a Messageable")
+        await interaction.response.send_message("Команда не доступна в этом канале (#2)", ephemeral=True)
         return
 
     game_list_message = await interaction.channel.fetch_message(config.DISCORD_GAME_LIST_MESSAGE_ID)
@@ -90,10 +91,11 @@ async def game_list_autocomplete(
 @app_commands.autocomplete(game=game_list_autocomplete)
 async def delete(interaction: discord.Interaction, game: str):
     if interaction.channel is None or interaction.channel.id != config.DISCORD_CHANNEL_ID:
+        await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
         return
 
     if not isinstance(interaction.channel, Messageable):
-        print("Not a Messageable")
+        await interaction.response.send_message("Команда не доступна в этом канале (#2)", ephemeral=True)
         return
 
     game_list_message = await interaction.channel.fetch_message(config.DISCORD_GAME_LIST_MESSAGE_ID)
