@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 from discord.abc import Messageable
 from discord import Object
@@ -95,4 +97,7 @@ async def delete(interaction: discord.Interaction, game: str):
 
 
 async def start_discord_sevice():
-    client.run(config.DISCORD_BOT_TOKEN)
+    print("Starting Discord service...")
+
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, client.run, config.DISCORD_BOT_TOKE)

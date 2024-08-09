@@ -10,7 +10,7 @@ RUN --mount=type=ssh /opt/venv/bin/poetry export --without-hashes ${POETRY_EXPOR
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 
-FROM python:3.11-slim AS runtime
+FROM python:3.12-slim AS runtime
 
 RUN apt update && apt install -y --no-install-recommends netcat-traditional wkhtmltopdf && apt clean
 
@@ -25,4 +25,4 @@ WORKDIR /app
 
 EXPOSE 80
 
-CMD ["python", "/app/main.py"]
+CMD ["python3.12", "/app/main.py"]
