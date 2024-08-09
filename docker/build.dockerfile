@@ -6,7 +6,7 @@ WORKDIR /opt/venv
 RUN python -m venv /opt/venv && /opt/venv/bin/pip install --upgrade pip && /opt/venv/bin/pip install --no-cache-dir httpx poetry
 
 COPY ./pyproject.toml ./poetry.lock ./
-RUN --mount=type=ssh /opt/venv/bin/poetry export --without-hashes --with app ${POETRY_EXPORT_EXTRA_ARGS} > requirements.txt \
+RUN --mount=type=ssh /opt/venv/bin/poetry export --without-hashes ${POETRY_EXPORT_EXTRA_ARGS} > requirements.txt \
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 
