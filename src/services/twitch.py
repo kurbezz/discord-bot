@@ -35,7 +35,10 @@ class TokenStorage:
 
 
 class TwitchService:
-    SCOPES = [AuthScope.CHANNEL_BOT]
+    SCOPES = [
+        AuthScope.CHAT_READ,
+        AuthScope.CHAT_EDIT,
+    ]
 
     def __init__(self, twitch: Twitch):
         self.twitch = twitch
