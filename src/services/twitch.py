@@ -1,18 +1,26 @@
 from asyncio import Lock, sleep
+from datetime import datetime
 import json
 
+from twitchAPI.helper import first
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope
-from twitchAPI.object.eventsub import ChannelChatMessageEvent, StreamOnlineEvent, StreamOfflineEvent
+from twitchAPI.object.eventsub import ChannelChatMessageEvent, StreamOnlineEvent, StreamOfflineEvent, ChannelUpdateEvent
 
 import aiofiles
 
+from pydantic import BaseModel
+
 from config import config
+from services.notification import notify
 
 
-class State:
-    pass
+class State(BaseModel):
+    title: str
+    category: str
+    is_live: bool
+    last_live_at: datetime
 
 
 class TokenStorage:
@@ -42,6 +50,8 @@ class TwitchService:
         AuthScope.CHAT_EDIT,
     ]
 
+    ONLINE_NOTIFICATION_DELAY = 5 * 60
+
     def __init__(self, twitch: Twitch):
         self.twitch = twitch
 
@@ -61,14 +71,83 @@ class TwitchService:
 
         return twitch
 
+    async def notify_online(self):
+        if self.state is None:
+            raise RuntimeError("State is None")
+
+        msg = f"HafMC сейчас стримит {self.state.title} ({self.state.category})! \nПрисоединяйся: https://twitch.tv/hafmc"
+
+        await notify(msg)
+
+    async def notify_change_category(self):
+        if self.state is None:
+            raise RuntimeError("State is None")
+
+        msg = f"HafMC начал играть в {self.state.category}! \nПрисоединяйся: https://twitch.tv/hafmc"
+
+        await notify(msg)
+
+    async def get_current_stream(self, retry_count: int = 5, delay: int = 5):
+        remain_retry = retry_count
+
+        while remain_retry > 0:
+            stream = await first(self.twitch.get_streams(user_id=[config.TWITCH_CHANNEL_ID]))
+
+            if stream is not None:
+                return stream
+
+            remain_retry -= 1
+            await sleep(delay)
+
+        return None
+
     async def on_channel_chat_message(self, event: ChannelChatMessageEvent):
-        print("on_channel_chat_message", event)
+        if self.state is None or (datetime.now() - self.state.last_live_at).seconds <= self.ONLINE_NOTIFICATION_DELAY:
+            return
+
+        current_stream = await self.get_current_stream()
+        if current_stream is None:
+            return
+
+        self.state.last_live_at = datetime.now()
+
+    async def on_channel_update(self, event: ChannelUpdateEvent):
+        if self.state is None:
+            return
+
+        if self.state.category == event.event.category_name:
+            return
+
+        self.state.title = event.event.title
+        self.state.category = event.event.category_name
+        self.state.last_live_at = datetime.now()
+
+        await self.notify_change_category()
 
     async def on_stream_online(self, event: StreamOnlineEvent):
-        print("on_stream_online", event)
+        current_stream = await self.get_current_stream()
+        if current_stream is None:
+            raise RuntimeError("Stream not found")
+
+        state = State(
+            title=current_stream.title,
+            category=current_stream.game_name,
+            is_live=True,
+            last_live_at=datetime.now()
+        )
+
+        if self.state is None:
+            self.state = state
+            await self.notify_online()
+
+        if (datetime.now() - self.state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY:
+            self.state = state
+            await self.notify_online()
 
     async def on_stream_offline(self, event: StreamOfflineEvent):
-        print("on_stream_offline", event)
+        if self.state:
+            self.state.is_live = False
+            self.last_live_at = datetime.now()
 
     async def run(self):
         eventsub = EventSubWebhook(
@@ -78,12 +157,22 @@ class TwitchService:
             message_deduplication_history_length=50
         )
 
+        current_stream = await self.get_current_stream()
+        if current_stream:
+            self.state = State(
+                title=current_stream.title,
+                category=current_stream.game_name,
+                is_live=current_stream.type == "live",
+                last_live_at=datetime.now()
+            )
+
         try:
             await eventsub.unsubscribe_all()
 
             eventsub.start()
 
             await eventsub.listen_channel_chat_message(config.TWITCH_CHANNEL_ID, config.TWITCH_ADMIN_USER_ID, self.on_channel_chat_message)
+            await eventsub.listen_channel_update_v2(config.TWITCH_CHANNEL_ID, self.on_channel_update)
             await eventsub.listen_stream_online(config.TWITCH_CHANNEL_ID, self.on_stream_online)
             await eventsub.listen_stream_offline(config.TWITCH_CHANNEL_ID, self.on_stream_offline)
 

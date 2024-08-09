@@ -13,6 +13,7 @@ twitchapi = "^4.2.1"
 pydantic = "^2.8.2"
 pydantic-settings = "^2.4.0"
 aiofiles = "^24.1.0"
+httpx = "^0.27.0"
 
 
 [build-system]
