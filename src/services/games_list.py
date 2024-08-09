@@ -38,6 +38,12 @@ class Category(BaseModel):
 
 
 class GameList:
+    CATEGORY_MAP = {
+        "points": "Заказанные игры (за 12к)",
+        "paids": "Проплачены 🤑 ",
+        "gifts": "Подарки",
+    }
+
     def __init__(self, data: list[Category]):
         self.data = data
 
@@ -58,11 +64,13 @@ class GameList:
         return cls(data=categories)
 
     def add_game(self, category: str, game_item: GameItem):
+        _category = self.CATEGORY_MAP.get(category)
+
         if game_item.date is None:
             game_item.date = datetime.now().strftime("%d.%m.%Y")
 
         for category_item in self.data:
-            if category_item.name == category:
+            if category_item.name == _category:
                 category_item.games.append(game_item)
 
     def delete_game(self, game_name: str):
