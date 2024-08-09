@@ -24,6 +24,7 @@ class DiscordClient(discord.Client):
             activity=discord.Game(config.DISCORD_BOT_ACTIVITY),
             status=discord.Status.online,
         )
+        await self.tree.sync()
 
 
 client = DiscordClient()
