@@ -123,7 +123,7 @@ async def create_discord_event(event: CreateDiscordEvent):
     async with AsyncClient() as client:
         response = await client.post(
             f"https://discord.com/api/v10/guilds/{config.DISCORD_GUILD_ID}/scheduled-events",
-            data=event.model_dump(),
+            json=event.model_dump(),
             headers={"Authorization": f"Bot {config.DISCORD_BOT_TOKEN}"}
         )
 
@@ -149,7 +149,7 @@ async def edit_discord_event(event_id: str, event: UpdateDiscordEvent):
     async with AsyncClient() as client:
         response = await client.patch(
             f"https://discord.com/api/v10/guilds/{config.DISCORD_GUILD_ID}/scheduled-events/{event_id}",
-            data=event.model_dump(),
+            json=event.model_dump(),
             headers={"Authorization": f"Bot {config.DISCORD_BOT_TOKEN}"}
         )
 
