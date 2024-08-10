@@ -48,6 +48,8 @@ class TwitchService:
     SCOPES = [
         AuthScope.CHAT_READ,
         AuthScope.CHAT_EDIT,
+        AuthScope.USER_BOT,
+        AuthScope.CHANNEL_BOT
     ]
 
     ONLINE_NOTIFICATION_DELAY = 5 * 60
@@ -173,7 +175,7 @@ class TwitchService:
 
             eventsub.start()
 
-            # await eventsub.listen_channel_chat_message(config.TWITCH_CHANNEL_ID, config.TWITCH_ADMIN_USER_ID, self.on_channel_chat_message)
+            await eventsub.listen_channel_chat_message(config.TWITCH_CHANNEL_ID, config.TWITCH_ADMIN_USER_ID, self.on_channel_chat_message)
             await eventsub.listen_channel_update_v2(config.TWITCH_CHANNEL_ID, self.on_channel_update)
             await eventsub.listen_stream_online(config.TWITCH_CHANNEL_ID, self.on_stream_online)
             await eventsub.listen_stream_offline(config.TWITCH_CHANNEL_ID, self.on_stream_offline)
