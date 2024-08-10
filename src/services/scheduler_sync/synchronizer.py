@@ -83,5 +83,9 @@ async def syncronize():
 
 async def start_synchronizer():
     while True:
-        await syncronize()
+        try:
+            await syncronize()
+        except Exception as e:
+            print(f"Error: {e}")
+
         await sleep(5 * 30)
