@@ -1,6 +1,7 @@
 from asyncio import Lock, sleep
 from datetime import datetime
 import json
+import logging
 
 from twitchAPI.helper import first
 from twitchAPI.eventsub.webhook import EventSubWebhook
@@ -14,6 +15,9 @@ from pydantic import BaseModel
 
 from config import config
 from services.notification import notify
+
+
+logger = logging.getLogger(__name__)
 
 
 class State(BaseModel):
@@ -188,7 +192,7 @@ class TwitchService:
 
     @classmethod
     async def start(cls):
-        print("Starting Twitch service...")
+        logger.info("Starting Twitch service...")
 
         twith = await cls.authorize()
         await cls(twith).run()

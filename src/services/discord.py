@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 import discord
 from discord.abc import Messageable
@@ -8,6 +9,9 @@ from discord import app_commands
 from services.games_list import GameList, GameItem
 
 from config import config
+
+
+logger = logging.getLogger(__name__)
 
 
 class DiscordClient(discord.Client):
@@ -109,7 +113,7 @@ async def delete(interaction: discord.Interaction, game: str):
 
 
 async def start_discord_sevice():
-    print("Starting Discord service...")
+    logger.info("Starting Discord service...")
 
     loop = asyncio.get_event_loop()
     await loop.run_in_executor(None, client.run, config.DISCORD_BOT_TOKEN)
