@@ -1,4 +1,4 @@
-from asyncio import gather
+from asyncio import wait, create_task
 import logging
 
 from services.discord import start_discord_sevice
@@ -12,10 +12,11 @@ logger.setLevel(logging.INFO)
 
 async def main():
     logger.info("Starting services...")
-    await gather(
-        start_discord_sevice(),
-        start_twitch_service()
-    )
+
+    await wait([
+        create_task(start_discord_sevice()),
+        create_task(start_twitch_service())
+    ], return_when="FIRST_COMPLETED")
 
 
 if __name__ == "__main__":
