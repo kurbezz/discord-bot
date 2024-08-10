@@ -194,6 +194,8 @@ class TwitchService:
             await eventsub.stop()
             await self.twitch.close()
 
+            raise RuntimeError("Twitch service stopped")
+
     @classmethod
     async def start(cls):
         logger.info("Starting Twitch service...")
