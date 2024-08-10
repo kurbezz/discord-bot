@@ -115,5 +115,4 @@ async def delete(interaction: discord.Interaction, game: str):
 async def start_discord_sevice():
     logger.info("Starting Discord service...")
 
-    loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, client.run, config.DISCORD_BOT_TOKEN)
+    await client.start(config.DISCORD_BOT_TOKEN)
