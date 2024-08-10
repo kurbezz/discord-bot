@@ -69,6 +69,8 @@ class TwitchService:
         token, refresh_token = await TokenStorage.get()
         await twitch.set_user_authentication(token, cls.SCOPES, refresh_token)
 
+        await twitch.authenticate_app(cls.SCOPES)
+
         return twitch
 
     async def notify_online(self):
