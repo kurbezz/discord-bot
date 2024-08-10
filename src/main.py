@@ -4,8 +4,10 @@ import logging
 from services.discord import start_discord_sevice
 from services.twitch import start_twitch_service
 
+logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 async def main():
