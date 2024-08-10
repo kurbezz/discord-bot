@@ -181,7 +181,7 @@ class TwitchService:
 
             logger.info("Subscribe to events...")
 
-            await eventsub.listen_channel_chat_message(config.TWITCH_CHANNEL_ID, config.TWITCH_ADMIN_USER_ID, self.on_channel_chat_message)
+            # await eventsub.listen_channel_chat_message(config.TWITCH_CHANNEL_ID, config.TWITCH_ADMIN_USER_ID, self.on_channel_chat_message)
             await eventsub.listen_channel_update_v2(config.TWITCH_CHANNEL_ID, self.on_channel_update)
             await eventsub.listen_stream_online(config.TWITCH_CHANNEL_ID, self.on_stream_online)
             await eventsub.listen_stream_offline(config.TWITCH_CHANNEL_ID, self.on_stream_offline)
