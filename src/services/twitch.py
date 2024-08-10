@@ -49,7 +49,7 @@ class TokenStorage:
 
 
 class TwitchService:
-    SCOPES = [item for item in AuthScope]
+    SCOPES = []
 
     ONLINE_NOTIFICATION_DELAY = 5 * 60
 
@@ -103,16 +103,6 @@ class TwitchService:
             await sleep(delay)
 
         return None
-
-    async def on_channel_chat_message(self, event: ChannelChatMessageEvent):
-        if self.state is None or (datetime.now() - self.state.last_live_at).seconds <= self.ONLINE_NOTIFICATION_DELAY:
-            return
-
-        current_stream = await self.get_current_stream()
-        if current_stream is None:
-            return
-
-        self.state.last_live_at = datetime.now()
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
         if self.state is None:
@@ -176,7 +166,6 @@ class TwitchService:
 
             logger.info("Subscribe to events...")
 
-            # await eventsub.listen_channel_chat_message(config.TWITCH_CHANNEL_ID, config.TWITCH_ADMIN_USER_ID, self.on_channel_chat_message)
             await eventsub.listen_channel_update_v2(config.TWITCH_CHANNEL_ID, self.on_channel_update)
             await eventsub.listen_stream_online(config.TWITCH_CHANNEL_ID, self.on_stream_online)
             await eventsub.listen_stream_offline(config.TWITCH_CHANNEL_ID, self.on_stream_offline)
