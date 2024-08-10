@@ -29,7 +29,7 @@ class RecurrenceRule(BaseModel):
         while True:
             next_date += timedelta(days=1)
 
-            if next_date < start:
+            if next_date <= datetime.now(start.tzinfo):
                 continue
 
             if next_date.weekday() in self.by_weekday:
