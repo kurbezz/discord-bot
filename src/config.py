@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Config(BaseSettings):
     DISCORD_BOT_TOKEN: str
+    DISCORD_BOT_ID: str
 
     DISCORD_GUILD_ID: int
     DISCORD_CHANNEL_ID: int

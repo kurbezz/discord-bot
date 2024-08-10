@@ -7,7 +7,7 @@ from twitchAPI.helper import first
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope
-from twitchAPI.object.eventsub import ChannelChatMessageEvent, StreamOnlineEvent, StreamOfflineEvent, ChannelUpdateEvent
+from twitchAPI.object.eventsub import StreamOnlineEvent, StreamOfflineEvent, ChannelUpdateEvent
 
 import aiofiles
 

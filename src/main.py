@@ -3,6 +3,7 @@ import logging
 
 from services.discord import start_discord_sevice
 from services.twitch import start_twitch_service
+from services.scheduler_sync import start_synchronizer
 
 logging.basicConfig(level=logging.INFO)
 
@@ -15,7 +16,8 @@ async def main():
 
     await wait([
         create_task(start_discord_sevice()),
-        create_task(start_twitch_service())
+        create_task(start_twitch_service()),
+        create_task(start_synchronizer())
     ], return_when="FIRST_COMPLETED")
 
 
