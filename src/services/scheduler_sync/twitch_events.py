@@ -67,8 +67,8 @@ async def get_twitch_events() -> list[TwitchEvent]:
             )
 
             if raw_event.get("RRULE"):
-                if raw_event.get("RRULE")["FREQ"] == "WEEKLY":
-                    value = raw_event.get("RRULE").split(";")["BYDAY"][0]
+                if raw_event.get("RRULE")["FREQ"][0] == "WEEKLY":
+                    value = raw_event.get("RRULE")["BYDAY"][0]
                     event.repeat_rule = WeeklyRepeatRule(weekday=Weekday(value))
                 else:
                     raise ValueError("Invalid repeat rule")
