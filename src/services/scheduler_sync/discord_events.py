@@ -15,7 +15,7 @@ class RecurrenceRule(BaseModel):
     interval: int
     frequency: int
 
-    @field_serializer("start")
+    @field_serializer("start", when_used="always")
     def serialize_datetime(cls, value: datetime) -> str:
         return value.isoformat()
 
@@ -81,7 +81,7 @@ class CreateDiscordEvent(BaseModel):
     scheduled_end_time: datetime
     recurrence_rule: RecurrenceRule | None
 
-    @field_serializer("scheduled_start_time", "scheduled_end_time")
+    @field_serializer("scheduled_start_time", "scheduled_end_time", when_used="always")
     def serialize_datetime(cls, value: datetime) -> str:
         return value.isoformat()
 
@@ -134,7 +134,7 @@ class UpdateDiscordEvent(BaseModel):
     scheduled_end_time: datetime
     recurrence_rule: RecurrenceRule | None
 
-    @field_serializer("scheduled_start_time", "scheduled_end_time")
+    @field_serializer("scheduled_start_time", "scheduled_end_time", when_used="always")
     def serialize_datetime(cls, value: datetime) -> str:
         return value.isoformat()
 
