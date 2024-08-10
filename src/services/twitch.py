@@ -49,12 +49,7 @@ class TokenStorage:
 
 
 class TwitchService:
-    SCOPES = [
-        AuthScope.CHAT_READ,
-        AuthScope.CHAT_EDIT,
-        AuthScope.USER_BOT,
-        AuthScope.CHANNEL_BOT
-    ]
+    SCOPES = [item for item in AuthScope]
 
     ONLINE_NOTIFICATION_DELAY = 5 * 60
 
