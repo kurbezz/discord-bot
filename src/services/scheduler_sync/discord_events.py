@@ -2,7 +2,7 @@ from typing import Self
 from datetime import datetime, timedelta
 
 from httpx import AsyncClient
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer
 
 from config import config
 
@@ -14,6 +14,10 @@ class RecurrenceRule(BaseModel):
     by_weekday: list[int]
     interval: int
     frequency: int
+
+    @field_serializer("start")
+    def serialize_datetime(cls, value: datetime) -> str:
+        return value.isoformat()
 
     def next_date(self, start: datetime) -> datetime:
         next_date = start
@@ -77,6 +81,10 @@ class CreateDiscordEvent(BaseModel):
     scheduled_end_time: datetime
     recurrence_rule: RecurrenceRule | None
 
+    @field_serializer("scheduled_start_time", "scheduled_end_time")
+    def serialize_datetime(cls, value: datetime) -> str:
+        return value.isoformat()
+
     @classmethod
     def parse_from_twitch_event(cls, event: TwitchEvent) -> Self:
         if event.categories:
@@ -125,6 +133,10 @@ class UpdateDiscordEvent(BaseModel):
     scheduled_start_time: datetime
     scheduled_end_time: datetime
     recurrence_rule: RecurrenceRule | None
+
+    @field_serializer("scheduled_start_time", "scheduled_end_time")
+    def serialize_datetime(cls, value: datetime) -> str:
+        return value.isoformat()
 
 
 async def edit_discord_event(event_id: str, event: UpdateDiscordEvent):
