@@ -62,7 +62,7 @@ async def get_twitch_events() -> list[TwitchEvent]:
                 end_at=raw_event.get("DTEND").dt,
                 name=raw_event.get("SUMMARY"),
                 description=raw_event.get("DESCRIPTION"),
-                categories=raw_event.get("CATEGORIES"),
+                categories=raw_event.get("CATEGORIES").cats[0],
                 repeat_rule=None
             )
 

@@ -17,7 +17,7 @@ async def main():
     await wait([
         create_task(start_discord_sevice()),
         create_task(start_twitch_service()),
-        # create_task(start_synchronizer())
+        create_task(start_synchronizer())
     ], return_when="FIRST_COMPLETED")
 
 
