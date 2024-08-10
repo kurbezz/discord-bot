@@ -1,4 +1,5 @@
 from asyncio import sleep
+import logging
 
 from services.scheduler_sync.twitch_events import get_twitch_events, TwitchEvent
 from services.scheduler_sync.discord_events import (
@@ -8,6 +9,9 @@ from services.scheduler_sync.discord_events import (
     edit_discord_event, UpdateDiscordEvent
 )
 from services.scheduler_sync.comparators import compare
+
+
+logger = logging.getLogger(__name__)
 
 
 async def add_events(
@@ -86,6 +90,6 @@ async def start_synchronizer():
         try:
             await syncronize()
         except Exception as e:
-            print(f"Error: {e}")
+            logging.error(e)
 
         await sleep(5 * 30)

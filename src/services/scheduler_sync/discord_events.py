@@ -1,5 +1,6 @@
 from typing import Self
 from datetime import datetime, timedelta
+import logging
 
 from httpx import AsyncClient
 from pydantic import BaseModel, field_serializer, SerializationInfo
@@ -7,6 +8,9 @@ from pydantic import BaseModel, field_serializer, SerializationInfo
 from config import config
 
 from services.scheduler_sync.twitch_events import TwitchEvent
+
+
+logger = logging.getLogger(__name__)
 
 
 class RecurrenceRule(BaseModel):
