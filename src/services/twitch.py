@@ -54,7 +54,7 @@ class TwitchService:
         AuthScope.CHAT_EDIT,
     ]
 
-    ONLINE_NOTIFICATION_DELAY = 5 * 60
+    ONLINE_NOTIFICATION_DELAY = 10 * 60
 
     def __init__(self, twitch: Twitch):
         self.twitch = twitch
@@ -120,10 +120,10 @@ class TwitchService:
 
         await self.notify_change_category()
 
-    async def on_stream_online(self, event: StreamOnlineEvent):
+    async def _on_stream_online(self):
         current_stream = await self.get_current_stream()
         if current_stream is None:
-            raise RuntimeError("Stream not found")
+            return
 
         state = State(
             title=current_stream.title,
@@ -137,8 +137,12 @@ class TwitchService:
             await self.notify_online()
 
         if (datetime.now() - self.state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY:
-            self.state = state
             await self.notify_online()
+
+        self.state = state
+
+    async def on_stream_online(self, event: StreamOnlineEvent):
+        await self._on_stream_online()
 
     async def on_stream_offline(self, event: StreamOfflineEvent):
         if self.state:
@@ -176,7 +180,8 @@ class TwitchService:
             logger.info("Twitch service started")
 
             while True:
-                await sleep(1)
+                await sleep(5 * 60)
+                await self._on_stream_online()
         finally:
             await eventsub.stop()
             await self.twitch.close()
