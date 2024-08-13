@@ -1,4 +1,3 @@
-import asyncio
 import logging
 
 import discord
@@ -14,6 +13,21 @@ from config import config
 logger = logging.getLogger(__name__)
 
 
+def get_game_list_channel_to_message_map() -> dict[int, int]:
+    result = {}
+
+    for streamer in config.STREAMERS:
+        if streamer.DISCORD is None:
+            continue
+
+        if streamer.DISCORD.GAME_LIST_CHANNEL_ID is None or streamer.DISCORD.GAME_LIST_MESSAGE_ID is None:
+            continue
+
+        result[streamer.DISCORD.GAME_LIST_CHANNEL_ID] = streamer.DISCORD.GAME_LIST_MESSAGE_ID
+
+    return result
+
+
 class DiscordClient(discord.Client):
     def __init__(self) -> None:
         intents = discord.Intents.default()
@@ -24,8 +38,15 @@ class DiscordClient(discord.Client):
         self.tree = app_commands.CommandTree(self)
 
     async def setup_hook(self):
-        self.tree.copy_global_to(guild=Object(id=config.DISCORD_GUILD_ID))
-        await self.tree.sync(guild=Object(id=config.DISCORD_GUILD_ID))
+        for streamer in config.STREAMERS:
+            if streamer.DISCORD is None:
+                continue
+
+            if streamer.DISCORD.GAME_LIST_CHANNEL_ID is None or streamer.DISCORD.GAME_LIST_MESSAGE_ID is None:
+                continue
+
+            self.tree.copy_global_to(guild=Object(id=streamer.DISCORD.GUILD_ID))
+            await self.tree.sync(guild=Object(id=streamer.DISCORD.GUILD_ID))
 
     async def on_ready(self):
         await self.change_presence(
@@ -58,15 +79,22 @@ async def add(
     game: str,
     date: str | None = None
 ):
-    if interaction.channel is None or interaction.channel.id != config.DISCORD_GAME_LIST_CHANNEL_ID:
+    channel_to_message = get_game_list_channel_to_message_map()
+
+    if interaction.channel is None:
         await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
+        return
+
+    message_id = channel_to_message.get(interaction.channel.id)
+    if message_id is None:
+        await interaction.response.send_message("Команда не доступна в этом канале (#3)", ephemeral=True)
         return
 
     if not isinstance(interaction.channel, Messageable):
         await interaction.response.send_message("Команда не доступна в этом канале (#2)", ephemeral=True)
         return
 
-    game_list_message = await interaction.channel.fetch_message(config.DISCORD_GAME_LIST_MESSAGE_ID)
+    game_list_message = await interaction.channel.fetch_message(message_id)
 
     game_list = GameList.parse(game_list_message.content)
     game_list.add_game(category, GameItem(name=game, customer=customer, date=date))
@@ -83,7 +111,12 @@ async def game_list_autocomplete(
     if not isinstance(interaction.channel, Messageable):
         return []
 
-    game_list_message = await interaction.channel.fetch_message(config.DISCORD_GAME_LIST_MESSAGE_ID)
+    channel_to_message = get_game_list_channel_to_message_map()
+    message_id = channel_to_message.get(interaction.channel.id)
+    if message_id is None:
+        return []
+
+    game_list_message = await interaction.channel.fetch_message(message_id)
 
     game_list = GameList.parse(game_list_message.content)
 
@@ -94,15 +127,22 @@ async def game_list_autocomplete(
 @app_commands.describe(game="Игра")
 @app_commands.autocomplete(game=game_list_autocomplete)
 async def delete(interaction: discord.Interaction, game: str):
-    if interaction.channel is None or interaction.channel.id != config.DISCORD_GAME_LIST_CHANNEL_ID:
+    channel_to_message = get_game_list_channel_to_message_map()
+
+    if interaction.channel is None:
         await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
+        return
+
+    message_id = channel_to_message.get(interaction.channel.id)
+    if message_id is None:
+        await interaction.response.send_message("Команда не доступна в этом канале (#3)", ephemeral=True)
         return
 
     if not isinstance(interaction.channel, Messageable):
         await interaction.response.send_message("Команда не доступна в этом канале (#2)", ephemeral=True)
         return
 
-    game_list_message = await interaction.channel.fetch_message(config.DISCORD_GAME_LIST_MESSAGE_ID)
+    game_list_message = await interaction.channel.fetch_message(message_id)
 
     game_list = GameList.parse(game_list_message.content)
     game_list.delete_game(game)

@@ -7,8 +7,6 @@ import icalendar
 from httpx import AsyncClient
 from pydantic import BaseModel
 
-from config import config
-
 
 class Weekday(StrEnum):
     Mon = "MO"
@@ -45,10 +43,10 @@ class TwitchEvent(BaseModel):
     repeat_rule: Optional[WeeklyRepeatRule]
 
 
-async def get_twitch_events() -> list[TwitchEvent]:
+async def get_twitch_events(twitch_channel_id: str) -> list[TwitchEvent]:
     async with AsyncClient() as client:
         response = await client.get(
-            f"https://api.twitch.tv/helix/schedule/icalendar?broadcaster_id={config.TWITCH_CHANNEL_ID}"
+            f"https://api.twitch.tv/helix/schedule/icalendar?broadcaster_id={twitch_channel_id}"
         )
 
         events: list[TwitchEvent] = []

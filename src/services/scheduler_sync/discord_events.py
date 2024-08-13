@@ -46,10 +46,10 @@ class DiscordEvent(BaseModel):
     creator_id: str
 
 
-async def get_discord_events() -> list[DiscordEvent]:
+async def get_discord_events(guild_id: int) -> list[DiscordEvent]:
     async with AsyncClient() as client:
         response = await client.get(
-            f"https://discord.com/api/v10/guilds/{config.DISCORD_GUILD_ID}/scheduled-events",
+            f"https://discord.com/api/v10/guilds/{guild_id}/scheduled-events",
             headers={"Authorization": f"Bot {config.DISCORD_BOT_TOKEN}"}
         )
 
@@ -60,10 +60,10 @@ async def get_discord_events() -> list[DiscordEvent]:
         return [event for event in events if event.creator_id == config.DISCORD_BOT_ID]
 
 
-async def delete_discord_event(event_id: str):
+async def delete_discord_event(guild_id: int, event_id: str):
     async with AsyncClient() as client:
         response = await client.delete(
-            f"https://discord.com/api/v10/guilds/{config.DISCORD_GUILD_ID}/scheduled-events/{event_id}",
+            f"https://discord.com/api/v10/guilds/{guild_id}/scheduled-events/{event_id}",
             headers={"Authorization": f"Bot {config.DISCORD_BOT_TOKEN}"}
         )
 
@@ -90,7 +90,7 @@ class CreateDiscordEvent(BaseModel):
         return value.isoformat()
 
     @classmethod
-    def parse_from_twitch_event(cls, event: TwitchEvent) -> Self:
+    def parse_from_twitch_event(cls, event: TwitchEvent, channel_name: str) -> Self:
         if event.categories:
             name = f"{event.name} | {event.categories}"
         else:
@@ -111,18 +111,17 @@ class CreateDiscordEvent(BaseModel):
             description=f"{event.description or ''}\n\n\n\n#{event.uid}",
             privacy_level=2,
             entity_type=3,
-            entity_metadata=EntityMetadata(location="https://twitch.tv/hafmc"),
+            entity_metadata=EntityMetadata(location=f"https://twitch.tv/{channel_name}"),
             scheduled_start_time=event.start_at,
             scheduled_end_time=event.end_at,
             recurrence_rule=recurrence_rule
         )
 
 
-
-async def create_discord_event(event: CreateDiscordEvent):
+async def create_discord_event(guild_id: int, event: CreateDiscordEvent):
     async with AsyncClient() as client:
         response = await client.post(
-            f"https://discord.com/api/v10/guilds/{config.DISCORD_GUILD_ID}/scheduled-events",
+            f"https://discord.com/api/v10/guilds/{guild_id}/scheduled-events",
             json=event.model_dump(),
             headers={
                 "Authorization": f"Bot {config.DISCORD_BOT_TOKEN}",
@@ -148,10 +147,10 @@ class UpdateDiscordEvent(BaseModel):
         return value.isoformat()
 
 
-async def edit_discord_event(event_id: str, event: UpdateDiscordEvent):
+async def edit_discord_event(guild_id: int, event_id: str, event: UpdateDiscordEvent):
     async with AsyncClient() as client:
         response = await client.patch(
-            f"https://discord.com/api/v10/guilds/{config.DISCORD_GUILD_ID}/scheduled-events/{event_id}",
+            f"https://discord.com/api/v10/guilds/{guild_id}/scheduled-events/{event_id}",
             json=event.model_dump(),
             headers={
                 "Authorization": f"Bot {config.DISCORD_BOT_TOKEN}",
