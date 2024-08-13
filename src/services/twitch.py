@@ -23,9 +23,8 @@ logger = logging.getLogger(__name__)
 class State(BaseModel):
     title: str
     category: str
-    is_live: bool
-    last_live_at: datetime
 
+    last_live_at: datetime
 
 class TokenStorage:
     lock = Lock()
@@ -54,7 +53,8 @@ class TwitchService:
         AuthScope.CHAT_EDIT,
     ]
 
-    ONLINE_NOTIFICATION_DELAY = 10 * 60
+    ONLINE_NOTIFICATION_DELAY = 15 * 60
+    UPDATE_DELAY = 5 * 60
 
     def __init__(self, twitch: Twitch):
         self.twitch = twitch
@@ -89,6 +89,9 @@ class TwitchService:
         if self.state is None:
             raise RuntimeError("State is None")
 
+        if (datetime.now() - self.state.last_live_at).seconds > 60:
+            raise RuntimeError("State is not live")
+
         msg = f"HafMC начал играть в {self.state.category}! \nПрисоединяйся: https://twitch.tv/hafmc"
 
         await notify(msg)
@@ -108,17 +111,21 @@ class TwitchService:
         return None
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
+        stream = await self.get_current_stream()
+        if stream is None:
+            return
+
         if self.state is None:
             return
 
-        if self.state.category == event.event.category_name:
-            return
+        changed = self.state.category == event.event.category_name
 
         self.state.title = event.event.title
         self.state.category = event.event.category_name
         self.state.last_live_at = datetime.now()
 
-        await self.notify_change_category()
+        if changed:
+            await self.notify_change_category()
 
     async def _on_stream_online(self):
         current_stream = await self.get_current_stream()
@@ -128,26 +135,16 @@ class TwitchService:
         state = State(
             title=current_stream.title,
             category=current_stream.game_name,
-            is_live=True,
             last_live_at=datetime.now()
         )
 
-        if self.state is None:
-            self.state = state
-            await self.notify_online()
-
-        if (datetime.now() - self.state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY:
+        if self.state is None or (datetime.now() - self.state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY:
             await self.notify_online()
 
         self.state = state
 
     async def on_stream_online(self, event: StreamOnlineEvent):
         await self._on_stream_online()
-
-    async def on_stream_offline(self, event: StreamOfflineEvent):
-        if self.state:
-            self.state.is_live = False
-            self.last_live_at = datetime.now()
 
     async def run(self):
         eventsub = EventSubWebhook(
@@ -162,7 +159,6 @@ class TwitchService:
             self.state = State(
                 title=current_stream.title,
                 category=current_stream.game_name,
-                is_live=current_stream.type == "live",
                 last_live_at=datetime.now()
             )
 
@@ -175,12 +171,11 @@ class TwitchService:
 
             await eventsub.listen_channel_update_v2(config.TWITCH_CHANNEL_ID, self.on_channel_update)
             await eventsub.listen_stream_online(config.TWITCH_CHANNEL_ID, self.on_stream_online)
-            await eventsub.listen_stream_offline(config.TWITCH_CHANNEL_ID, self.on_stream_offline)
 
             logger.info("Twitch service started")
 
             while True:
-                await sleep(5 * 60)
+                await sleep(self.UPDATE_DELAY)
                 await self._on_stream_online()
         finally:
             await eventsub.stop()
