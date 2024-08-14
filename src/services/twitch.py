@@ -95,7 +95,7 @@ class TwitchService:
         if streamer.START_STREAM_MESSAGE is None:
             return
 
-        msg = streamer.START_STREAM_MESSAGE.format(
+        msg = streamer.START_STREAM_MESSAGE.replace("\\n", "\n").format(
             title=current_state.title,
             category=current_state.category
         )
@@ -116,7 +116,7 @@ class TwitchService:
         if streamer.CHANGE_CATEGORY_MESSAGE is None:
             return
 
-        msg = streamer.CHANGE_CATEGORY_MESSAGE.format(
+        msg = streamer.CHANGE_CATEGORY_MESSAGE.replace("\\n", "\n").format(
             category=current_state.category
         )
 
