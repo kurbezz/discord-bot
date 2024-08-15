@@ -108,8 +108,8 @@ class TwitchService:
         if current_state is None:
             raise RuntimeError("State is None")
 
-        if (datetime.now() - current_state.last_live_at).seconds > 60:
-            raise RuntimeError("State is not live")
+        if (datetime.now() - current_state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY:
+            return
 
         streamer = self.get_streamer_config(streamer_id)
 
