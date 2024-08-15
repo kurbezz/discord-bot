@@ -147,7 +147,7 @@ class TwitchService:
         if current_state is None:
             return
 
-        changed = current_state.category == event.event.category_name
+        changed = current_state.category != event.event.category_name
 
         current_state.title = event.event.title
         current_state.category = event.event.category_name
