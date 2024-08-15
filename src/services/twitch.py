@@ -171,10 +171,13 @@ class TwitchService:
 
         current_state = self.state.get(streamer_id)
 
-        if current_state is None or (datetime.now() - current_state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY:
-            await self.notify_online(streamer_id)
+
+        is_need_notify = current_state is None or (datetime.now() - current_state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY
 
         self.state[streamer_id] = state
+
+        if is_need_notify:
+            await self.notify_online(streamer_id)
 
     async def on_stream_online(self, event: StreamOnlineEvent):
         await self._on_stream_online(event.event.broadcaster_user_id)
