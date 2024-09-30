@@ -93,7 +93,7 @@ async def syncronize(twitch: TwitchConfig, discord_guild_id: int):
 
 
 async def start_synchronizer():
-    await sleep(5)
+    logger.info("Starting events syncronizer...")
 
     while True:
         try:
