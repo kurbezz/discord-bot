@@ -68,6 +68,7 @@ async def delete_discord_event(guild_id: int, event_id: str):
         )
 
         response.raise_for_status()
+
         return response.json()
 
 
@@ -129,7 +130,12 @@ async def create_discord_event(guild_id: int, event: CreateDiscordEvent):
             }
         )
 
-        response.raise_for_status()
+        if response.status_code == 400:
+            raise ValueError({
+                "status_code": response.status_code,
+                "response": response.json(),
+                "event": event.model_dump()
+            })
 
         return response.json()
 
@@ -157,6 +163,11 @@ async def edit_discord_event(guild_id: int, event_id: str, event: UpdateDiscordE
             }
         )
 
-        response.raise_for_status()
+        if response.status_code == 400:
+            raise ValueError({
+                "status_code": response.status_code,
+                "response": response.json(),
+                "event": event.model_dump()
+            })
 
         return response.json()
