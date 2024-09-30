@@ -129,7 +129,7 @@ async def create_discord_event(guild_id: int, event: CreateDiscordEvent):
             }
         )
 
-        if response.status_code == 400:
+        if response.status_code != 200:
             raise ValueError(response.json())
 
         return response.json()
@@ -158,7 +158,7 @@ async def edit_discord_event(guild_id: int, event_id: str, event: UpdateDiscordE
             }
         )
 
-        if response.status_code == 400:
+        if response.status_code != 200:
             raise ValueError(response.json())
 
         return response.json()
