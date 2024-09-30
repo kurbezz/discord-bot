@@ -93,6 +93,8 @@ async def syncronize(twitch: TwitchConfig, discord_guild_id: int):
 
 
 async def start_synchronizer():
+    await sleep(5)
+
     while True:
         try:
             for streamer in config.STREAMERS:
