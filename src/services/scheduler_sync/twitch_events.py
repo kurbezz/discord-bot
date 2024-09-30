@@ -71,7 +71,7 @@ async def get_twitch_events(twitch_channel_id: str) -> list[TwitchEvent]:
                 else:
                     raise ValueError("Invalid repeat rule")
 
-            if (datetime.now(event.start_at.tzinfo) - event.start_at).seconds > 30 or event.repeat_rule:
+            if (datetime.now(event.start_at.tzinfo) - event.start_at).seconds > 60 or event.repeat_rule:
                 events.append(event)
 
         return events
