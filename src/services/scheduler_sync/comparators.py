@@ -5,7 +5,7 @@ from services.scheduler_sync.discord_events import DiscordEvent, CreateDiscordEv
 
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def is_repeated(start: datetime, target: datetime, rule: RecurrenceRule) -> bool:
