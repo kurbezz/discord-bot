@@ -9,7 +9,10 @@ logger.setLevel(logging.DEBUG)
 
 
 def is_repeated(start: datetime, target: datetime, rule: RecurrenceRule) -> bool:
-    return start.time() == target.time() and target.weekday() in rule.by_weekday
+    start_utc = start.astimezone(datetime.now().astimezone().tzinfo)
+    target_utc = target.astimezone(datetime.now().astimezone().tzinfo)
+
+    return start_utc.time() == target_utc.time() and target.weekday() in rule.by_weekday
 
 
 def compare(create_event: CreateDiscordEvent, event: DiscordEvent) -> bool:
