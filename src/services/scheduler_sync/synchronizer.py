@@ -1,5 +1,6 @@
 from asyncio import sleep
 import logging
+from datetime import datetime
 
 from services.scheduler_sync.twitch_events import get_twitch_events, TwitchEvent
 from services.scheduler_sync.discord_events import (
@@ -25,6 +26,9 @@ async def add_events(
     discord_events_ids = [event[0] for event in discord_events]
 
     for (uid, event) in twitch_events:
+        if event.start_at > datetime.now(event.start_at.tzinfo):
+            continue
+
         if uid not in discord_events_ids:
             create_event = CreateDiscordEvent.parse_from_twitch_event(event, twitch_channel_name)
             await create_discord_event(guild_id, create_event)
