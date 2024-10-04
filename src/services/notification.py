@@ -33,14 +33,18 @@ async def notify_discord(msg: str, channel_id: str):
 
 
 async def notify(msg: str, streamer_config: StreamerConfig):
-    if streamer_config.DISCORD is not None:
-        try:
-            await notify_discord(msg, str(streamer_config.DISCORD.CHANNEL_ID))
-        except Exception as e:
-            logger.error("Failed to notify discord", exc_info=e)
+    integrations = streamer_config.integrations
 
-    if streamer_config.TELEGRAM_CHANNEL_ID is not None:
-        try:
-            await notify_telegram(msg, str(streamer_config.TELEGRAM_CHANNEL_ID))
-        except Exception as e:
-            logger.error("Failed to notify telegram", exc_info=e)
+    if (discord := integrations.discord) is not None:
+        if discord.notifications_channel_id is not None:
+            try:
+                await notify_discord(msg, str(discord.notifications_channel_id))
+            except Exception as e:
+                logger.error("Failed to notify discord", exc_info=e)
+
+    if (telegram := integrations.telegram) is not None:
+        if telegram.notifications_channel_id is not None:
+            try:
+                await notify_telegram(msg, str(telegram.notifications_channel_id))
+            except Exception as e:
+                logger.error("Failed to notify telegram", exc_info=e)

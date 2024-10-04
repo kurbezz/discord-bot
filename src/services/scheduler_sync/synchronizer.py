@@ -82,7 +82,7 @@ async def edit_events(
 
 
 async def syncronize(twitch: TwitchConfig, discord_guild_id: int):
-    twitch_events = await get_twitch_events(twitch.CHANNEL_ID)
+    twitch_events = await get_twitch_events(str(twitch.id))
     discord_events = await get_discord_events(discord_guild_id)
 
     twitch_events_with_id = [(event.uid, event) for event in twitch_events]
@@ -91,9 +91,9 @@ async def syncronize(twitch: TwitchConfig, discord_guild_id: int):
         for event in discord_events
     ]
 
-    await add_events(discord_guild_id, twitch.CHANNEL_NAME, twitch_events_with_id, discord_events_with_id)
+    await add_events(discord_guild_id, twitch.name, twitch_events_with_id, discord_events_with_id)
     await remove_events(discord_guild_id, twitch_events_with_id, discord_events_with_id)
-    await edit_events(discord_guild_id, twitch.CHANNEL_NAME, twitch_events_with_id, discord_events_with_id)
+    await edit_events(discord_guild_id, twitch.name, twitch_events_with_id, discord_events_with_id)
 
 
 async def start_synchronizer():
@@ -102,10 +102,10 @@ async def start_synchronizer():
     while True:
         try:
             for streamer in config.STREAMERS:
-                if streamer.DISCORD is None:
+                if (integration := streamer.integrations.discord) is None:
                     continue
 
-                await syncronize(streamer.TWITCH, streamer.DISCORD.GUILD_ID)
+                await syncronize(streamer.twitch, integration.guild_id)
         except Exception as e:
             logging.error(e)
 

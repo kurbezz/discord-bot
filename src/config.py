@@ -1,29 +1,38 @@
-import json
+import tomllib
 
 from pydantic import BaseModel, field_validator
 from pydantic_settings import BaseSettings
+from pathlib import Path
 
 
 class TwitchConfig(BaseModel):
-    CHANNEL_ID: str
-    CHANNEL_NAME: str
+    id: int
+    name: str
 
+class NotificationsConfig(BaseModel):
+    start_stream: str
+    change_category: str | None = None
+
+class GamesListConfig(BaseModel):
+    channel_id: int
+    message_id: int
 
 class DiscordConfig(BaseModel):
-    GUILD_ID: int
-    CHANNEL_ID: int
+    guild_id: int
+    notifications_channel_id: int
+    games_list: GamesListConfig | None = None
 
-    GAME_LIST_CHANNEL_ID: int
-    GAME_LIST_MESSAGE_ID: int
+class TelegramConfig(BaseModel):
+    notifications_channel_id: int
 
+class IntegrationsConfig(BaseModel):
+    discord: DiscordConfig | None = None
+    telegram: TelegramConfig | None = None
 
 class StreamerConfig(BaseModel):
-    TWITCH: TwitchConfig
-    DISCORD: DiscordConfig | None = None
-    TELEGRAM_CHANNEL_ID: int | None = None
-
-    START_STREAM_MESSAGE: str | None = None
-    CHANGE_CATEGORY_MESSAGE: str | None = None
+    twitch: TwitchConfig
+    notifications: NotificationsConfig
+    integrations: IntegrationsConfig
 
 
 class Config(BaseSettings):
@@ -45,13 +54,16 @@ class Config(BaseSettings):
 
     SECRETS_FILE_PATH: str
 
-
     @field_validator("STREAMERS", mode="before")
     def check_streamers(cls, value):
-        if isinstance(value, str):
-            return json.loads(value)
-
-        return value
+        config_dir = Path("/app/configs")
+        streamers = []
+        for toml_file in config_dir.glob("*.toml"):
+            if toml_file.is_file():
+                with open(toml_file, "rb") as f:
+                    streamer_config = tomllib.load(f)
+                streamers.append(StreamerConfig(**streamer_config))
+        return streamers if streamers else value
 
 
 config = Config()  # type: ignore

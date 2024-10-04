@@ -1,0 +1,29 @@
+[twitch]
+id = 59900845
+name = "hafmc"
+
+
+[notifications]
+start_stream = '''
+HafMC сейчас стримит {title} ({category})!
+Присоединяйся: https://twitch.tv/hafmc
+'''
+
+change_category = '''
+HafMC начал играть в {category}!
+Присоединяйся: https://twitch.tv/hafmc
+'''
+
+
+[integrations]
+
+[integrations.discord]
+guild_id = 1198051900906549329
+notifications_channel_id = 1198296540964475002
+
+[integrations.discord.games_list]
+channel_id = 1201810638800691210
+message_id = 1239664178038313012
+
+[integrations.telegram]
+notifications_channel_id = -1001939021131

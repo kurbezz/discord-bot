@@ -1,0 +1,18 @@
+[twitch]
+id = 188615689
+name = "ssstano"
+
+
+[notifications]
+start_stream = '''
+ssstano ебашит LIVE стрим для everyone
+
+https://www.twitch.tv/ssstano
+https://www.twitch.tv/ssstano
+https://www.twitch.tv/ssstano
+'''
+
+[integrations]
+
+[integrations.telegram]
+notifications_channel_id = -1002152372995

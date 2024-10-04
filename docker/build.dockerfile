@@ -15,6 +15,7 @@ FROM python:3.12-slim AS runtime
 RUN apt update && apt install -y --no-install-recommends netcat-traditional wkhtmltopdf && apt clean
 
 COPY ./src/ /app
+COPY ./configs/ /app/configs
 
 ENV PATH="/opt/venv/bin:$PATH"
 ENV VENV_PATH=/opt/venv

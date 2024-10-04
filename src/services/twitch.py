@@ -60,7 +60,7 @@ class TwitchService:
     def __init__(self, twitch: Twitch):
         self.twitch = twitch
 
-        self.state: dict[str, State | None] = {}
+        self.state: dict[int, State | None] = {}
 
     @classmethod
     async def authorize(cls):
@@ -78,31 +78,31 @@ class TwitchService:
 
         return twitch
 
-    def get_streamer_config(self, streamer_id: str) -> StreamerConfig:
+    def get_streamer_config(self, streamer_id: int) -> StreamerConfig:
         for streamer in config.STREAMERS:
-            if streamer.TWITCH.CHANNEL_ID == streamer_id:
+            if streamer.twitch.id == streamer_id:
                 return streamer
 
         raise ValueError(f"Streamer with id {streamer_id} not found")
 
-    async def notify_online(self, streamer_id: str):
+    async def notify_online(self, streamer_id: int):
         current_state = self.state.get(streamer_id)
         if current_state is None:
             raise RuntimeError("State is None")
 
         streamer = self.get_streamer_config(streamer_id)
 
-        if streamer.START_STREAM_MESSAGE is None:
+        if streamer.notifications.start_stream is None:
             return
 
-        msg = streamer.START_STREAM_MESSAGE.replace("\\n", "\n").format(
+        msg = streamer.notifications.start_stream.format(
             title=current_state.title,
             category=current_state.category
         )
 
         await notify(msg, streamer)
 
-    async def notify_change_category(self, streamer_id: str):
+    async def notify_change_category(self, streamer_id: int):
         current_state = self.state.get(streamer_id)
 
         if current_state is None:
@@ -113,20 +113,21 @@ class TwitchService:
 
         streamer = self.get_streamer_config(streamer_id)
 
-        if streamer.CHANGE_CATEGORY_MESSAGE is None:
+        if streamer.notifications.change_category is None:
             return
 
-        msg = streamer.CHANGE_CATEGORY_MESSAGE.replace("\\n", "\n").format(
+        msg = streamer.notifications.change_category.format(
+            title=current_state.title,
             category=current_state.category
         )
 
         await notify(msg, streamer)
 
-    async def get_current_stream(self, streamer_id: str, retry_count: int = 5, delay: int = 5):
+    async def get_current_stream(self, streamer_id: int, retry_count: int = 5, delay: int = 5):
         remain_retry = retry_count
 
         while remain_retry > 0:
-            stream = await first(self.twitch.get_streams(user_id=[streamer_id]))
+            stream = await first(self.twitch.get_streams(user_id=[str(streamer_id)]))
 
             if stream is not None:
                 return stream
@@ -137,7 +138,7 @@ class TwitchService:
         return None
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
-        brodcaster_id = event.event.broadcaster_user_id
+        brodcaster_id = int(event.event.broadcaster_user_id)
 
         stream = await self.get_current_stream(brodcaster_id)
         if stream is None:
@@ -158,7 +159,7 @@ class TwitchService:
         if changed:
             await self.notify_change_category(brodcaster_id)
 
-    async def _on_stream_online(self, streamer_id: str):
+    async def _on_stream_online(self, streamer_id: int):
         current_stream = await self.get_current_stream(streamer_id)
         if current_stream is None:
             return
@@ -180,7 +181,7 @@ class TwitchService:
             await self.notify_online(streamer_id)
 
     async def on_stream_online(self, event: StreamOnlineEvent):
-        await self._on_stream_online(event.event.broadcaster_user_id)
+        await self._on_stream_online(int(event.event.broadcaster_user_id))
 
     async def run(self):
         eventsub = EventSubWebhook(
@@ -191,15 +192,16 @@ class TwitchService:
         )
 
         for streamer in config.STREAMERS:
-            current_stream = await self.get_current_stream(streamer.TWITCH.CHANNEL_ID)
+            current_stream = await self.get_current_stream(streamer.twitch.id)
+
             if current_stream:
-                self.state[streamer.TWITCH.CHANNEL_ID] = State(
+                self.state[streamer.twitch.id] = State(
                     title=current_stream.title,
                     category=current_stream.game_name,
                     last_live_at=datetime.now()
                 )
             else:
-                self.state[streamer.TWITCH.CHANNEL_ID] = None
+                self.state[streamer.twitch.id] = None
 
         try:
             await eventsub.unsubscribe_all()
@@ -209,8 +211,8 @@ class TwitchService:
             logger.info("Subscribe to events...")
 
             for streamer in config.STREAMERS:
-                await eventsub.listen_channel_update_v2(streamer.TWITCH.CHANNEL_ID, self.on_channel_update)
-                await eventsub.listen_stream_online(streamer.TWITCH.CHANNEL_ID, self.on_stream_online)
+                await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
+                await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
 
             logger.info("Twitch service started")
 
@@ -218,7 +220,7 @@ class TwitchService:
                 await sleep(self.UPDATE_DELAY)
 
                 for streamer in config.STREAMERS:
-                    await self._on_stream_online(streamer.TWITCH.CHANNEL_ID)
+                    await self._on_stream_online(streamer.twitch.id)
         finally:
             await eventsub.stop()
             await self.twitch.close()

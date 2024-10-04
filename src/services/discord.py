@@ -17,13 +17,16 @@ def get_game_list_channel_to_message_map() -> dict[int, int]:
     result = {}
 
     for streamer in config.STREAMERS:
-        if streamer.DISCORD is None:
+        if (integration := streamer.integrations.discord) is None:
             continue
 
-        if streamer.DISCORD.GAME_LIST_CHANNEL_ID is None or streamer.DISCORD.GAME_LIST_MESSAGE_ID is None:
+        if (games_list := integration.games_list) is None:
             continue
 
-        result[streamer.DISCORD.GAME_LIST_CHANNEL_ID] = streamer.DISCORD.GAME_LIST_MESSAGE_ID
+        if games_list.channel_id is None or games_list.message_id is None:
+            continue
+
+        result[games_list.channel_id] = games_list.message_id
 
     return result
 
@@ -39,14 +42,14 @@ class DiscordClient(discord.Client):
 
     async def setup_hook(self):
         for streamer in config.STREAMERS:
-            if streamer.DISCORD is None:
+            if (integration := streamer.integrations.discord) is None:
                 continue
 
-            if streamer.DISCORD.GAME_LIST_CHANNEL_ID is None or streamer.DISCORD.GAME_LIST_MESSAGE_ID is None:
+            if integration.games_list is None:
                 continue
 
-            self.tree.copy_global_to(guild=Object(id=streamer.DISCORD.GUILD_ID))
-            await self.tree.sync(guild=Object(id=streamer.DISCORD.GUILD_ID))
+            self.tree.copy_global_to(guild=Object(id=integration.guild_id))
+            await self.tree.sync(guild=Object(id=integration.guild_id))
 
     async def on_ready(self):
         await self.change_presence(
