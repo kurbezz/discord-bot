@@ -211,8 +211,10 @@ class TwitchService:
             logger.info("Subscribe to events...")
 
             for streamer in config.STREAMERS:
+                logger.info(f"Subscribe to events for {streamer.twitch.name}")
                 await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
                 await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
+                logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
             logger.info("Twitch service started")
 
