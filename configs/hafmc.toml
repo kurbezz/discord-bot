@@ -2,16 +2,19 @@
 id = 59900845
 name = "hafmc"
 
-
 [notifications]
 start_stream = '''
-HafMC сейчас стримит {title} ({category})!
+HafMC стримит {title} ({category})!
 Присоединяйся: https://twitch.tv/hafmc
+
+{role}
 '''
 
 change_category = '''
-HafMC начал играть в {category}!
+HafMC играет в {category} ({title})!
 Присоединяйся: https://twitch.tv/hafmc
+
+{role}
 '''
 
 
@@ -24,6 +27,17 @@ notifications_channel_id = 1198296540964475002
 [integrations.discord.games_list]
 channel_id = 1201810638800691210
 message_id = 1239664178038313012
+
+[integrations.discord.roles]
+"Counter-Strike" = 1198372462476398823
+"SIGame" = 1198372523046346833
+"Battlefield 1" = 1198377604533735454
+"Battlefield V" = 1198377604533735454
+"Among Us" = 1198377604533735454
+"BattleBit Remastered" = 1198381867343286352
+"Lethal Company" = 1198383849785270302
+"HELLDIVERS 2" = 1230292196805054488
+"Satisfactory" = 1292091826802528308
 
 [integrations.telegram]
 notifications_channel_id = -1001939021131

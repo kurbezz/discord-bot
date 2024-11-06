@@ -21,6 +21,7 @@ class DiscordConfig(BaseModel):
     guild_id: int
     notifications_channel_id: int
     games_list: GamesListConfig | None = None
+    roles: dict[str, int] | None = None
 
 class TelegramConfig(BaseModel):
     notifications_channel_id: int

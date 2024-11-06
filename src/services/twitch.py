@@ -95,12 +95,7 @@ class TwitchService:
         if streamer.notifications.start_stream is None:
             return
 
-        msg = streamer.notifications.start_stream.format(
-            title=current_state.title,
-            category=current_state.category
-        )
-
-        await notify(msg, streamer)
+        await notify("start", streamer, current_state)
 
     async def notify_change_category(self, streamer_id: int):
         current_state = self.state.get(streamer_id)
@@ -116,12 +111,7 @@ class TwitchService:
         if streamer.notifications.change_category is None:
             return
 
-        msg = streamer.notifications.change_category.format(
-            title=current_state.title,
-            category=current_state.category
-        )
-
-        await notify(msg, streamer)
+        await notify("change_category", streamer, current_state)
 
     async def get_current_stream(self, streamer_id: int, retry_count: int = 5, delay: int = 5):
         remain_retry = retry_count
