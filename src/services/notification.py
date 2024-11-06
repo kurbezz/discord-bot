@@ -4,7 +4,7 @@ from typing import Literal
 from httpx import AsyncClient
 
 from config import config, StreamerConfig
-from services.twitch import State
+from services.twitch_state import State
 
 
 logger = logging.getLogger(__name__)

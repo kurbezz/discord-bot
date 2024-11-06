@@ -11,20 +11,12 @@ from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 
 import aiofiles
 
-from pydantic import BaseModel
-
 from config import config, StreamerConfig
 from services.notification import notify
+from services.twitch_state import State
 
 
 logger = logging.getLogger(__name__)
-
-
-class State(BaseModel):
-    title: str
-    category: str
-
-    last_live_at: datetime
 
 
 class TokenStorage:
