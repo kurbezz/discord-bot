@@ -57,6 +57,19 @@ async def notify(notification_type: Literal["start"] | Literal["change_category"
 
     integrations = streamer_config.integrations
 
+    if (telegram := integrations.telegram) is not None:
+        if telegram.notifications_channel_id is not None:
+            msg = message_template.format(
+                title=current_state.title,
+                category=current_state.category,
+                role=""
+            )
+
+            try:
+                await notify_telegram(msg, str(telegram.notifications_channel_id))
+            except Exception as e:
+                logger.error("Failed to notify telegram", exc_info=e)
+
     if (discord := integrations.discord) is not None:
         if discord.notifications_channel_id is not None:
             role_id = get_role_id(streamer_config, current_state.category)
@@ -75,16 +88,3 @@ async def notify(notification_type: Literal["start"] | Literal["change_category"
                 await notify_discord(msg, str(discord.notifications_channel_id))
             except Exception as e:
                 logger.error("Failed to notify discord", exc_info=e)
-
-    if (telegram := integrations.telegram) is not None:
-        if telegram.notifications_channel_id is not None:
-            msg = message_template.format(
-                title=current_state.title,
-                category=current_state.category,
-                role=""
-            )
-
-            try:
-                await notify_telegram(msg, str(telegram.notifications_channel_id))
-            except Exception as e:
-                logger.error("Failed to notify telegram", exc_info=e)
