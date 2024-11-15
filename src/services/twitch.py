@@ -41,6 +41,8 @@ class TokenStorage:
 
 
 class TwitchService:
+    lock = Lock()
+
     SCOPES = [
         AuthScope.CHAT_READ,
         AuthScope.CHAT_EDIT,
@@ -126,17 +128,18 @@ class TwitchService:
         if stream is None:
             return
 
-        current_state = self.state.get(brodcaster_id)
-        if current_state is None:
-            return
+        async with self.lock:
+            current_state = self.state.get(brodcaster_id)
+            if current_state is None:
+                return
 
-        changed = current_state.category != event.event.category_name
+            changed = current_state.category != event.event.category_name
 
-        current_state.title = event.event.title
-        current_state.category = event.event.category_name
-        current_state.last_live_at = datetime.now()
+            current_state.title = event.event.title
+            current_state.category = event.event.category_name
+            current_state.last_live_at = datetime.now()
 
-        self.state[brodcaster_id] = current_state
+            self.state[brodcaster_id] = current_state
 
         if changed:
             await self.notify_change_category(brodcaster_id)
@@ -152,12 +155,12 @@ class TwitchService:
             last_live_at=datetime.now()
         )
 
-        current_state = self.state.get(streamer_id)
+        async with self.lock:
+            current_state = self.state.get(streamer_id)
 
+            is_need_notify = current_state is None or (datetime.now() - current_state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY
 
-        is_need_notify = current_state is None or (datetime.now() - current_state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY
-
-        self.state[streamer_id] = state
+            self.state[streamer_id] = state
 
         if is_need_notify:
             await self.notify_online(streamer_id)
