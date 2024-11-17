@@ -74,6 +74,8 @@ async def notify(notification_type: Literal["start"] | Literal["change_category"
 
     if (discord := integrations.discord) is not None:
         if discord.notifications_channel_id is not None:
+            # TODO: Get roles from discord api
+
             role_id = get_role_id(streamer_config, current_state.category)
             if role_id is not None:
                 role = f"<@&{role_id}>"
