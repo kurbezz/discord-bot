@@ -87,27 +87,44 @@ async def add(
     game: str,
     date: str | None = None
 ):
-    channel_to_message = await get_game_list_channel_to_message_map()
-
-    if interaction.channel is None:
-        await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
-        return
-
-    message_id = channel_to_message.get(interaction.channel.id)
-    if message_id is None:
-        await interaction.response.send_message("Команда не доступна в этом канале (#3)", ephemeral=True)
-        return
-
     if not isinstance(interaction.channel, Messageable):
-        await interaction.response.send_message("Команда не доступна в этом канале (#2)", ephemeral=True)
+        await interaction.response.send_message(
+            "Interation not allowed in this channel!", ephemeral=True
+        )
         return
 
-    game_list_message = await interaction.channel.fetch_message(message_id)
+    streamer = await StreamerConfigRepository.find_one(
+        integration_discord_guild_id=interaction.guild_id,
+        integration_discord_games_list_channel_id=interaction.channel_id
+    )
 
-    game_list = GameList.parse(game_list_message.content)
+    if streamer is None:
+        await interaction.response.send_message(
+            "Interation not allowed in this channel!", ephemeral=True
+        )
+        return
+
+    if streamer.integrations.discord is None or streamer.integrations.discord.games_list is None:
+        await interaction.response.send_message(
+            "Need setup!", ephemeral=True
+        )
+        return
+
+    game_list = await GameList.get(streamer.twitch.id)
+    if game_list is None:
+        await interaction.response.send_message(
+            "Game list not found!", ephemeral=True
+        )
+        return
+
     game_list.add_game(category, GameItem(name=game, customer=customer, date=date))
 
+    game_list_message = await interaction.channel.fetch_message(
+        streamer.integrations.discord.games_list.message_id
+    )
+
     await game_list_message.edit(content=str(game_list))
+    await game_list.save(streamer.twitch.id)
 
     await interaction.response.send_message("Игра добавлена!", ephemeral=True)
 
@@ -116,17 +133,16 @@ async def game_list_autocomplete(
     interaction: discord.Interaction,
     current: str,
 ) -> list[app_commands.Choice[str]]:
-    if not isinstance(interaction.channel, Messageable):
+    streamer = await StreamerConfigRepository.find_one(
+        integration_discord_guild_id=interaction.guild_id,
+        integration_discord_games_list_channel_id=interaction.channel_id
+    )
+    if streamer is None:
         return []
 
-    channel_to_message = await get_game_list_channel_to_message_map()
-    message_id = channel_to_message.get(interaction.channel.id)
-    if message_id is None:
+    game_list = await GameList.get(streamer.twitch.id)
+    if game_list is None:
         return []
-
-    game_list_message = await interaction.channel.fetch_message(message_id)
-
-    game_list = GameList.parse(game_list_message.content)
 
     return game_list.get_choices(current)
 
@@ -135,27 +151,44 @@ async def game_list_autocomplete(
 @app_commands.describe(game="Игра")
 @app_commands.autocomplete(game=game_list_autocomplete)
 async def delete(interaction: discord.Interaction, game: str):
-    channel_to_message = await get_game_list_channel_to_message_map()
-
-    if interaction.channel is None:
-        await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
-        return
-
-    message_id = channel_to_message.get(interaction.channel.id)
-    if message_id is None:
-        await interaction.response.send_message("Команда не доступна в этом канале (#3)", ephemeral=True)
-        return
-
     if not isinstance(interaction.channel, Messageable):
-        await interaction.response.send_message("Команда не доступна в этом канале (#2)", ephemeral=True)
+        await interaction.response.send_message(
+            "Interation not allowed in this channel!", ephemeral=True
+        )
         return
 
-    game_list_message = await interaction.channel.fetch_message(message_id)
+    streamer = await StreamerConfigRepository.find_one(
+        integration_discord_guild_id=interaction.guild_id,
+        integration_discord_games_list_channel_id=interaction.channel_id
+    )
 
-    game_list = GameList.parse(game_list_message.content)
+    if streamer is None:
+        await interaction.response.send_message(
+            "Interation not allowed in this channel!", ephemeral=True
+        )
+        return
+
+    if streamer.integrations.discord is None or streamer.integrations.discord.games_list is None:
+        await interaction.response.send_message(
+            "Need setup!", ephemeral=True
+        )
+        return
+
+    game_list = await GameList.get(streamer.twitch.id)
+    if game_list is None:
+        await interaction.response.send_message(
+            "Game list not found!", ephemeral=True
+        )
+        return
+
     game_list.delete_game(game)
 
+    game_list_message = await interaction.channel.fetch_message(
+        streamer.integrations.discord.games_list.message_id
+    )
+
     await game_list_message.edit(content=str(game_list))
+    await game_list.save(streamer.twitch.id)
 
     await interaction.response.send_message("Игра удалена!", ephemeral=True)
 

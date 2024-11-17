@@ -19,6 +19,32 @@ class StreamerConfigRepository:
             return StreamerConfig(**doc)
 
     @classmethod
+    async def find_one(
+        cls,
+        integration_discord_guild_id: int | None = None,
+        integration_discord_games_list_channel_id: int | None = None,
+    ) -> StreamerConfig | None:
+        filters = {}
+
+        if integration_discord_guild_id is not None:
+            filters["integrations.discord.guild_id"] = integration_discord_guild_id
+
+        if integration_discord_games_list_channel_id is not None:
+            filters[
+                "integrations.discord.games_list.channel_id"
+            ] = integration_discord_games_list_channel_id
+
+        async with mongo_manager.connect() as client:
+            db = client.get_default_database()
+            collection = db[cls.COLLECTION_NAME]
+
+            doc = await collection.find_one(filters)
+            if doc is None:
+                return None
+
+            return StreamerConfig(**doc)
+
+    @classmethod
     async def all(cls) -> list[StreamerConfig]:
         async with mongo_manager.connect() as client:
             db = client.get_default_database()

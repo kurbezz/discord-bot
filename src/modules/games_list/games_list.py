@@ -1,9 +1,10 @@
 from typing import Self
 from datetime import datetime
-import re
 
 from discord import app_commands
 from pydantic import BaseModel
+
+from core.mongo import mongo_manager
 
 
 class GameItem(BaseModel):
@@ -17,20 +18,6 @@ class GameItem(BaseModel):
         else:
             return f"* {self.name} ({self.customer})"
 
-    @classmethod
-    def parse(cls, line: str) -> Self:
-        regex_result_with_date = re.search(r"^\* (.+) \((.+)\) \| (.+)$", line)
-        if regex_result_with_date is not None:
-            name, customer, date = regex_result_with_date.groups()
-            return cls(name=name, customer=customer, date=date)
-
-        regex_result_without_date = re.search(r"^\* (.+) \((.+)\)$", line)
-        if regex_result_without_date is not None:
-            name, customer = regex_result_without_date.groups()
-            return cls(name=name, customer=customer, date=None)
-
-        raise ValueError(f"Invalid line: {line}")
-
 
 class Category(BaseModel):
     name: str
@@ -38,6 +25,8 @@ class Category(BaseModel):
 
 
 class GameList:
+    COLLECTION_NAME = "games_list_data"
+
     CATEGORY_MAP = {
         "points": "Заказанные игры (за 12к)",
         "paids": "Проплачены 🤑 ",
@@ -48,20 +37,33 @@ class GameList:
         self.data = data
 
     @classmethod
-    def parse(cls, message: str) -> Self:
-        categories = []
+    async def get(cls, twitch_id: int) -> Self | None:
+        async with mongo_manager.connect() as client:
+            db = client.get_default_database()
+            collection = db[cls.COLLECTION_NAME]
 
-        for line in message.split("\n"):
-            if line == "".strip():
-                continue
+            doc = await collection.find_one({"twitch_id": twitch_id})
+            if doc is None:
+                return None
 
-            if not line.startswith("*"):
-                name = line.replace(":", "")
-                categories.append(Category(name=name, games=[]))
-            else:
-                categories[-1].games.append(GameItem.parse(line.strip()))
+            return cls([
+                Category(**category)
+                for category in doc["data"]
+            ])
 
-        return cls(data=categories)
+    async def save(self, twitch_id: int):
+        async with mongo_manager.connect() as client:
+            db = client.get_default_database()
+            collection = db[self.COLLECTION_NAME]
+
+            await collection.replace_one(
+                {"twitch_id": twitch_id},
+                {
+                    "twitch_id": twitch_id,
+                    "data": [category.model_dump() for category in self.data]
+                },
+                upsert=True
+            )
 
     def add_game(self, category: str, game_item: GameItem):
         _category = self.CATEGORY_MAP.get(category)
@@ -79,6 +81,16 @@ class GameList:
                 if game.name.startswith(game_name):
                     category.games.remove(game)
 
+    def get_choices(self, query: str) -> list[app_commands.Choice[str]]:
+        choices = []
+
+        for category in self.data:
+            for game in category.games:
+                if query.lower() in game.name.lower():
+                    choices.append(app_commands.Choice(name=game.name, value=game.name))
+
+        return choices[:25]
+
     def __str__(self) -> str:
         result = ""
 
@@ -91,13 +103,3 @@ class GameList:
             result += "\n\n"
 
         return result
-
-    def get_choices(self, query: str) -> list[app_commands.Choice[str]]:
-        choices = []
-
-        for category in self.data:
-            for game in category.games:
-                if query.lower() in game.name.lower():
-                    choices.append(app_commands.Choice(name=game.name, value=game.name))
-
-        return choices[:25]
