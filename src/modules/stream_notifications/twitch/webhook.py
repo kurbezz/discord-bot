@@ -71,12 +71,12 @@ class TwitchService:
         streamers = await StreamerConfigRepository.all()
 
         try:
+            eventsub.start()
+
             logger.info("Unsubscribe from all events...")
             await eventsub.unsubscribe_all()
             await sleep(5)
             logger.info("Unsubscribe from all events done")
-
-            eventsub.start()
 
             logger.info("Subscribe to events...")
             await gather(
