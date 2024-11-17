@@ -6,7 +6,8 @@ from httpx import AsyncClient
 from core.config import config
 from domain.streamers import StreamerConfig
 
-from .twitch.state import State
+from .state import State
+from .sent_notifications import SentNotificationType
 
 
 logger = logging.getLogger(__name__)
@@ -48,14 +49,16 @@ def get_role_id(streamer_config: StreamerConfig, category: str) -> int | None:
     return roles.get(category)
 
 
-async def notify(notification_type: Literal["start"] | Literal["change_category"], streamer_config: StreamerConfig, current_state: State):
-    if notification_type == "start":
+async def notify(notification_type: SentNotificationType, streamer_config: StreamerConfig, current_state: State) -> dict[str, bool]:
+    result: dict[str, bool] = {}
+
+    if notification_type == SentNotificationType.START_STREAM:
         message_template = streamer_config.notifications.start_stream
     else:
         message_template = streamer_config.notifications.change_category
 
     if message_template is None:
-        return
+        return result
 
     integrations = streamer_config.integrations
 
@@ -69,7 +72,9 @@ async def notify(notification_type: Literal["start"] | Literal["change_category"
 
             try:
                 await notify_telegram(msg, str(telegram.notifications_channel_id))
+                result["telegram"] = True
             except Exception as e:
+                result["telegram"] = False
                 logger.error("Failed to notify telegram", exc_info=e)
 
     if (discord := integrations.discord) is not None:
@@ -90,5 +95,9 @@ async def notify(notification_type: Literal["start"] | Literal["change_category"
 
             try:
                 await notify_discord(msg, str(discord.notifications_channel_id))
+                result["discord"] = True
             except Exception as e:
+                result["discord"] = False
                 logger.error("Failed to notify discord", exc_info=e)
+
+    return result

@@ -1,4 +1,4 @@
-from .twitch.twitch import start_twitch_service
+from .twitch.webhook import start_twitch_service
 
 
 start = start_twitch_service

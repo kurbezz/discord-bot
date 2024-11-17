@@ -5,6 +5,7 @@ from modules.games_list import start as start_games_list_module
 from modules.stream_notifications import start as start_stream_notifications_module
 
 from core.mongo import mongo_manager
+from core.redis import redis_manager
 
 
 logging.basicConfig(level=logging.INFO)
@@ -17,6 +18,7 @@ async def main():
     logger.info("Starting services...")
 
     await mongo_manager.init()
+    await redis_manager.init()
 
     await wait([
         create_task(start_games_list_module()),
