@@ -87,8 +87,10 @@ class TwitchService:
             while True:
                 await sleep(0.1)
         finally:
-            await eventsub.unsubscribe_all_known()
+            await eventsub.unsubscribe_all()
             await eventsub.stop()
+
+            await sleep(10)
 
             await self.twitch.close()
 
