@@ -33,7 +33,8 @@ class GameList:
         "gifts": "Подарки",
     }
 
-    def __init__(self, data: list[Category]):
+    def __init__(self, twitch_id: int, data: list[Category]):
+        self.twitch_id = twitch_id
         self.data = data
 
     @classmethod
@@ -46,20 +47,23 @@ class GameList:
             if doc is None:
                 return None
 
-            return cls([
-                Category(**category)
-                for category in doc["data"]
-            ])
+            return cls(
+                twitch_id,
+                [
+                    Category(**category)
+                    for category in doc["data"]
+                ]
+            )
 
-    async def save(self, twitch_id: int):
+    async def save(self):
         async with mongo_manager.connect() as client:
             db = client.get_default_database()
             collection = db[self.COLLECTION_NAME]
 
             await collection.replace_one(
-                {"twitch_id": twitch_id},
+                {"twitch_id": self.twitch_id},
                 {
-                    "twitch_id": twitch_id,
+                    "twitch_id": self.twitch_id,
                     "data": [category.model_dump() for category in self.data]
                 },
                 upsert=True

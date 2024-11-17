@@ -124,7 +124,7 @@ async def add(
     )
 
     await game_list_message.edit(content=str(game_list))
-    await game_list.save(streamer.twitch.id)
+    await game_list.save()
 
     await interaction.response.send_message("Игра добавлена!", ephemeral=True)
 
@@ -188,7 +188,7 @@ async def delete(interaction: discord.Interaction, game: str):
     )
 
     await game_list_message.edit(content=str(game_list))
-    await game_list.save(streamer.twitch.id)
+    await game_list.save()
 
     await interaction.response.send_message("Игра удалена!", ephemeral=True)
 
