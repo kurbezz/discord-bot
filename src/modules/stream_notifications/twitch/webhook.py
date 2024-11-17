@@ -1,4 +1,4 @@
-from asyncio import sleep
+from asyncio import sleep, gather
 import logging
 from typing import NoReturn, Literal
 
@@ -43,12 +43,22 @@ class TwitchService:
                 await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
             else:
                 raise ValueError("Unknown method")
+        except ValueError as e:
+            raise e
         except Exception as e:
             if retry > 0:
                 await sleep(1)
                 await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
             else:
                 raise e
+
+    async def subscribe_to_streamer(self, eventsub: EventSubWebhook, streamer: StreamerConfig):
+        logger.info(f"Subscribe to events for {streamer.twitch.name}")
+        await gather(
+            self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer),
+            self.subscribe_with_retry("listen_stream_online", eventsub, streamer)
+        )
+        logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
     async def run(self) -> NoReturn:
         eventsub = EventSubWebhook(
@@ -66,13 +76,9 @@ class TwitchService:
             eventsub.start()
 
             logger.info("Subscribe to events...")
-
-            for streamer in streamers:
-                logger.info(f"Subscribe to events for {streamer.twitch.name}")
-                await self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer)
-                await self.subscribe_with_retry("listen_stream_online", eventsub, streamer)
-                logger.info(f"Subscribe to events for {streamer.twitch.name} done")
-
+            await gather(
+                *[self.subscribe_to_streamer(eventsub, streamer) for streamer in streamers]
+            )
             logger.info("Twitch service started")
 
             while True:
