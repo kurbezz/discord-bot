@@ -2,8 +2,6 @@ from asyncio import sleep
 import logging
 from datetime import datetime
 
-from core.config import config
-
 from domain.streamers import TwitchConfig
 from repositories.streamers import StreamerConfigRepository
 

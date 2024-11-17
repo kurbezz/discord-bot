@@ -3,7 +3,8 @@ from typing import Literal
 
 from httpx import AsyncClient
 
-from core.config import config, StreamerConfig
+from core.config import config
+from domain.streamers import StreamerConfig
 
 from .twitch.state import State
 
