@@ -25,8 +25,7 @@ async def authorize(auto_refresh_auth: bool = False) -> Twitch:
     await twitch.set_user_authentication(
         token,
         SCOPES,
-        refresh_token=refresh_token if auto_refresh_auth else None,
-        validate=True
+        refresh_token=refresh_token if auto_refresh_auth else None
     )
 
     await twitch.authenticate_app(SCOPES)
