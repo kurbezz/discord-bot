@@ -7,7 +7,7 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 
 from core.config import config
-from repositories.streamers import StreamerConfigRepository
+from repositories.streamers import StreamerConfigRepository, StreamerConfig
 from modules.stream_notifications.tasks import on_stream_state_change
 
 from .authorize import authorize
@@ -28,6 +28,23 @@ class TwitchService:
     async def on_stream_online(self, event: StreamOnlineEvent):
         await on_stream_state_change.kiq(int(event.event.broadcaster_user_id))
 
+    async def subscribe_with_retry(
+            self,
+            eventsub: EventSubWebhook,
+            streamer: StreamerConfig,
+            retry: int = 10
+        ):
+
+        try:
+            await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
+            await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
+        except Exception as e:
+            if retry > 0:
+                await sleep(1)
+                await self.subscribe_with_retry(eventsub, streamer, retry - 1)
+            else:
+                raise e
+
     async def run(self) -> NoReturn:
         eventsub = EventSubWebhook(
             callback_url=config.TWITCH_CALLBACK_URL,
@@ -47,8 +64,7 @@ class TwitchService:
 
             for streamer in streamers:
                 logger.info(f"Subscribe to events for {streamer.twitch.name}")
-                await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
-                await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
+                await self.subscribe_with_retry(eventsub, streamer)
                 logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
             logger.info("Twitch service started")
