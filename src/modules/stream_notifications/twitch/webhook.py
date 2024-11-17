@@ -84,7 +84,9 @@ class TwitchService:
             while True:
                 await sleep(0.1)
         finally:
+            await eventsub.unsubscribe_all_known()
             await eventsub.stop()
+
             await self.twitch.close()
 
             raise RuntimeError("Twitch service stopped")
