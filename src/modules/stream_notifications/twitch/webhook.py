@@ -81,6 +81,7 @@ class TwitchService:
             twitch=self.twitch,
             message_deduplication_history_length=50
         )
+        eventsub.wait_for_subscription_confirm_timeout = 60
 
         streamers = await StreamerConfigRepository.all()
 
