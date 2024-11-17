@@ -1,6 +1,6 @@
 from core.broker import broker
 from repositories.streamers import StreamerConfigRepository
-from ..synchronizer import syncronize
+from .synchronizer import syncronize
 
 
 @broker.task()
