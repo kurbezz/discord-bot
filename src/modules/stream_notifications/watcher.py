@@ -65,8 +65,12 @@ class StateWatcher:
         await cls.notify_and_save(streamer_id, SentNotificationType.CHANGE_CATEGORY, state)
 
     @classmethod
-    async def _on_stream_state_change(cls, streamer_id: int):
-        current_state = await cls.get_twitch_state(streamer_id)
+    async def _on_stream_state_change(cls, streamer_id: int, new_state: State | None = None):
+        if new_state is not None:
+            current_state = new_state
+        else:
+            current_state = await cls.get_twitch_state(streamer_id)
+
         if current_state is None:
             return
 
@@ -89,7 +93,7 @@ class StateWatcher:
         await StateManager.update(streamer_id, current_state)
 
     @classmethod
-    async def on_stream_state_change(cls, streamer_id: int):
+    async def on_stream_state_change(cls, streamer_id: int, new_state: State | None = None):
         async with redis_manager.connect() as redis:
             async with redis.lock(f"on_stream_state_change:{streamer_id}"):
-                await cls._on_stream_state_change(streamer_id)
+                await cls._on_stream_state_change(streamer_id, new_state)
