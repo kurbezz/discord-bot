@@ -5,6 +5,7 @@ from typing import NoReturn, Literal
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
+from twitchAPI.type import EventSubSubscriptionConflict
 
 from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
@@ -45,12 +46,28 @@ class TwitchService:
                 raise ValueError("Unknown method")
         except ValueError as e:
             raise e
-        except Exception as e:
-            if retry > 0:
-                await sleep(1)
-                await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
+        except EventSubSubscriptionConflict:
+            if method == "listen_channel_update_v2":
+                sub_type = "channel.update"
+            elif method == "listen_stream_online":
+                sub_type = "stream.online"
             else:
+                raise ValueError("Unknown method")
+
+            subs = await self.twitch.get_eventsub_subscriptions(
+                status="enabled",
+                sub_type=sub_type,
+                user_id=str(streamer.twitch.id)
+            )
+
+            for sub in subs.data:
+                await self.twitch.delete_eventsub_subscription(sub.id)
+        except Exception as e:
+            if retry <= 0:
                 raise e
+
+        await sleep(1)
+        await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
 
     async def subscribe_to_streamer(self, eventsub: EventSubWebhook, streamer: StreamerConfig):
         logger.info(f"Subscribe to events for {streamer.twitch.name}")
