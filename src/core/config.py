@@ -18,6 +18,8 @@ class Config(BaseSettings):
 
     MONGODB_URI: str
 
+    REDIS_URI: str
+
     SECRETS_FILE_PATH: str
 
 
