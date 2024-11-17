@@ -5,13 +5,11 @@ from taskiq_redis import ListQueueBroker, RedisAsyncResultBackend
 from core.config import config
 
 
-broker = ListQueueBroker(
-    url=config.REDIS_URI,
-    result_backend=RedisAsyncResultBackend(
+broker = ListQueueBroker(url=config.REDIS_URI) \
+    .with_result_backend(RedisAsyncResultBackend(
         redis_url=config.REDIS_URI,
         result_ex_time=60 * 60 * 24 * 7,
-    ),
-)
+    ))
 
 
 scheduler = TaskiqScheduler(
