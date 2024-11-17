@@ -55,13 +55,12 @@ class TwitchService:
                 raise ValueError("Unknown method")
 
             subs = await self.twitch.get_eventsub_subscriptions(
-                status="enabled",
-                sub_type=sub_type,
                 user_id=str(streamer.twitch.id)
             )
 
             for sub in subs.data:
-                await self.twitch.delete_eventsub_subscription(sub.id)
+                if sub.status == "enabled" and sub.type == sub_type:
+                    await self.twitch.delete_eventsub_subscription(sub.id)
         except Exception as e:
             if retry <= 0:
                 raise e
