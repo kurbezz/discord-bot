@@ -62,7 +62,7 @@ class TwitchService:
         )
 
         for sub in subs.data:
-            if sub.status == "enabled" and sub.type == sub_type:
+            if sub.type == sub_type:
                 await self.twitch.delete_eventsub_subscription(sub.id)
 
         await sleep(1)
