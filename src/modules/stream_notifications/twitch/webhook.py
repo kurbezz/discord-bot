@@ -44,6 +44,8 @@ class TwitchService:
                 await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
             else:
                 raise ValueError("Unknown method")
+
+            return
         except Exception as e:
             if retry <= 0:
                 raise e
