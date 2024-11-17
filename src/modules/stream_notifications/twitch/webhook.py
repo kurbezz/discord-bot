@@ -90,11 +90,6 @@ class TwitchService:
         try:
             eventsub.start()
 
-            logger.info("Unsubscribe from all events...")
-            await eventsub.unsubscribe_all()
-            await sleep(5)
-            logger.info("Unsubscribe from all events done")
-
             logger.info("Subscribe to events...")
             await gather(
                 *[self.subscribe_to_streamer(eventsub, streamer) for streamer in streamers]
