@@ -8,8 +8,9 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 
-from core.config import config, StreamerConfig
+from core.config import config
 from modules.stream_notifications.notification import notify
+from repositories.streamers import StreamerConfigRepository
 
 from .state import State
 from .token_storage import TokenStorage
@@ -50,19 +51,12 @@ class TwitchService:
 
         return twitch
 
-    def get_streamer_config(self, streamer_id: int) -> StreamerConfig:
-        for streamer in config.STREAMERS:
-            if streamer.twitch.id == streamer_id:
-                return streamer
-
-        raise ValueError(f"Streamer with id {streamer_id} not found")
-
     async def notify_online(self, streamer_id: int):
         current_state = self.state.get(streamer_id)
         if current_state is None:
             raise RuntimeError("State is None")
 
-        streamer = self.get_streamer_config(streamer_id)
+        streamer = await StreamerConfigRepository.get_by_twitch_id(streamer_id)
 
         if streamer.notifications.start_stream is None:
             return
@@ -78,7 +72,7 @@ class TwitchService:
         if (datetime.now() - current_state.last_live_at).seconds >= self.ONLINE_NOTIFICATION_DELAY:
             return
 
-        streamer = self.get_streamer_config(streamer_id)
+        streamer = await StreamerConfigRepository.get_by_twitch_id(streamer_id)
 
         if streamer.notifications.change_category is None:
             return
@@ -154,7 +148,9 @@ class TwitchService:
             message_deduplication_history_length=50
         )
 
-        for streamer in config.STREAMERS:
+        streamers = await StreamerConfigRepository.all()
+
+        for streamer in streamers:
             current_stream = await self.get_current_stream(streamer.twitch.id)
 
             if current_stream:
@@ -173,7 +169,7 @@ class TwitchService:
 
             logger.info("Subscribe to events...")
 
-            for streamer in config.STREAMERS:
+            for streamer in streamers:
                 logger.info(f"Subscribe to events for {streamer.twitch.name}")
                 await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
                 await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
@@ -184,7 +180,7 @@ class TwitchService:
             while True:
                 await sleep(self.UPDATE_DELAY)
 
-                for streamer in config.STREAMERS:
+                for streamer in streamers:
                     await self._on_stream_online(streamer.twitch.id)
         finally:
             await eventsub.stop()

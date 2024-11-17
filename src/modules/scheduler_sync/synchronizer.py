@@ -2,7 +2,10 @@ from asyncio import sleep
 import logging
 from datetime import datetime
 
-from core.config import config, TwitchConfig
+from core.config import config
+
+from domain.streamers import TwitchConfig
+from repositories.streamers import StreamerConfigRepository
 
 from .twitch_events import get_twitch_events, TwitchEvent
 from .discord_events import (
@@ -101,7 +104,9 @@ async def start_synchronizer():
 
     while True:
         try:
-            for streamer in config.STREAMERS:
+            streamers = await StreamerConfigRepository().all()
+
+            for streamer in streamers:
                 if (integration := streamer.integrations.discord) is None:
                     continue
 
@@ -109,4 +114,4 @@ async def start_synchronizer():
         except Exception as e:
             logging.error(e)
 
-        await sleep(5 * 30)
+        await sleep(5 * 60)

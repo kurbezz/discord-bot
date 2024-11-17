@@ -8,15 +8,18 @@ from discord import app_commands
 from modules.games_list.games_list import GameList, GameItem
 
 from core.config import config
+from repositories.streamers import StreamerConfigRepository
 
 
 logger = logging.getLogger(__name__)
 
 
-def get_game_list_channel_to_message_map() -> dict[int, int]:
+async def get_game_list_channel_to_message_map() -> dict[int, int]:
     result = {}
 
-    for streamer in config.STREAMERS:
+    streamers = await StreamerConfigRepository.all()
+
+    for streamer in streamers:
         if (integration := streamer.integrations.discord) is None:
             continue
 
@@ -41,7 +44,9 @@ class DiscordClient(discord.Client):
         self.tree = app_commands.CommandTree(self)
 
     async def setup_hook(self):
-        for streamer in config.STREAMERS:
+        streamers = await StreamerConfigRepository.all()
+
+        for streamer in streamers:
             if (integration := streamer.integrations.discord) is None:
                 continue
 
@@ -82,7 +87,7 @@ async def add(
     game: str,
     date: str | None = None
 ):
-    channel_to_message = get_game_list_channel_to_message_map()
+    channel_to_message = await get_game_list_channel_to_message_map()
 
     if interaction.channel is None:
         await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
@@ -114,7 +119,7 @@ async def game_list_autocomplete(
     if not isinstance(interaction.channel, Messageable):
         return []
 
-    channel_to_message = get_game_list_channel_to_message_map()
+    channel_to_message = await get_game_list_channel_to_message_map()
     message_id = channel_to_message.get(interaction.channel.id)
     if message_id is None:
         return []
@@ -130,7 +135,7 @@ async def game_list_autocomplete(
 @app_commands.describe(game="Игра")
 @app_commands.autocomplete(game=game_list_autocomplete)
 async def delete(interaction: discord.Interaction, game: str):
-    channel_to_message = get_game_list_channel_to_message_map()
+    channel_to_message = await get_game_list_channel_to_message_map()
 
     if interaction.channel is None:
         await interaction.response.send_message("Команда не доступна в этом канале (#1)", ephemeral=True)
