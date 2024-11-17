@@ -1,6 +1,6 @@
 from asyncio import sleep
 import logging
-from typing import NoReturn
+from typing import NoReturn, Literal
 
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
@@ -30,18 +30,23 @@ class TwitchService:
 
     async def subscribe_with_retry(
             self,
+            method: Literal["listen_channel_update_v2"] | Literal["listen_stream_online"],
             eventsub: EventSubWebhook,
             streamer: StreamerConfig,
             retry: int = 10
         ):
 
         try:
-            await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
-            await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
+            if method == "listen_channel_update_v2":
+                await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
+            elif method == "listen_stream_online":
+                await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
+            else:
+                raise ValueError("Unknown method")
         except Exception as e:
             if retry > 0:
                 await sleep(1)
-                await self.subscribe_with_retry(eventsub, streamer, retry - 1)
+                await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
             else:
                 raise e
 
@@ -64,7 +69,8 @@ class TwitchService:
 
             for streamer in streamers:
                 logger.info(f"Subscribe to events for {streamer.twitch.name}")
-                await self.subscribe_with_retry(eventsub, streamer)
+                await self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer)
+                await self.subscribe_with_retry("listen_stream_online", eventsub, streamer)
                 logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
             logger.info("Twitch service started")
