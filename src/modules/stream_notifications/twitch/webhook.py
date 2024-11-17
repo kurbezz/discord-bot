@@ -44,26 +44,24 @@ class TwitchService:
                 await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
             else:
                 raise ValueError("Unknown method")
-        except ValueError as e:
-            raise e
-        except EventSubSubscriptionConflict:
-            if method == "listen_channel_update_v2":
-                sub_type = "channel.update"
-            elif method == "listen_stream_online":
-                sub_type = "stream.online"
-            else:
-                raise ValueError("Unknown method")
-
-            subs = await self.twitch.get_eventsub_subscriptions(
-                user_id=str(streamer.twitch.id)
-            )
-
-            for sub in subs.data:
-                if sub.status == "enabled" and sub.type == sub_type:
-                    await self.twitch.delete_eventsub_subscription(sub.id)
         except Exception as e:
             if retry <= 0:
                 raise e
+
+        if method == "listen_channel_update_v2":
+            sub_type = "channel.update"
+        elif method == "listen_stream_online":
+            sub_type = "stream.online"
+        else:
+            raise ValueError("Unknown method")
+
+        subs = await self.twitch.get_eventsub_subscriptions(
+            user_id=str(streamer.twitch.id)
+        )
+
+        for sub in subs.data:
+            if sub.status == "enabled" and sub.type == sub_type:
+                await self.twitch.delete_eventsub_subscription(sub.id)
 
         await sleep(1)
         await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
