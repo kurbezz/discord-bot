@@ -3,7 +3,7 @@ from repositories.streamers import StreamerConfigRepository
 from .synchronizer import syncronize
 
 
-@broker.task()
+@broker.task("scheduler_sync.syncronize_task")
 async def syncronize_task(twitch_id: int):
     streamer = await StreamerConfigRepository.get_by_twitch_id(twitch_id)
 
@@ -13,7 +13,7 @@ async def syncronize_task(twitch_id: int):
     await syncronize(streamer.twitch, streamer.integrations.discord.guild_id)
 
 
-@broker.task(schedule=[{"cron": "*/5 * * * *"}])
+@broker.task("scheduler_sync.syncronize_all_task", schedule=[{"cron": "*/5 * * * *"}])
 async def syncronize_all_task():
     streamers = await StreamerConfigRepository().all()
 
