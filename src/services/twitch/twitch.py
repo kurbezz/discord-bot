@@ -11,6 +11,7 @@ from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 from core.config import config, StreamerConfig
 from services.notification import notify
 from services.twitch_state import State
+from services.twitch.token_storage import TokenStorage
 
 
 logger = logging.getLogger(__name__)
