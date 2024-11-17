@@ -5,7 +5,7 @@ from discord.abc import Messageable
 from discord import Object
 from discord import app_commands
 
-from services.games_list import GameList, GameItem
+from modules.games_list.games_list import GameList, GameItem
 
 from core.config import config
 

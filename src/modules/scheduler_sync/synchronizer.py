@@ -2,16 +2,16 @@ from asyncio import sleep
 import logging
 from datetime import datetime
 
-from services.scheduler_sync.twitch_events import get_twitch_events, TwitchEvent
-from services.scheduler_sync.discord_events import (
+from core.config import config, TwitchConfig
+
+from .twitch_events import get_twitch_events, TwitchEvent
+from .discord_events import (
     get_discord_events, DiscordEvent,
     delete_discord_event,
     create_discord_event, CreateDiscordEvent,
     edit_discord_event, UpdateDiscordEvent
 )
-from services.scheduler_sync.comparators import compare
-
-from core.config import config, TwitchConfig
+from .comparators import compare
 
 
 logger = logging.getLogger(__name__)

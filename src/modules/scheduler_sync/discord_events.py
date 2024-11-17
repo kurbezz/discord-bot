@@ -7,7 +7,7 @@ from pydantic import BaseModel, field_serializer, SerializationInfo
 
 from core.config import config
 
-from services.scheduler_sync.twitch_events import TwitchEvent
+from .twitch_events import TwitchEvent
 
 
 logger = logging.getLogger(__name__)

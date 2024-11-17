@@ -9,9 +9,10 @@ from twitchAPI.type import AuthScope
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 
 from core.config import config, StreamerConfig
-from services.notification import notify
-from services.twitch_state import State
-from services.twitch.token_storage import TokenStorage
+from modules.stream_notifications.notification import notify
+
+from .state import State
+from .token_storage import TokenStorage
 
 
 logger = logging.getLogger(__name__)

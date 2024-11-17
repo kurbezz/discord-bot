@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 
-from services.scheduler_sync.discord_events import DiscordEvent, CreateDiscordEvent, RecurrenceRule
+from .discord_events import DiscordEvent, CreateDiscordEvent, RecurrenceRule
 
 
 logger = logging.getLogger(__name__)

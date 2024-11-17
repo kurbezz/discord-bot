@@ -1,11 +1,12 @@
 from asyncio import wait, create_task
 import logging
 
-from services.discord import start_discord_sevice
-from services.twitch.twitch import start_twitch_service
-from services.scheduler_sync import start_synchronizer
+from modules.games_list import start as start_games_list_module
+from modules.scheduler_sync import start as start_scheduler_sync_module
+from modules.stream_notifications import start as start_stream_notifications_module
 
 from core.mongo import mongo_manager
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,9 +20,9 @@ async def main():
     await mongo_manager.init()
 
     await wait([
-        create_task(start_discord_sevice()),
-        create_task(start_twitch_service()),
-        create_task(start_synchronizer())
+        create_task(start_games_list_module()),
+        create_task(start_scheduler_sync_module()),
+        create_task(start_stream_notifications_module())
     ], return_when="FIRST_COMPLETED")
 
 
