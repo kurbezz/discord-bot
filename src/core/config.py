@@ -53,6 +53,8 @@ class Config(BaseSettings):
 
     STREAMERS: list[StreamerConfig] = []
 
+    MONGODB_URI: str
+
     SECRETS_FILE_PATH: str
 
     @field_validator("STREAMERS", mode="before")

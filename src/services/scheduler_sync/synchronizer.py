@@ -11,7 +11,7 @@ from services.scheduler_sync.discord_events import (
 )
 from services.scheduler_sync.comparators import compare
 
-from config import config, TwitchConfig
+from core.config import config, TwitchConfig
 
 
 logger = logging.getLogger(__name__)

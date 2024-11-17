@@ -7,7 +7,7 @@ from discord import app_commands
 
 from services.games_list import GameList, GameItem
 
-from config import config
+from core.config import config
 
 
 logger = logging.getLogger(__name__)

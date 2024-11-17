@@ -5,7 +5,7 @@ import logging
 from httpx import AsyncClient
 from pydantic import BaseModel, field_serializer, SerializationInfo
 
-from config import config
+from core.config import config
 
 from services.scheduler_sync.twitch_events import TwitchEvent
 

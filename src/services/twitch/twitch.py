@@ -1,6 +1,5 @@
 from asyncio import Lock, sleep
 from datetime import datetime
-import json
 import logging
 
 from twitchAPI.helper import first
@@ -9,35 +8,12 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.type import AuthScope
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 
-import aiofiles
-
-from config import config, StreamerConfig
+from core.config import config, StreamerConfig
 from services.notification import notify
 from services.twitch_state import State
 
 
 logger = logging.getLogger(__name__)
-
-
-class TokenStorage:
-    lock = Lock()
-
-    @staticmethod
-    async def save(acceess_token: str, refresh_token: str):
-        data = json.dumps({"access_token": acceess_token, "refresh_token": refresh_token})
-
-        async with TokenStorage.lock:
-            async with aiofiles.open(config.SECRETS_FILE_PATH, "w") as f:
-                await f.write(data)
-
-    @staticmethod
-    async def get() -> tuple[str, str]:
-        async with TokenStorage.lock:
-            async with aiofiles.open(config.SECRETS_FILE_PATH, "r") as f:
-                data_str = await f.read()
-
-        data = json.loads(data_str)
-        return data["access_token"], data["refresh_token"]
 
 
 class TwitchService:

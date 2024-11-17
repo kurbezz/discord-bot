@@ -2,8 +2,10 @@ from asyncio import wait, create_task
 import logging
 
 from services.discord import start_discord_sevice
-from services.twitch import start_twitch_service
+from services.twitch.twitch import start_twitch_service
 from services.scheduler_sync import start_synchronizer
+
+from core.mongo import mongo_manager
 
 logging.basicConfig(level=logging.INFO)
 
@@ -13,6 +15,8 @@ logger.setLevel(logging.INFO)
 
 async def main():
     logger.info("Starting services...")
+
+    await mongo_manager.init()
 
     await wait([
         create_task(start_discord_sevice()),
