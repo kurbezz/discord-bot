@@ -1,9 +1,7 @@
-from asyncio import sleep
 import logging
 from datetime import datetime
 
 from domain.streamers import TwitchConfig
-from repositories.streamers import StreamerConfigRepository
 
 from .twitch_events import get_twitch_events, TwitchEvent
 from .discord_events import (
@@ -95,21 +93,3 @@ async def syncronize(twitch: TwitchConfig, discord_guild_id: int):
     await add_events(discord_guild_id, twitch.name, twitch_events_with_id, discord_events_with_id)
     await remove_events(discord_guild_id, twitch_events_with_id, discord_events_with_id)
     await edit_events(discord_guild_id, twitch.name, twitch_events_with_id, discord_events_with_id)
-
-
-async def start_synchronizer():
-    logger.info("Starting events syncronizer...")
-
-    while True:
-        try:
-            streamers = await StreamerConfigRepository().all()
-
-            for streamer in streamers:
-                if (integration := streamer.integrations.discord) is None:
-                    continue
-
-                await syncronize(streamer.twitch, integration.guild_id)
-        except Exception as e:
-            logging.error(e)
-
-        await sleep(5 * 60)

@@ -2,7 +2,6 @@ from asyncio import wait, create_task
 import logging
 
 from modules.games_list import start as start_games_list_module
-from modules.scheduler_sync import start as start_scheduler_sync_module
 from modules.stream_notifications import start as start_stream_notifications_module
 
 from core.mongo import mongo_manager
@@ -21,7 +20,6 @@ async def main():
 
     await wait([
         create_task(start_games_list_module()),
-        create_task(start_scheduler_sync_module()),
         create_task(start_stream_notifications_module())
     ], return_when="FIRST_COMPLETED")
 
