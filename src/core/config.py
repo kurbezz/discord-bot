@@ -1,7 +1,16 @@
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
+from httpx import Client
 
-class Config(BaseSettings):
+
+class Settings(BaseSettings):
+    VAULT_HOST: str
+    VAULT_SECRET_PATH: str
+    VAULT_TOKEN: str
+
+
+class Config(BaseModel):
     DISCORD_BOT_TOKEN: str
     DISCORD_BOT_ID: str
     DISCORD_BOT_ACTIVITY: str
@@ -21,4 +30,21 @@ class Config(BaseSettings):
     REDIS_URI: str
 
 
-config = Config()  # type: ignore
+def get_config() -> Config:
+    settings = Settings()  # type: ignore
+
+    with Client() as client:
+        response = client.get(
+            f"https://{settings.VAULT_HOST}/v1/{settings.VAULT_SECRET_PATH}",
+            headers={
+                "X-Vault-Token": settings.VAULT_TOKEN,
+                "Content-Type": "application/json",
+            }
+        )
+
+        response.raise_for_status()
+
+    return Config(**response.json()["data"])
+
+
+config = get_config()
