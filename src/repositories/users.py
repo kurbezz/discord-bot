@@ -26,4 +26,8 @@ class UserRepository(BaseRepository):
 
             user = await collection.find_one(filter_data)
 
-        return User(**user)
+        return User(
+            id=str(user["_id"]),
+            oauths=user["oauths"],
+            is_admin=user["is_admin"],
+        )
