@@ -20,7 +20,5 @@ class Config(BaseSettings):
 
     REDIS_URI: str
 
-    SECRETS_FILE_PATH: str
-
 
 config = Config()  # type: ignore
