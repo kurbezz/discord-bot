@@ -104,14 +104,9 @@ class TwitchService:
             )
             logger.info("Twitch service started")
 
-            while True:
-                await sleep(0.1)
+            await eventsub._keep_loop_alive()
         finally:
-            await eventsub.unsubscribe_all()
             await eventsub.stop()
-
-            await sleep(10)
-
             await self.twitch.close()
 
             raise RuntimeError("Twitch service stopped")
