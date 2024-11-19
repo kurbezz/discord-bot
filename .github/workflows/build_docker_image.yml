@@ -44,7 +44,7 @@ jobs:
           file: ./docker/build.dockerfile
 
       -
-        name: Invoke deployment hook (app)
+        name: Invoke deployment hook (game_list)
         uses: joelwmale/webhook-action@master
         with:
           url: ${{ secrets.WEBHOOK_URL }}
@@ -60,3 +60,9 @@ jobs:
         uses: joelwmale/webhook-action@master
         with:
           url: ${{ secrets.WEBHOOK_URL_3 }}
+
+      -
+        name: Invoke deployment hook (scheduler)
+        uses: joelwmale/webhook-action@master
+        with:
+          url: ${{ secrets.WEBHOOK_URL_4 }}

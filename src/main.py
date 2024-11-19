@@ -17,6 +17,9 @@ logger.setLevel(logging.INFO)
 async def main():
     logger.info("Starting services...")
 
+    if len(sys.argv) != 2:
+        raise RuntimeError("Usage: python main.py <module>")
+
     module = sys.argv[1]
 
     await mongo_manager.init()
