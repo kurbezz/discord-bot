@@ -29,6 +29,8 @@ class Config(BaseModel):
 
     REDIS_URI: str
 
+    WEB_APP_HOST: str
+
 
 def get_config() -> Config:
     settings = Settings()  # type: ignore
