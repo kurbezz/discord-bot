@@ -8,8 +8,8 @@ from core.mongo import mongo_manager
 class BaseRepository(abc.ABC):
     COLLECTION_NAME: str
 
-    @asynccontextmanager
     @classmethod
+    @asynccontextmanager
     async def connect(cls):
         async with mongo_manager.connect() as client:
             db = client.get_default_database()
