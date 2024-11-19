@@ -6,7 +6,8 @@ response=`curl -X 'GET' "https://$VAULT_HOST/v1/$VAULT_SECRET_PATH" -s \
 
 data=`echo $response | jq -r '.data.data'`
 
-for key in $(echo "$data" | jq -r 'keys[]'); do
-    value=$(echo "$data" | jq -r ".\"$key\"")  # Corrected syntax
-    echo "$key"="$value"
+echo "$data" | jq -r 'to_entries[] | "\(.key)=\(.value)"' | while IFS= read -r line; do
+    key=$(echo "$line" | cut -d '=' -f 1)
+    value=$(echo "$line" | cut -d '=' -f 2-)
+    echo "$key=$value"
 done
