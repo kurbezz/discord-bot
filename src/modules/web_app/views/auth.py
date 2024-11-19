@@ -1,68 +1,32 @@
 from fastapi import APIRouter
 
-from twitchAPI.twitch import Twitch, AuthScope
-from twitchAPI.helper import first
-from httpx_oauth.oauth2 import OAuth2
-
-from core.config import config
+from domain.auth import OAuthProvider, OAuthData
+from domain.users import CreateUser
+from modules.web_app.services.oauth.process_callback import process_callback
+from modules.web_app.services.oauth.authorization_url_getter import get_authorization_url as gen_auth_link
+from modules.web_app.serializers.auth import GetAuthorizationUrlResponse
+from repositories.users import UserRepository
 
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-class TwithOAuth2(OAuth2):
-    async def get_id_email(self, token: str):
-        twitch_client = Twitch(config.TWITCH_CLIENT_ID, config.TWITCH_CLIENT_SECRET)
-        twitch_client.auto_refresh_auth = False
+@auth_router.get("/get_authorization_url/{provider}/")
+async def get_authorization_url(provider: OAuthProvider) -> GetAuthorizationUrlResponse:
+    link = await gen_auth_link(provider)
 
-        await twitch_client.set_user_authentication(
-            token,
-            [AuthScope.USER_READ_EMAIL],
-            validate=True
+    return GetAuthorizationUrlResponse(authorization_url=link)
+
+
+@auth_router.get("/callback/{provider}/")
+async def callback(provider: OAuthProvider, code: str):
+    user_data = await process_callback(provider, code)
+
+    user = await UserRepository.get_or_create_user(
+        CreateUser(
+            oauths={provider: OAuthData(id=user_data[0], email=user_data[1])},
+            is_admin=False,
         )
+    )
 
-        me = await first(twitch_client.get_users())
-
-        if me is None:
-            raise Exception("Failed to get user data")
-
-        return me.id, me.email
-
-
-twitch_oauth = TwithOAuth2(
-    config.TWITCH_CLIENT_ID,
-    config.TWITCH_CLIENT_SECRET,
-    "https://id.twitch.tv/oauth2/authorize",
-    "https://id.twitch.tv/oauth2/token",
-    base_scopes=[AuthScope.USER_READ_EMAIL.value],
-)
-
-
-REDIRECT_URI_TEMPLATE = f"https://{config.WEB_APP_HOST}/" + "auth/callback/{service}/"
-
-
-@auth_router.get("/get_authorization_url/{service}/")
-async def get_authorization_url(service: str):
-    link = None
-
-    if service == "twitch":
-        link = await twitch_oauth.get_authorization_url(
-            redirect_uri=REDIRECT_URI_TEMPLATE.format(service="twitch"),
-        )
-
-    return {"link": link}
-
-
-@auth_router.get("/callback/{service}/")
-async def callback(service: str, code: str):
-    user_data = None
-
-    if service == "twitch":
-        token = await twitch_oauth.get_access_token(
-            code,
-            redirect_uri=REDIRECT_URI_TEMPLATE.format(service="twitch"),
-        )
-
-        user_data = await twitch_oauth.get_id_email(token["access_token"])
-
-    return {"user_data": user_data}
+    return {"user": user.model_dump()}

@@ -1,17 +1,14 @@
 from domain.streamers import StreamerConfig
 
-from core.mongo import mongo_manager
+from .base import BaseRepository
 
 
-class StreamerConfigRepository:
+class StreamerConfigRepository(BaseRepository):
     COLLECTION_NAME = "streamers"
 
     @classmethod
     async def get_by_twitch_id(cls, twitch_id: int) -> StreamerConfig:
-        async with mongo_manager.connect() as client:
-            db = client.get_default_database()
-            collection = db[cls.COLLECTION_NAME]
-
+        async with cls.connect() as collection:
             doc = await collection.find_one({"twitch.id": twitch_id})
             if doc is None:
                 raise ValueError(f"Streamer with twitch id {twitch_id} not found")
@@ -34,10 +31,7 @@ class StreamerConfigRepository:
                 "integrations.discord.games_list.channel_id"
             ] = integration_discord_games_list_channel_id
 
-        async with mongo_manager.connect() as client:
-            db = client.get_default_database()
-            collection = db[cls.COLLECTION_NAME]
-
+        async with cls.connect() as collection:
             doc = await collection.find_one(filters)
             if doc is None:
                 return None
@@ -46,9 +40,6 @@ class StreamerConfigRepository:
 
     @classmethod
     async def all(cls) -> list[StreamerConfig]:
-        async with mongo_manager.connect() as client:
-            db = client.get_default_database()
-            collection = db[cls.COLLECTION_NAME]
-
+        async with cls.connect() as collection:
             cursor = await collection.find()
             return [StreamerConfig(**doc) async for doc in cursor]
