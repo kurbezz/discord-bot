@@ -1,5 +1,5 @@
-from asyncio import wait, create_task
 import logging
+import sys
 
 from modules.games_list import start as start_games_list_module
 from modules.stream_notifications import start as start_stream_notifications_module
@@ -17,13 +17,17 @@ logger.setLevel(logging.INFO)
 async def main():
     logger.info("Starting services...")
 
+    module = sys.argv[1]
+
     await mongo_manager.init()
     await redis_manager.init()
 
-    await wait([
-        create_task(start_games_list_module()),
-        create_task(start_stream_notifications_module())
-    ], return_when="FIRST_COMPLETED")
+    if module == "games_list":
+        await start_games_list_module()
+    elif module == "stream_notifications":
+        await start_stream_notifications_module()
+    else:
+        raise RuntimeError(f"Unknown module: {module}")
 
 
 if __name__ == "__main__":
