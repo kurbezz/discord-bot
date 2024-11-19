@@ -34,6 +34,7 @@ twitch_oauth = TwithOAuth2(
     config.TWITCH_CLIENT_SECRET,
     "https://id.twitch.tv/oauth2/authorize",
     "https://id.twitch.tv/oauth2/token",
+    base_scopes=[AuthScope.USER_READ_EMAIL.value],
 )
 
 
