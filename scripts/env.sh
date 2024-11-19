@@ -9,5 +9,5 @@ data=`echo $response | jq -r '.data.data'`
 echo "$data" | jq -r 'to_entries[] | "\(.key)=\(.value)"' | while IFS= read -r line; do
     key=$(echo "$line" | cut -d '=' -f 1)
     value=$(echo "$line" | cut -d '=' -f 2-)
-    echo "$key=$value"
+    echo "$key=\"$value\""
 done
