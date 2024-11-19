@@ -19,6 +19,10 @@ mongojet = "^0.2.4"
 taskiq = "^0.11.7"
 taskiq-redis = "^1.0.2"
 redis = {extras = ["hiredis"], version = "^5.2.0"}
+fastapi = "^0.115.5"
+authx = "^1.4.0"
+httpx-oauth = "^0.15.1"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
 
 
 [build-system]

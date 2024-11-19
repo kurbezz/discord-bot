@@ -12,9 +12,14 @@ RUN --mount=type=ssh /opt/venv/bin/poetry export --without-hashes ${POETRY_EXPOR
 
 FROM python:3.12-slim AS runtime
 
-RUN apt update && apt install -y --no-install-recommends netcat-traditional wkhtmltopdf && apt clean
+RUN apt update && \
+    apt install -y --no-install-recommends curl jq && \
+    apt clean
 
 COPY ./src/ /app
+
+COPY ./scripts/*.sh /
+RUN chmod +x /*.sh
 
 ENV PATH="/opt/venv/bin:$PATH"
 ENV VENV_PATH=/opt/venv
