@@ -13,6 +13,7 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 class TwithOAuth2(OAuth2):
     async def get_id_email(self, token: str):
         twitch_client = Twitch(config.TWITCH_CLIENT_ID, config.TWITCH_CLIENT_SECRET)
+        twitch_client.auto_refresh_auth = False
 
         await twitch_client.set_user_authentication(
             token,
