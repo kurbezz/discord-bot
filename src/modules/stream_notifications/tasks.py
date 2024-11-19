@@ -8,7 +8,10 @@ from .watcher import StateWatcher
 from .twitch.authorize import authorize
 
 
-@broker.task("stream_notifications.twitch.on_stream_state_change")
+@broker.task(
+    "stream_notifications.twitch.on_stream_state_change",
+    retry_on_error=True
+)
 async def on_stream_state_change(
     streamer_id: int, new_state: State | None = None
 ):
