@@ -6,6 +6,7 @@ from modules.stream_notifications import start as start_stream_notifications_mod
 
 from core.mongo import mongo_manager
 from core.redis import redis_manager
+from core.broker import broker
 
 
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +25,9 @@ async def main():
 
     await mongo_manager.init()
     await redis_manager.init()
+
+    if not broker.is_worker_process:
+        await broker.startup()
 
     if module == "games_list":
         await start_games_list_module()
