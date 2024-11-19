@@ -44,7 +44,7 @@ def get_config() -> Config:
 
         response.raise_for_status()
 
-    return Config(**response.json()["data"])
+    return Config(**response.json()["data"]["data"])
 
 
 config = get_config()
