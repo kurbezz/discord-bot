@@ -66,3 +66,9 @@ jobs:
         uses: joelwmale/webhook-action@master
         with:
           url: ${{ secrets.WEBHOOK_URL_4 }}
+
+      -
+        name: Invoke deployment hook (web_app)
+        uses: joelwmale/webhook-action@master
+        with:
+          url: ${{ secrets.WEBHOOK_URL_5 }}

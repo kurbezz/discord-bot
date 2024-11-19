@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from twitchAPI.twitch import Twitch, AuthScope
+from twitchAPI.helper import first
 from httpx_oauth.oauth2 import OAuth2
 
 from core.config import config
@@ -8,7 +10,25 @@ from core.config import config
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-twitch_oauth = OAuth2(
+class TwithOAuth2(OAuth2):
+    async def get_id_email(self, token: str):
+        twitch_client = Twitch(config.TWITCH_CLIENT_ID, config.TWITCH_CLIENT_SECRET)
+
+        await twitch_client.set_user_authentication(
+            token,
+            [AuthScope.USER_READ_EMAIL],
+            validate=True
+        )
+
+        me = await first(twitch_client.get_users())
+
+        if me is None:
+            raise Exception("Failed to get user data")
+
+        return me.id, me.email
+
+
+twitch_oauth = TwithOAuth2(
     config.TWITCH_CLIENT_ID,
     config.TWITCH_CLIENT_SECRET,
     "https://id.twitch.tv/oauth2/authorize",
