@@ -18,7 +18,7 @@ class TwithOAuth2(OAuth2):
         await twitch_client.set_user_authentication(
             token,
             [AuthScope.USER_READ_EMAIL],
-            validate=True
+            validate=False
         )
 
         me = await first(twitch_client.get_users())
