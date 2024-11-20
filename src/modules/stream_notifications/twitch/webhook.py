@@ -5,6 +5,7 @@ from typing import NoReturn, Literal
 
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
+from twitchAPI.helper import first
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 
 from core.config import config
@@ -25,6 +26,10 @@ class TwitchService:
         self.twitch = twitch
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
+        stream = await first(self.twitch.get_streams(user_id=[event.event.broadcaster_user_id]))
+        if stream is None:
+            return
+
         await on_stream_state_change.kiq(
             int(event.event.broadcaster_user_id),
             State(
