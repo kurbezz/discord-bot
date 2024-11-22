@@ -31,6 +31,8 @@ class Config(BaseModel):
 
     WEB_APP_HOST: str
 
+    SECRET_KEY: str
+
 
 def get_config() -> Config:
     settings = Settings()  # type: ignore

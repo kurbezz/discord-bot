@@ -4,11 +4,14 @@ from core.mongo import mongo_manager
 from core.redis import redis_manager
 from core.broker import broker
 
+from .auth.authx import auth
 from .views import routes
 
 
 def get_app() -> FastAPI:
     app = FastAPI()
+
+    auth.handle_errors(app)
 
     for route in routes:
         app.include_router(route)
