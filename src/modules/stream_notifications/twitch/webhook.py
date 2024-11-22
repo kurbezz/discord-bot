@@ -7,6 +7,7 @@ from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
 from twitchAPI.helper import first
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
+from twitchAPI.oauth import validate_token
 
 from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
@@ -89,6 +90,19 @@ class TwitchService:
         )
         logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
+    async def _check_token(self):
+        while True:
+            await sleep(60)
+
+            assert self.twitch._user_auth_token is not None
+
+            val_result = await validate_token(
+                self.twitch._user_auth_token,
+                auth_base_url=self.twitch.auth_base_url
+            )
+            if val_result.get('status', 200) != 200:
+                await self.twitch.refresh_used_token()
+
     async def run(self) -> NoReturn:
         eventsub = EventSubWebhook(
             callback_url=config.TWITCH_CALLBACK_URL,
@@ -109,7 +123,7 @@ class TwitchService:
             )
             logger.info("Twitch service started")
 
-            await eventsub._keep_loop_alive()
+            await self._check_token()
         finally:
             await eventsub.stop()
             await self.twitch.close()
