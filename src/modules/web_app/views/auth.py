@@ -4,7 +4,7 @@ from domain.auth import OAuthProvider, OAuthData
 from domain.users import CreateUser
 from modules.web_app.services.oauth.process_callback import process_callback
 from modules.web_app.services.oauth.authorization_url_getter import get_authorization_url as gen_auth_link
-from modules.web_app.serializers.auth import GetAuthorizationUrlResponse
+from modules.web_app.serializers.auth import GetAuthorizationUrlResponse, CallbackResponse
 from modules.web_app.auth.authx import auth
 from repositories.users import UserRepository
 
@@ -20,7 +20,7 @@ async def get_authorization_url(provider: OAuthProvider) -> GetAuthorizationUrlR
 
 
 @auth_router.get("/callback/{provider}/")
-async def callback(provider: OAuthProvider, code: str):
+async def callback(provider: OAuthProvider, code: str) -> CallbackResponse:
     user_data = await process_callback(provider, code)
 
     user = await UserRepository.get_or_create_user(
@@ -30,6 +30,9 @@ async def callback(provider: OAuthProvider, code: str):
         )
     )
 
-    token = auth.create_access_token(uid=user.id, data={"is_admin": user.is_admin})
+    token = auth.create_access_token(
+        uid=user.id,
+        is_admin=user.is_admin
+    )
 
-    return {"token": token}
+    return CallbackResponse(token=token)

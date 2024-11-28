@@ -96,12 +96,14 @@ class TwitchService:
 
             assert self.twitch._user_auth_token is not None
 
+            logger.info("Check token...")
             val_result = await validate_token(
                 self.twitch._user_auth_token,
                 auth_base_url=self.twitch.auth_base_url
             )
             if val_result.get('status', 200) != 200:
                 await self.twitch.refresh_used_token()
+                logger.info("Token refreshed")
 
     async def run(self) -> NoReturn:
         eventsub = EventSubWebhook(
