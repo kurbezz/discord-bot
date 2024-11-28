@@ -1,4 +1,4 @@
-from asyncio import sleep, gather
+from asyncio import sleep, gather, get_running_loop
 from datetime import datetime, timezone
 import logging
 from typing import NoReturn, Literal
@@ -24,6 +24,7 @@ class TwitchService:
     ONLINE_NOTIFICATION_DELAY = 15 * 60
 
     def __init__(self, twitch: Twitch):
+        self.loop = get_
         self.twitch = twitch
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
@@ -91,10 +92,13 @@ class TwitchService:
         logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
     async def _check_token(self):
-        while True:
-            await sleep(60)
+        assert self.twitch._user_auth_token is not None
 
-            assert self.twitch._user_auth_token is not None
+        while True:
+            for _ in range(60):
+                loop = get_running_loop()
+                if loop.is_closed():
+                    return
 
             logger.info("Check token...")
             val_result = await validate_token(
