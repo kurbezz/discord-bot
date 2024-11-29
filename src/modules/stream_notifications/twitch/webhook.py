@@ -24,7 +24,6 @@ class TwitchService:
     ONLINE_NOTIFICATION_DELAY = 15 * 60
 
     def __init__(self, twitch: Twitch):
-        self.loop = get_
         self.twitch = twitch
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
