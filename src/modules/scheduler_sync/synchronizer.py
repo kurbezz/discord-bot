@@ -25,12 +25,20 @@ async def add_events(
     discord_events_ids = [event[0] for event in discord_events]
 
     for (uid, event) in twitch_events:
-        if event.start_at <= datetime.now(event.start_at.tzinfo):
+        if uid not in discord_events_ids:
             continue
 
-        if uid not in discord_events_ids:
-            create_event = CreateDiscordEvent.parse_from_twitch_event(event, twitch_channel_name)
-            await create_discord_event(guild_id, create_event)
+        if event.start_at <= datetime.now(event.start_at.tzinfo) and event.repeat_rule is None:
+            continue
+
+        create_event = CreateDiscordEvent.parse_from_twitch_event(event, twitch_channel_name)
+
+        if create_event.recurrence_rule is not None:
+            while create_event.scheduled_start_time <= datetime.now(create_event.scheduled_start_time.tzinfo):
+                create_event.scheduled_start_time = create_event.recurrence_rule.next_date(create_event.scheduled_start_time)
+                create_event.scheduled_end_time = create_event.scheduled_start_time + (create_event.scheduled_end_time - create_event.scheduled_start_time)
+
+        await create_discord_event(guild_id, create_event)
 
 
 async def remove_events(
