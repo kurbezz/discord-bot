@@ -81,6 +81,8 @@ async def edit_events(
 
 
 async def syncronize(twitch: TwitchConfig, discord_guild_id: int):
+    logger.info(f"Syncronizing events for {twitch.name}")
+
     twitch_events = await get_twitch_events(str(twitch.id))
     discord_events = await get_discord_events(discord_guild_id)
 
