@@ -25,7 +25,7 @@ async def add_events(
     discord_events_ids = [event[0] for event in discord_events]
 
     for (uid, event) in twitch_events:
-        if event.start_at > datetime.now(event.start_at.tzinfo):
+        if event.start_at <= datetime.now(event.start_at.tzinfo):
             continue
 
         if uid not in discord_events_ids:
