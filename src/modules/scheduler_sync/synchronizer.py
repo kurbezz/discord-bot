@@ -34,9 +34,11 @@ async def add_events(
         create_event = CreateDiscordEvent.parse_from_twitch_event(event, twitch_channel_name)
 
         if create_event.recurrence_rule is not None:
+            duration = create_event.scheduled_end_time - create_event.scheduled_start_time
+
             while create_event.scheduled_start_time <= datetime.now(create_event.scheduled_start_time.tzinfo):
                 create_event.scheduled_start_time = create_event.recurrence_rule.next_date(create_event.scheduled_start_time)
-                create_event.scheduled_end_time = create_event.scheduled_start_time + (create_event.scheduled_end_time - create_event.scheduled_start_time)
+                create_event.scheduled_end_time = create_event.scheduled_start_time + duration
 
         await create_discord_event(guild_id, create_event)
 
