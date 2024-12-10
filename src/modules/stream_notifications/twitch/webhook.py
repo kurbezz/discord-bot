@@ -1,4 +1,4 @@
-from asyncio import sleep, gather, get_running_loop
+from asyncio import sleep, gather
 from datetime import datetime, timezone
 import logging
 from typing import NoReturn, Literal
@@ -11,7 +11,7 @@ from twitchAPI.oauth import validate_token
 
 from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
-from modules.stream_notifications.tasks import on_stream_state_change
+from modules.stream_notifications.tasks import on_stream_state_change, check_streams_states
 
 from .authorize import authorize
 from ..state import State
@@ -26,8 +26,16 @@ class TwitchService:
     def __init__(self, twitch: Twitch):
         self.twitch = twitch
 
+        self.failed = False
+
     async def on_channel_update(self, event: ChannelUpdateEvent):
-        stream = await first(self.twitch.get_streams(user_id=[event.event.broadcaster_user_id]))
+        try:
+            stream = await first(self.twitch.get_streams(user_id=[event.event.broadcaster_user_id]))
+        except RuntimeError as e:
+            await check_streams_states.kiq()
+            self.failed = True
+            raise e
+
         if stream is None:
             return
 
@@ -93,11 +101,12 @@ class TwitchService:
     async def _check_token(self):
         assert self.twitch._user_auth_token is not None
 
-        while True:
+        while not self.failed:
             for _ in range(60):
-                loop = get_running_loop()
-                if loop.is_closed():
+                if self.failed:
                     return
+
+                await sleep(1)
 
             logger.info("Check token...")
             val_result = await validate_token(
