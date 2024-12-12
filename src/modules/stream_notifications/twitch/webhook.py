@@ -117,6 +117,19 @@ class TwitchService:
                 await self.twitch.refresh_used_token()
                 logger.info("Token refreshed")
 
+    async def stop(self, eventsub: EventSubWebhook):
+        self.failed = True
+
+        try:
+            await eventsub.stop()
+        except Exception as e:
+            logger.error(e)
+
+        try:
+            await self.twitch.close()
+        except Exception as e:
+            logger.error(e)
+
     async def run(self) -> NoReturn:
         eventsub = EventSubWebhook(
             callback_url=config.TWITCH_CALLBACK_URL,
@@ -139,10 +152,7 @@ class TwitchService:
 
             await self._check_token()
         finally:
-            await eventsub.stop()
-            await self.twitch.close()
-
-            raise RuntimeError("Twitch service stopped")
+            await self.stop(eventsub)
 
     @classmethod
     async def start(cls):
