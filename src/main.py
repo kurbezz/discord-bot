@@ -36,6 +36,8 @@ async def main():
     else:
         raise RuntimeError(f"Unknown module: {module}")
 
+    exit(0)
+
 
 if __name__ == "__main__":
     from asyncio import run
