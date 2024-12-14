@@ -152,6 +152,7 @@ class TwitchService:
 
             await self._check_token()
         finally:
+            logger.info("Twitch service stopping...")
             await self.stop(eventsub)
 
     @classmethod
@@ -160,6 +161,8 @@ class TwitchService:
 
         twith = await authorize(auto_refresh_auth=True)
         await cls(twith).run()
+
+        logger.info("Twitch service stopped")
 
 
 async def start_twitch_service() -> NoReturn:
