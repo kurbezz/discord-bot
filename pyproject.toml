@@ -9,20 +9,20 @@ packages = [{include = "discord_bot"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 discord-py = "^2.4.0"
-twitchapi = "^4.3.1"
+twitchapi = "^4.4.0"
 pydantic = "^2.10.4"
-pydantic-settings = "^2.6.1"
-httpx = "^0.27.2"
-icalendar = "^6.0.1"
+pydantic-settings = "^2.7.0"
+httpx = "^0.28.1"
+icalendar = "^6.1.0"
 pytz = "^2024.2"
-mongojet = "^0.2.4"
-taskiq = "^0.11.7"
+mongojet = "^0.2.5"
+taskiq = "^0.11.10"
 taskiq-redis = "^1.0.2"
-redis = {extras = ["hiredis"], version = "^5.2.0"}
+redis = {extras = ["hiredis"], version = "^5.2.1"}
 fastapi = "^0.115.5"
 authx = "^1.4.0"
-httpx-oauth = "^0.15.1"
-uvicorn = {extras = ["standard"], version = "^0.32.0"}
+httpx-oauth = "^0.16.1"
+uvicorn = {extras = ["standard"], version = "^0.34.0"}
 
 
 [build-system]

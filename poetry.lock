@@ -742,13 +742,13 @@ test = ["Cython (>=0.29.24)"]
 
 [[package]]
 name = "httpx"
-version = "0.27.2"
+version = "0.28.1"
 description = "The next generation HTTP client."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "httpx-0.27.2-py3-none-any.whl", hash = "sha256:7bb2708e112d8fdd7829cd4243970f0c223274051cb35ee80c03301ee29a3df0"},
-    {file = "httpx-0.27.2.tar.gz", hash = "sha256:f7c2be1d2f3c3c3160d441802406b206c2b76f5947b11115e6df10c6c65e66c2"},
+    {file = "httpx-0.28.1-py3-none-any.whl", hash = "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"},
+    {file = "httpx-0.28.1.tar.gz", hash = "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc"},
 ]
 
 [package.dependencies]
@@ -756,7 +756,6 @@ anyio = "*"
 certifi = "*"
 httpcore = "==1.*"
 idna = "*"
-sniffio = "*"
 
 [package.extras]
 brotli = ["brotli", "brotlicffi"]
@@ -767,27 +766,27 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "httpx-oauth"
-version = "0.15.1"
+version = "0.16.1"
 description = "Async OAuth client using HTTPX"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "httpx_oauth-0.15.1-py3-none-any.whl", hash = "sha256:89b45f250e93e42bbe9631adf349cab0e3d3ced958c07e06651735198d1bdf00"},
-    {file = "httpx_oauth-0.15.1.tar.gz", hash = "sha256:4094cf0938fc7252b5f5dfd62cd1ab5aee2fcb6734e621942ee17d1af4806b74"},
+    {file = "httpx_oauth-0.16.1-py3-none-any.whl", hash = "sha256:2fcad82f80f28d0473a0fc4b4eda223dc952050af7e3a8c8781342d850f09fb5"},
+    {file = "httpx_oauth-0.16.1.tar.gz", hash = "sha256:7402f061f860abc092ea4f5c90acfc576a40bbb79633c1d2920f1ca282c296ee"},
 ]
 
 [package.dependencies]
-httpx = ">=0.18,<1.0.0"
+httpx = ">=0.18"
 
 [[package]]
 name = "icalendar"
-version = "6.0.1"
+version = "6.1.0"
 description = "iCalendar parser/generator"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "icalendar-6.0.1-py3-none-any.whl", hash = "sha256:9bf3d69203bd0366a9a29a8b0e220574580b86d7918afcb628fc6920287922f3"},
-    {file = "icalendar-6.0.1.tar.gz", hash = "sha256:1ff44825d7b41c3f77eac9e09cc67a770dd3c2377430c23b0eb7d91603088892"},
+    {file = "icalendar-6.1.0-py3-none-any.whl", hash = "sha256:46c09b774a6e6948495dafcb166dc15135c8259d0ae25491f154cbc822714b69"},
+    {file = "icalendar-6.1.0.tar.gz", hash = "sha256:43c2db8632959d634f4e48f6e6131e706bf2cdddad488cf0b72fda079b796bad"},
 ]
 
 [package.dependencies]
@@ -844,72 +843,72 @@ files = [
 
 [[package]]
 name = "mongojet"
-version = "0.2.4"
+version = "0.2.5"
 description = "Async MongoDB client for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mongojet-0.2.4-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:498f7b2981757e32fcbd944359380a503a51b6d4aff0385dbc175e58147188c7"},
-    {file = "mongojet-0.2.4-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:cd15a6e94a3c7cbe1f59358136a6a5e24be0dce49def8b68fcc2ab57023dad5e"},
-    {file = "mongojet-0.2.4-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:a7e0d53839c6159f9e627547da1ea878d2300665377c643be90abbc73668d2fa"},
-    {file = "mongojet-0.2.4-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0bfa3c1c25b85603e5a8651e7b2256a91b03122ed45ee3dfc2545715d67e4fde"},
-    {file = "mongojet-0.2.4-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:96b6782e487805f49ff6588ad179ec17469aaa4ea958feed9728273edf1f00e4"},
-    {file = "mongojet-0.2.4-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:e1771ebecbb8de41b83ceb83766e196f5bdba97941fd45d941f51e3436b1f6f9"},
-    {file = "mongojet-0.2.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ea1649ebdf3815193cb35f2fc08b5d189be5abbec1aec0458df0a85746d0e930"},
-    {file = "mongojet-0.2.4-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:8fa40d0bfb3894a6541e0285327aa71f6d51217134896f92a20db56b9d7c8a5b"},
-    {file = "mongojet-0.2.4-cp310-none-win32.whl", hash = "sha256:ec1181853d489eb493d9494dbe20902b0ec29d6bde66084064a21db277516e8f"},
-    {file = "mongojet-0.2.4-cp310-none-win_amd64.whl", hash = "sha256:f122f492790410944f1c44d30b1541ee554b7b6380d64e54a7aea94c7cc005ba"},
-    {file = "mongojet-0.2.4-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:f3e984c6af86ab06ed0b99ab65fe41c6a261741a2199cdf066cbe4841de51476"},
-    {file = "mongojet-0.2.4-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:0cf3669b5f1e15be8339d6db8aecfa6e0d45f403eb5feba9afbf65c550a12422"},
-    {file = "mongojet-0.2.4-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:079148440ba2c22edc3abc6983a0d6ab49d383f48f3fee7b7efdc7563d130019"},
-    {file = "mongojet-0.2.4-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:90146d090d2d11046cbd09ef249dd6d99b926d81c5085302463e62bf9ffb15c2"},
-    {file = "mongojet-0.2.4-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:0a51ff96d69147e6a7ae3c65248752481ac681b1f0071d6581dd1ba9a13f22d7"},
-    {file = "mongojet-0.2.4-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:e449a0e531b8114f85afb85c96ec337969580e994ef39c0b23e5cb214d7c5d18"},
-    {file = "mongojet-0.2.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c76b1f040509036e49bf681a8314c1a190104678cb717f740402e97e71d9da96"},
-    {file = "mongojet-0.2.4-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:5f968e6eab3ccf1cca6833100554e9cf8e90a13a4d7bdb887de2244b7380a447"},
-    {file = "mongojet-0.2.4-cp311-none-win32.whl", hash = "sha256:e1f00c2f8243bc137569b8edbdd87fcd91602b50949244e46f048362a0ad121c"},
-    {file = "mongojet-0.2.4-cp311-none-win_amd64.whl", hash = "sha256:1b35b725f77ee72cd98253d2db94691c9bb34d4869bb18fa035ea36b257fe19c"},
-    {file = "mongojet-0.2.4-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:ece48097590f9fec493fa2865a720f4f3830bd6f9d5df3c3a6c0c630d01712cb"},
-    {file = "mongojet-0.2.4-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:b5d7454302549667cc1ef5497bd501e4d15a836ef86bea3c75c7066e752f86d8"},
-    {file = "mongojet-0.2.4-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:09a1f9c62683c7d3b59f6fdea94c09009f29482288b259914252b1683c03e45d"},
-    {file = "mongojet-0.2.4-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:acdd0e368746c8b20810e7512eedce713c52adb135361278eb3515e77c118822"},
-    {file = "mongojet-0.2.4-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:20e8d1e8c5420e32c734b8995f46ecbd87e533379f7579bbf689ce2e0427de8e"},
-    {file = "mongojet-0.2.4-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:af54990562dcab637268c7b804c58ff668164e35763cb19aa26d332a9ddfdd26"},
-    {file = "mongojet-0.2.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4da637f5b297a4b82efd91baad511d8072cc896770bb40001b6e6fc766779f71"},
-    {file = "mongojet-0.2.4-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:e48662ab6f8cbb7cb33d8bf24c9285ac30b5c15823b603ff314a1a03295273a5"},
-    {file = "mongojet-0.2.4-cp312-none-win32.whl", hash = "sha256:01239184d74cc9deb3c9598bdf472c5fb9e279f88473a7b8c83c5e3de5ea4f44"},
-    {file = "mongojet-0.2.4-cp312-none-win_amd64.whl", hash = "sha256:2f262eaf0b6a6e770b3d1121371cbb1d9d195e43d64b0cf2e8662537e30d7621"},
-    {file = "mongojet-0.2.4-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:b77a1424663b045b56a4171f4bbaa1a71e415176fe674330d4a8351b7d5a9600"},
-    {file = "mongojet-0.2.4-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:dc6ebe35bf8c6506a76a82b14e9e76266b24ec83ccbe164074ad0ec933874806"},
-    {file = "mongojet-0.2.4-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:6b290dc9d1e2ba31e2dac64b626ea1f966fe66f4ece9b8b3831163c7b94cb4bd"},
-    {file = "mongojet-0.2.4-cp313-cp313-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0ad64950d1be2cb8e85ca88c4b5bc7bd8e38cab05e55765b4e636544214027de"},
-    {file = "mongojet-0.2.4-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:42bf3fefa1f65586a44e77f7b984900a1b2b9ff8144b9911f122fc30faf473e8"},
-    {file = "mongojet-0.2.4-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:88f2f0837eb96ed0a421718a9272f187dd0aa9ef7ea3ee00a6dd78c8c47493f8"},
-    {file = "mongojet-0.2.4-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:953db55a9797f1de4cdceb39b33563cb9996c7409bbd6564a9fde26d08ec7add"},
-    {file = "mongojet-0.2.4-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:6e96a396db236bb3b19920bb3c0571203b2b9e397c298b1d89180a93ee13ac55"},
-    {file = "mongojet-0.2.4-cp313-none-win32.whl", hash = "sha256:3021d827e528d3727565e0126dbb7bb5d12e743e2d2133dc0814d5ac4e649c04"},
-    {file = "mongojet-0.2.4-cp313-none-win_amd64.whl", hash = "sha256:70cfe879bc61b68020841eff081df85c6ee59ac3fae90e121d24a91ac084c1d3"},
-    {file = "mongojet-0.2.4-cp38-cp38-macosx_10_12_x86_64.whl", hash = "sha256:331798552b5130b870bc215285648ba5ec3c3cac25105857c869699f6e0c8c85"},
-    {file = "mongojet-0.2.4-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:a28b02da9a4cc45db6b78da6f35e9badf46a7ecd6df2f4d88c459d473ef45040"},
-    {file = "mongojet-0.2.4-cp38-cp38-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:69b3770e64e1bd507fc6e68a069d16f07ea456096daaf51f8e72e45ae449cbdb"},
-    {file = "mongojet-0.2.4-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bb81d870d52b9d29290bbda9ea02bd52b2b25c5df8db313285ffb15ed7decbd7"},
-    {file = "mongojet-0.2.4-cp38-cp38-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:d538e568347c19daf39b48fa4d39e2823b39455e83091c8fbe490c269ea79548"},
-    {file = "mongojet-0.2.4-cp38-cp38-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:cfed9e23c3dfaf64968fddf939f47e96404ea9973fa3012721dd2c6e66a12660"},
-    {file = "mongojet-0.2.4-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f8561efcc1274dcddabd773bf0d34635b2d39dd66f34ca6ad2cb301c0a44bc37"},
-    {file = "mongojet-0.2.4-cp38-cp38-manylinux_2_28_aarch64.whl", hash = "sha256:1c69392e3218fa0b0d4b138c1efa1a89f0e0ff09a3c2aad16bee9cc6d0873047"},
-    {file = "mongojet-0.2.4-cp38-none-win32.whl", hash = "sha256:ae48932723aab62e04ee72db11f0cf761fd49c6f843fedf6cfb4cb008e67a892"},
-    {file = "mongojet-0.2.4-cp38-none-win_amd64.whl", hash = "sha256:0094cc0a982f742c29712e1691c48ea2f362be0282f00a9f8dea8080a1b9b803"},
-    {file = "mongojet-0.2.4-cp39-cp39-macosx_10_12_x86_64.whl", hash = "sha256:3afbc881a6dc750ac6e0e82568ff9894a5c2e8ea931416859a2ff19ece6ef35e"},
-    {file = "mongojet-0.2.4-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:f2ffc91ae328b9526ccf9ead5729dd08c8023a5d1ad536a61340b86c8e47a952"},
-    {file = "mongojet-0.2.4-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:7e5bc0b6a518f6fcd963aba68846d0bf7f1443b1285d15f3cab7e954752ce803"},
-    {file = "mongojet-0.2.4-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:6694524ef8662964e9456142bdcbd38da9b72af0a31b8894999531aa1c09773d"},
-    {file = "mongojet-0.2.4-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:9bd0894b592c61d51a82a64bb1647b6d0b0d3f5944ac92963e9b494c56187627"},
-    {file = "mongojet-0.2.4-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4b9f848a836fef7b326bf07fdb55f50eb62a9bd4fc48e598e12dce27d8cfb287"},
-    {file = "mongojet-0.2.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0fabe38ae5f5751940268cb57f1a73042b3514b11528ddeadbc202d30a1e16bc"},
-    {file = "mongojet-0.2.4-cp39-cp39-manylinux_2_28_aarch64.whl", hash = "sha256:f7320ebf4a25389c98fad03f135e3b9acfc84f178a1f3eee33e2baef8b936ee0"},
-    {file = "mongojet-0.2.4-cp39-none-win32.whl", hash = "sha256:f4a3fd7f2ebd4c2aeda377688f506102e88eb42d8e5944218622cef9b9a6d4c6"},
-    {file = "mongojet-0.2.4-cp39-none-win_amd64.whl", hash = "sha256:6088f7c6d122145f496232dc3cb2a4d484cedb110b793d3df16861a5d6770662"},
-    {file = "mongojet-0.2.4.tar.gz", hash = "sha256:c6fe79efffb28cdc881005354df41dfa263f68c7e1973b8dc2f57932c85a8737"},
+    {file = "mongojet-0.2.5-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:c9839bad41dbe12f4969255d51526e76638cc6c9be8b15941d54002541d3ec08"},
+    {file = "mongojet-0.2.5-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:ed97c074a0dd1d45abd6f0b6a6c8739b90a8a00cb382b64a91d4cb70e3c24abc"},
+    {file = "mongojet-0.2.5-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:4a490ce691ee29df5b273734095ddc4e8394be166383eac7cc8e0e97025ee741"},
+    {file = "mongojet-0.2.5-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:6e0db2b3a367928287b51a65fbcc362a3a6fbd9fd1843b81a5863f609ed05e36"},
+    {file = "mongojet-0.2.5-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4c5180b656cb3c5fdfd47df035a417df3dcc08f3071e401adf1b912d3d83ff4a"},
+    {file = "mongojet-0.2.5-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4686207d23892bf4ce09d509405c2fc3baf689b1b6dcdc5bbd56377bd297784d"},
+    {file = "mongojet-0.2.5-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:560ac2d67c5ce72280b6aef34b380d0e778eb115b1f92be77c47e42cbf3d28cf"},
+    {file = "mongojet-0.2.5-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:1816eac708012223b158ed76d9961dd41a6eaf663975e718f7b4798118a8ec23"},
+    {file = "mongojet-0.2.5-cp310-cp310-win32.whl", hash = "sha256:501080deeaf2066d7306542dee0a4c9e5c8ada0c19368fa1fa5b406b8ec1d2d7"},
+    {file = "mongojet-0.2.5-cp310-cp310-win_amd64.whl", hash = "sha256:d0e0282660651fa5ca8ca76031db997bd13dc634f5234daa7becfdd7c2ebc6d7"},
+    {file = "mongojet-0.2.5-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:97276553fa593546b34982fd8217e940b872334f5e01bb2680eec3652c31e14f"},
+    {file = "mongojet-0.2.5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:6617054c8fc9fffb268c5cde27c4beef9d8bbba678d0f883676781a5a042cad6"},
+    {file = "mongojet-0.2.5-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:165d8ddd2b48a0359479c33aa470938223f5c408bb1faca2b80cda734d44cde9"},
+    {file = "mongojet-0.2.5-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c6317efaab87c22c5e899b1518e41b2ba5a9aba8c5f77d221e93e278107afc12"},
+    {file = "mongojet-0.2.5-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1a1d91e8cb05fb6b83e620b2d7043f78ffa28ba0f295224eb99654d7bc3827aa"},
+    {file = "mongojet-0.2.5-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:a1ebc37e5deb66fc88e6d31a8fe03c38eca9241c3bc4af1f4a859433a7f0b60e"},
+    {file = "mongojet-0.2.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6f010b3bb597a8345c59c1e92baf11a32cda22eff72b6ba8dc80ddcef496065a"},
+    {file = "mongojet-0.2.5-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:a614d3d0dae839eb092829800549d4331c8f8c997d9abaaa737686d4070d5f53"},
+    {file = "mongojet-0.2.5-cp311-cp311-win32.whl", hash = "sha256:9bc191f61f669aaeeec32b3c8887721d592d29262a0b05b06e39f662096bd273"},
+    {file = "mongojet-0.2.5-cp311-cp311-win_amd64.whl", hash = "sha256:2f42018262ddd63fc358be4aaa3b9ff2aaebb9002cf4c368f0ec9385bdb9c598"},
+    {file = "mongojet-0.2.5-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:c553eb225d23b6759ffbfeae9c287a14c73b0fe33488e8351ef30bbfc7f5a2fd"},
+    {file = "mongojet-0.2.5-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:5708c3effb84e16239bd5fb464e5976680cb33d3f77daccd4b2fcdbd7e128a53"},
+    {file = "mongojet-0.2.5-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d7e69bb46fdd481a018281444e8ec1b47b7d63f3dd397e3924549f6c1f2bcf59"},
+    {file = "mongojet-0.2.5-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a32958c10abf177473358a664d71b63685b334190b9f632f2215b9b02b1f92cc"},
+    {file = "mongojet-0.2.5-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:fc8c8334b67de31223d9a1f31e7daacffa12abb202761e4ee701427c76e7232e"},
+    {file = "mongojet-0.2.5-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:34dad1e6ddda078f5ad7cc82251944934e24b756554d45e64096d6a286a499c0"},
+    {file = "mongojet-0.2.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4da2e5e7d8d1c280cc10d31b71cc9eb35d387574f2268ef38aa80ba1b533dea3"},
+    {file = "mongojet-0.2.5-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:f01409dd35e0d42e7fd5f5152a2a495efaec4c99dbbdf9534e6c058b14dd62ba"},
+    {file = "mongojet-0.2.5-cp312-cp312-win32.whl", hash = "sha256:172f99b5038e054640ff3dfbb69862d6cbfb3cd9159b73fe9b3d224a99cddeb2"},
+    {file = "mongojet-0.2.5-cp312-cp312-win_amd64.whl", hash = "sha256:a832cb7cecb02cdcc1133723ef9d5360ff0e6597a98bf9aabd4f3dac177d10cb"},
+    {file = "mongojet-0.2.5-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:8dc2735fa07cd6834117215f5d15cc94db19f6b5885da1c0afbf273e09233fc5"},
+    {file = "mongojet-0.2.5-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:690abaf2a70b37dddbbe2e489e4f42a67d837bd0f09e1751ba2a004c3e087feb"},
+    {file = "mongojet-0.2.5-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:4f20442a319a1a8490f42cb5ac9249cebb5846a5148e7610ce6007466bcb8ff9"},
+    {file = "mongojet-0.2.5-cp313-cp313-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:11d14b627a73a46c2acdf104af24e7f599ee11db4d9e1a83e6787008d90df019"},
+    {file = "mongojet-0.2.5-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:2d24d7f14bf2c3990ca6242b41c588521ba93cb1e1c191475bf201500f2bb41f"},
+    {file = "mongojet-0.2.5-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:e882911c4c2820239c34fe36af1b5f285fcb25976fd5d6842736154637f1ee65"},
+    {file = "mongojet-0.2.5-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:99f90a122060cf5b316b77e75e75e0e43a6701b9fbc82358125c47339d966629"},
+    {file = "mongojet-0.2.5-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:deb3097f76d11625bdae935390d20a26d81e62e47d1c2a142a83798fc25b7518"},
+    {file = "mongojet-0.2.5-cp313-cp313-win32.whl", hash = "sha256:3eb22947057f0f2014e5ff49cdd78c8f64e643134bad2e9af9640772016e9c10"},
+    {file = "mongojet-0.2.5-cp313-cp313-win_amd64.whl", hash = "sha256:16368d04ca796974630d1f3de3984c753dc5d76991111e03aaa7e5e6c613dd7b"},
+    {file = "mongojet-0.2.5-cp38-cp38-macosx_10_12_x86_64.whl", hash = "sha256:a86078b03d0c0e1994c909d9efb52da20fbd2c60d09f05909a35b11272dc9afd"},
+    {file = "mongojet-0.2.5-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:c085ff445cff07909f5b44d9e3396c4edfd859abc92b6c109ddc8973c7be31bb"},
+    {file = "mongojet-0.2.5-cp38-cp38-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:da78b0986b22f92eaeb54813fd5e05fefd11a7bd1c37e6dbf72821f0643400ec"},
+    {file = "mongojet-0.2.5-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:16f8f7cd9ffc8841f10724274f21776b0b2a29f5ae42f97ba3a7684c85c0ab23"},
+    {file = "mongojet-0.2.5-cp38-cp38-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:507f090fbfe5f2bc28f7520883a7a17f8f08c9c1ad7bcdd866f293e59b4264b4"},
+    {file = "mongojet-0.2.5-cp38-cp38-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:041bf34d978d41c162446bf613563bae9286cb5c3a0abd6d8f1e8085aa588d4c"},
+    {file = "mongojet-0.2.5-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0dcf65b00ff67cc34fc03779bf167bb0b07e2aa31a80e7682dbe5ee38ca822f6"},
+    {file = "mongojet-0.2.5-cp38-cp38-manylinux_2_28_aarch64.whl", hash = "sha256:1a7d95c49c012f3337f81a07287d94081cd36629894836a0d1b4c0c73af39894"},
+    {file = "mongojet-0.2.5-cp38-cp38-win32.whl", hash = "sha256:4c20a1d7262a40fdc8e436a17aafa407b3a7c7eead9b1c5df8fdd8f3e24f2099"},
+    {file = "mongojet-0.2.5-cp38-cp38-win_amd64.whl", hash = "sha256:92287c8655e345a38b95d354bd1f4021fa00da593b681eac07c24f2c6a5f393a"},
+    {file = "mongojet-0.2.5-cp39-cp39-macosx_10_12_x86_64.whl", hash = "sha256:4095ec4e9ac166f8f8c014549aea4bd92c13d784f865ce6f6443a8a1c49e9c60"},
+    {file = "mongojet-0.2.5-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:a6d84dbd245d93e06a26cbab1e9601d1853720f4a778068c1c92a8cc98343098"},
+    {file = "mongojet-0.2.5-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:e240b89dc66787019c9ad82250a46d3cb19d98ddc9c8bacb8bc4be8536ecd423"},
+    {file = "mongojet-0.2.5-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:feadc3f920833962b45e5ea2c07572a0a73919ce44f3fb5a26a699b9c4bf20e4"},
+    {file = "mongojet-0.2.5-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1ac36a673ee1fddf2fadff7eef8a5d9122ece03c82d694b00107de7847b2b2a3"},
+    {file = "mongojet-0.2.5-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:c113a90edf35ab171072f0c7c92bcc65a8d272db8a2c9b85da21eef5a469d2c7"},
+    {file = "mongojet-0.2.5-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fe26df8dbbf457a953b74967d0df6a2017c07aff213bc343bb9bcbcb1b3ed453"},
+    {file = "mongojet-0.2.5-cp39-cp39-manylinux_2_28_aarch64.whl", hash = "sha256:827fcf2e89dfd4d3d190f41b5951d5a1a34cdf129e0f45959a81aa5049c0d666"},
+    {file = "mongojet-0.2.5-cp39-cp39-win32.whl", hash = "sha256:c6cb1a33f8fa4095a903ce584d39e7443d353ae892bd2d1735b6dc5e81a801a6"},
+    {file = "mongojet-0.2.5-cp39-cp39-win_amd64.whl", hash = "sha256:7287884601bbabefdac099b30dfec9c30669b754d94f918aa6929ef76c62cf4d"},
+    {file = "mongojet-0.2.5.tar.gz", hash = "sha256:edfdc6151a51b5a7d4e71cdb70404a0e8ae897251b32c5e66e93480ea8e880ca"},
 ]
 
 [package.dependencies]
@@ -1192,13 +1191,13 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
 name = "pydantic-settings"
-version = "2.6.1"
+version = "2.7.0"
 description = "Settings management using Pydantic"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pydantic_settings-2.6.1-py3-none-any.whl", hash = "sha256:7fb0637c786a558d3103436278a7c4f1cfd29ba8973238a50c5bb9a55387da87"},
-    {file = "pydantic_settings-2.6.1.tar.gz", hash = "sha256:e0f92546d8a9923cb8941689abf85d6601a8c19a23e97a34b2964a2e3f813ca0"},
+    {file = "pydantic_settings-2.7.0-py3-none-any.whl", hash = "sha256:e00c05d5fa6cbbb227c84bd7487c5c1065084119b750df7c8c1a554aed236eb5"},
+    {file = "pydantic_settings-2.7.0.tar.gz", hash = "sha256:ac4bfd4a36831a48dbf8b2d9325425b549a0a6f18cea118436d728eb4f1c4d66"},
 ]
 
 [package.dependencies]
@@ -1449,13 +1448,13 @@ files = [
 
 [[package]]
 name = "redis"
-version = "5.2.0"
+version = "5.2.1"
 description = "Python client for Redis database and key-value store"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "redis-5.2.0-py3-none-any.whl", hash = "sha256:ae174f2bb3b1bf2b09d54bf3e51fbc1469cf6c10aa03e21141f51969801a7897"},
-    {file = "redis-5.2.0.tar.gz", hash = "sha256:0b1087665a771b1ff2e003aa5bdd354f15a70c9e25d5a7dbf9c722c16528a7b0"},
+    {file = "redis-5.2.1-py3-none-any.whl", hash = "sha256:ee7e1056b9aea0f04c6c2ed59452947f34c4940ee025f5dd83e6a6418b6989e4"},
+    {file = "redis-5.2.1.tar.gz", hash = "sha256:16f2e22dff21d5125e8481515e386711a34cbec50f0e44413dd7d9c060a54e0f"},
 ]
 
 [package.dependencies]
@@ -1521,13 +1520,13 @@ full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart (>=0.0.7
 
 [[package]]
 name = "taskiq"
-version = "0.11.7"
+version = "0.11.10"
 description = "Distributed task queue with full async support"
 optional = false
 python-versions = "<4.0.0,>=3.8.1"
 files = [
-    {file = "taskiq-0.11.7-py3-none-any.whl", hash = "sha256:15f741ca03e812724985333a327a2344ab720e7d54daaa932e1d3df7639558da"},
-    {file = "taskiq-0.11.7.tar.gz", hash = "sha256:dcb43960de0309b10bda814ce4da3963e532d50c132687a43edffa3f60da440a"},
+    {file = "taskiq-0.11.10-py3-none-any.whl", hash = "sha256:2b656c34231bf6947a6020098c94f93d6c45d15688d9e6bb8b3fbf54088e7717"},
+    {file = "taskiq-0.11.10.tar.gz", hash = "sha256:d3ce40ccf399b38aa656614ecab6e5bbcc222b61fee654927822fc97ef4418a6"},
 ]
 
 [package.dependencies]
@@ -1541,13 +1540,13 @@ taskiq_dependencies = ">=1.3.1,<2"
 typing-extensions = ">=3.10.0.0"
 
 [package.extras]
-cbor = ["cbor2 (>=5.4.6,<6.0.0)"]
+cbor = ["cbor2 (>=5,<6)"]
 metrics = ["prometheus_client (>=0,<1)"]
 msgpack = ["msgpack (>=1.0.7,<2.0.0)"]
-orjson = ["orjson (>=3.9.9,<4.0.0)"]
-reload = ["gitignore-parser (>=0,<1)", "watchdog (>=2.1.9,<3.0.0)"]
+orjson = ["orjson (>=3,<4)"]
+reload = ["gitignore-parser (>=0,<1)", "watchdog (>=4,<5)"]
 uv = ["uvloop (>=0.16.0,<1)"]
-zmq = ["pyzmq (>=23.2.0,<24.0.0)"]
+zmq = ["pyzmq (>=26,<27)"]
 
 [[package]]
 name = "taskiq-dependencies"
@@ -1577,20 +1576,20 @@ taskiq = ">=0.11.1,<1"
 
 [[package]]
 name = "twitchapi"
-version = "4.3.1"
+version = "4.4.0"
 description = "A Python 3.7+ implementation of the Twitch Helix API, PubSub, EventSub and Chat"
 optional = false
 python-versions = "*"
 files = [
-    {file = "twitchAPI-4.3.1-py3-none-any.whl", hash = "sha256:f97b0609e68552aa7c46953b5fe7c686580bd775c74a4bd59c36d7579f76e547"},
-    {file = "twitchapi-4.3.1.tar.gz", hash = "sha256:29f87014cce9e9352356f9ec5c4573bb397599cc2a9ba96d7c547063041163ee"},
+    {file = "twitchAPI-4.4.0-py3-none-any.whl", hash = "sha256:087939a4891a447aee5d1ab564da8ad3a984b580b0708ab9c59afd93b9a3d5da"},
+    {file = "twitchapi-4.4.0.tar.gz", hash = "sha256:4aa005972b72b7d254f01bf8cdc1a98986c6c0c007808e2c0235f1b2a54cfe47"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.9.3"
 enum-tools = "*"
 python-dateutil = ">=2.8.2"
-typing-extensions = "*"
+typing_extensions = "*"
 
 [[package]]
 name = "typing-extensions"
@@ -1616,20 +1615,20 @@ files = [
 
 [[package]]
 name = "uvicorn"
-version = "0.32.0"
+version = "0.34.0"
 description = "The lightning-fast ASGI server."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "uvicorn-0.32.0-py3-none-any.whl", hash = "sha256:60b8f3a5ac027dcd31448f411ced12b5ef452c646f76f02f8cc3f25d8d26fd82"},
-    {file = "uvicorn-0.32.0.tar.gz", hash = "sha256:f78b36b143c16f54ccdb8190d0a26b5f1901fe5a3c777e1ab29f26391af8551e"},
+    {file = "uvicorn-0.34.0-py3-none-any.whl", hash = "sha256:023dc038422502fa28a09c7a30bf2b6991512da7dcdb8fd35fe57cfc154126f4"},
+    {file = "uvicorn-0.34.0.tar.gz", hash = "sha256:404051050cd7e905de2c9a7e61790943440b3416f49cb409f965d9dcd0fa73e9"},
 ]
 
 [package.dependencies]
 click = ">=7.0"
 colorama = {version = ">=0.4", optional = true, markers = "sys_platform == \"win32\" and extra == \"standard\""}
 h11 = ">=0.8"
-httptools = {version = ">=0.5.0", optional = true, markers = "extra == \"standard\""}
+httptools = {version = ">=0.6.3", optional = true, markers = "extra == \"standard\""}
 python-dotenv = {version = ">=0.13", optional = true, markers = "extra == \"standard\""}
 pyyaml = {version = ">=5.1", optional = true, markers = "extra == \"standard\""}
 uvloop = {version = ">=0.14.0,<0.15.0 || >0.15.0,<0.15.1 || >0.15.1", optional = true, markers = "(sys_platform != \"win32\" and sys_platform != \"cygwin\") and platform_python_implementation != \"PyPy\" and extra == \"standard\""}
@@ -1637,7 +1636,7 @@ watchfiles = {version = ">=0.13", optional = true, markers = "extra == \"standar
 websockets = {version = ">=10.4", optional = true, markers = "extra == \"standard\""}
 
 [package.extras]
-standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "watchfiles (>=0.13)", "websockets (>=10.4)"]
+standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "watchfiles (>=0.13)", "websockets (>=10.4)"]
 
 [[package]]
 name = "uvloop"
@@ -1988,4 +1987,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4bbb2c4728e521d56b29d7cb957a9ba68d0d84e16e809050bc12cd128d9593da"
+content-hash = "d0cd80a04ffd74dea9156efe84bc7dffda01362bd509fbca4ea969a3ae629ad4"
