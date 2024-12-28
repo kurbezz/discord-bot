@@ -184,13 +184,13 @@ tests-mypy = ["mypy (>=1.11.1)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "authx"
-version = "1.4.0"
+version = "1.4.1"
 description = "Ready to use and customizable Authentications and Oauth2 management for FastAPI"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "authx-1.4.0-py3-none-any.whl", hash = "sha256:9a95790e755b8bb037aa79756e178a1b8fd41a563d0b74b87ff023e5bd0fda91"},
-    {file = "authx-1.4.0.tar.gz", hash = "sha256:bcd7ec8b604003ff11353785905f59fafe95dafbdb568e3740ed8b7cfa4ca444"},
+    {file = "authx-1.4.1-py3-none-any.whl", hash = "sha256:4d42082230125e446fd5240b9531af7726d7d69370bfc5aedd6fafeb9df6ffc9"},
+    {file = "authx-1.4.1.tar.gz", hash = "sha256:06ddad3f80ebe32ce7d97adc8915c1f64b389298849f0058a713f3b0c2c1e64a"},
 ]
 
 [package.dependencies]
@@ -1987,4 +1987,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "049480947b7bfd2da1651623fca542de6435159f20f7485947fe11e620193a5d"
+content-hash = "f51f1ef0de414e9f58f94c9fdedf996f5606b4c48988ff16777ae0849f11dac3"

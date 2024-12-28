@@ -1,20 +1,17 @@
 from asyncio import sleep, gather
-from datetime import datetime, timezone
 import logging
 from typing import NoReturn, Literal
 
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
-from twitchAPI.helper import first
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
 from twitchAPI.oauth import validate_token
 
 from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
-from modules.stream_notifications.tasks import on_stream_state_change, check_streams_states
+from modules.stream_notifications.tasks import on_stream_state_change, on_stream_state_change_with_check
 
 from .authorize import authorize
-from ..state import State
 
 
 logger = logging.getLogger(__name__)
@@ -29,24 +26,7 @@ class TwitchService:
         self.failed = False
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
-        try:
-            stream = await first(self.twitch.get_streams(user_id=[event.event.broadcaster_user_id]))
-        except RuntimeError as e:
-            await check_streams_states.kiq()
-            self.failed = True
-            raise e
-
-        if stream is None:
-            return
-
-        await on_stream_state_change.kiq(
-            int(event.event.broadcaster_user_id),
-            State(
-                title=event.event.title,
-                category=event.event.category_name,
-                last_live_at=datetime.now(timezone.utc)
-            )
-        )
+        await on_stream_state_change_with_check.kiq(event)
 
     async def on_stream_online(self, event: StreamOnlineEvent):
         await on_stream_state_change.kiq(int(event.event.broadcaster_user_id))
