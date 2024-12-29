@@ -12,6 +12,12 @@ class State(BaseModel):
     last_live_at: datetime
 
 
+class UpdateEvent(BaseModel):
+    broadcaster_user_id: str
+    title: str
+    category_name: str
+
+
 class StateManager:
     COLLECTION_NAME = "stream_twitch_state"
 

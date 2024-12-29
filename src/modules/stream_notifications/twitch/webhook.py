@@ -10,7 +10,7 @@ from twitchAPI.oauth import validate_token
 from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
 from modules.stream_notifications.tasks import on_stream_state_change, on_stream_state_change_with_check
-
+from modules.stream_notifications.state import UpdateEvent
 from .authorize import authorize
 
 
@@ -26,7 +26,11 @@ class TwitchService:
         self.failed = False
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
-        await on_stream_state_change_with_check.kiq(event)
+        await on_stream_state_change_with_check.kiq(UpdateEvent(
+            broadcaster_user_id=event.event.broadcaster_user_id,
+            title=event.event.title,
+            category_name=event.event.category_name
+        ))
 
     async def on_stream_online(self, event: StreamOnlineEvent):
         await on_stream_state_change.kiq(int(event.event.broadcaster_user_id))
