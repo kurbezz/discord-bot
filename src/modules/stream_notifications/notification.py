@@ -31,7 +31,7 @@ async def notify_telegram(msg: str, chat_id: str) -> SentResult:
         if result.json()["ok"] is False:
             return SentResult(success=False, message_id=None)
 
-        return SentResult(success=True, message_id=result.json()["result"]["message_id"])
+        return SentResult(success=True, message_id=str(result.json()["result"]["message_id"]))
 
 
 async def delete_telegram_message(chat_id: int, message_id: int):
