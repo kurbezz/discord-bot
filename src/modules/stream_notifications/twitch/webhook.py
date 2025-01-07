@@ -1,4 +1,4 @@
-from asyncio import sleep, gather
+from asyncio import sleep, gather, wait_for
 import logging
 from typing import NoReturn, Literal
 
@@ -137,7 +137,8 @@ class TwitchService:
             await self._check_token()
         finally:
             logger.info("Twitch service stopping...")
-            await self.stop(eventsub)
+
+            await wait_for(self.stop(eventsub), timeout=5)
 
     @classmethod
     async def start(cls):
