@@ -137,7 +137,6 @@ class TwitchService:
             await self._check_token()
         finally:
             logger.info("Twitch service stopping...")
-
             await wait_for(self.stop(eventsub), timeout=5)
 
     @classmethod
