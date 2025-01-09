@@ -131,8 +131,11 @@ class TwitchService:
     async def start(cls):
         logger.info("Starting Twitch service...")
 
-        twith = await authorize(auto_refresh_auth=True)
-        await cls(twith).run()
+        try:
+            twith = await authorize(auto_refresh_auth=True)
+            await cls(twith).run()
+        except Exception as e:
+            logger.error("Twitch service failed", exc_info=e)
 
         logger.info("Twitch service stopped")
 
