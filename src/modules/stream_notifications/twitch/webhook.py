@@ -85,7 +85,7 @@ class TwitchService:
     async def _check_token(self):
         assert self.twitch._user_auth_token is not None
 
-        while not self.failed:
+        while True:
             for _ in range(60):
                 if self.failed:
                     return
@@ -101,19 +101,6 @@ class TwitchService:
                 await self.twitch.refresh_used_token()
                 logger.info("Token refreshed")
 
-    async def stop(self, eventsub: EventSubWebhook):
-        self.failed = True
-
-        try:
-            await eventsub.stop()
-        except Exception as e:
-            logger.error(e)
-
-        try:
-            await self.twitch.close()
-        except Exception as e:
-            logger.error(e)
-
     async def run(self) -> NoReturn:
         eventsub = EventSubWebhook(
             callback_url=config.TWITCH_CALLBACK_URL,
@@ -122,6 +109,7 @@ class TwitchService:
             message_deduplication_history_length=50
         )
         eventsub.wait_for_subscription_confirm_timeout = 60
+        eventsub.unsubscribe_on_stop = False
 
         streamers = await StreamerConfigRepository.all()
 
@@ -137,7 +125,7 @@ class TwitchService:
             await self._check_token()
         finally:
             logger.info("Twitch service stopping...")
-            await wait_for(self.stop(eventsub), timeout=5)
+            await eventsub.stop()
 
     @classmethod
     async def start(cls):
