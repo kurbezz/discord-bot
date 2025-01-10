@@ -79,6 +79,12 @@ class GameList:
             if category_item.name == _category:
                 category_item.games.append(game_item)
 
+    def replace_game(self, game_name: str, new_game_name: str):
+        for category in self.data:
+            for game in category.games:
+                if game.name.startswith(game_name):
+                    game.name = new_game_name
+
     def delete_game(self, game_name: str):
         for category in self.data:
             for game in category.games:

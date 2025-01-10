@@ -66,7 +66,7 @@ class DiscordClient(discord.Client):
 client = DiscordClient()
 
 
-@client.tree.command()
+@client.tree.command(description="Добавление игры")
 @app_commands.describe(
     category="Раздел",
     customer="Кто заказал",
@@ -147,7 +147,7 @@ async def game_list_autocomplete(
     return game_list.get_choices(current)
 
 
-@client.tree.command()
+@client.tree.command(description="Удаление игры")
 @app_commands.describe(game="Игра")
 @app_commands.autocomplete(game=game_list_autocomplete)
 async def delete(interaction: discord.Interaction, game: str):
@@ -191,6 +191,55 @@ async def delete(interaction: discord.Interaction, game: str):
     await game_list.save()
 
     await interaction.response.send_message("Игра удалена!", ephemeral=True)
+
+
+@client.tree.command(description="Замена игры")
+@app_commands.describe(
+    game="Старая игра",
+    new="Новая игра"
+)
+@app_commands.autocomplete(game=game_list_autocomplete)
+async def replace(interaction: discord.Interaction, game: str, new: str):
+    if not isinstance(interaction.channel, Messageable):
+        await interaction.response.send_message(
+            "Interation not allowed in this channel!", ephemeral=True
+        )
+        return
+
+    streamer = await StreamerConfigRepository.find_one(
+        integration_discord_guild_id=interaction.guild_id,
+        integration_discord_games_list_channel_id=interaction.channel_id
+    )
+
+    if streamer is None:
+        await interaction.response.send_message(
+            "Interation not allowed in this channel!", ephemeral=True
+        )
+        return
+
+    if streamer.integrations.discord is None or streamer.integrations.discord.games_list is None:
+        await interaction.response.send_message(
+            "Need setup!", ephemeral=True
+        )
+        return
+
+    game_list = await GameList.get(streamer.twitch.id)
+    if game_list is None:
+        await interaction.response.send_message(
+            "Game list not found!", ephemeral=True
+        )
+        return
+
+    game_list.replace_game(game, new)
+
+    game_list_message = await interaction.channel.fetch_message(
+        streamer.integrations.discord.games_list.message_id
+    )
+
+    await game_list_message.edit(content=str(game_list))
+    await game_list.save()
+
+    await interaction.response.send_message("Игра заменена!", ephemeral=True)
 
 
 async def start_discord_sevice():
