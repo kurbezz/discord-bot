@@ -58,7 +58,7 @@ const Main = {
 const AuthCallbackTwitch = {
     setup() {
         onMounted(() => {
-            fetch('/api/auth/callback/twitch/' + urlParams.search)
+            fetch('/api/auth/callback/twitch/' + window.location.search)
                 .then(response => response.json())
                 .then(data => {
                     localStorage.setItem('token', data.token);
