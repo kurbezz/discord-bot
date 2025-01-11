@@ -12,6 +12,11 @@ from .views import routes
 def get_app() -> FastAPI:
     app = FastAPI()
 
+    auth.handle_errors(app)
+
+    for route in routes:
+        app.include_router(route)
+
     app.mount(
         "/",
         StaticFiles(
@@ -20,11 +25,6 @@ def get_app() -> FastAPI:
         ),
         name="frontend"
     )
-
-    auth.handle_errors(app)
-
-    for route in routes:
-        app.include_router(route)
 
     @app.on_event("startup")
     async def startup_event():
