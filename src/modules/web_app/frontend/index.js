@@ -1,5 +1,5 @@
 import { createApp, ref, onMounted } from 'vue';
-import { createRouter, createWebHistory, RouterView } from 'vue-router';
+import { createRouter, createWebHistory, RouterView, useRouter } from 'vue-router';
 
 
 const Authorize = {
@@ -57,13 +57,15 @@ const Main = {
 
 const AuthCallbackTwitch = {
     setup() {
+        const router = useRouter();
+
         onMounted(() => {
             fetch('/api/auth/callback/twitch/' + window.location.search)
                 .then(response => response.json())
                 .then(data => {
                     localStorage.setItem('token', data.token);
 
-                    this.$router.push('/');
+                    router.push('/');
                 });
         });
     },
