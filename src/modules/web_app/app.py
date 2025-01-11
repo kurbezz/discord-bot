@@ -12,7 +12,14 @@ from .views import routes
 def get_app() -> FastAPI:
     app = FastAPI()
 
-    app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+    app.mount(
+        "/",
+        StaticFiles(
+            directory="modules/web_app/frontend",
+            html=True
+        ),
+        name="frontend"
+    )
 
     auth.handle_errors(app)
 
