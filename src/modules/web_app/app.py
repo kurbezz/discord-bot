@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from core.mongo import mongo_manager
 from core.redis import redis_manager
@@ -10,6 +11,8 @@ from .views import routes
 
 def get_app() -> FastAPI:
     app = FastAPI()
+
+    app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
     auth.handle_errors(app)
 
