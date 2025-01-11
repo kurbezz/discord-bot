@@ -1,0 +1,16 @@
+.authorize__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+a.authorize__twitch_btn {
+    display: inline-block;
+    background-color: #6441a5;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.5rem;
+}

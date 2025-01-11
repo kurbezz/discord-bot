@@ -8,7 +8,7 @@ from repositories.users import UserRepository
 from domain.auth import OAuthProvider
 
 
-streamer_router = APIRouter(prefix="/streamers")
+streamer_router = APIRouter(prefix="/api/streamers")
 
 
 @streamer_router.get("/")

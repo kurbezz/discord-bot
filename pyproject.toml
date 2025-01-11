@@ -10,7 +10,7 @@ packages = [{include = "discord_bot"}]
 python = "^3.11"
 discord-py = "^2.4.0"
 twitchapi = "^4.4.0"
-pydantic = "^2.10.4"
+pydantic = "^2.10.5"
 pydantic-settings = "^2.7.1"
 httpx = "^0.28.1"
 icalendar = "^6.1.0"

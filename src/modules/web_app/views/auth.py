@@ -9,7 +9,7 @@ from modules.web_app.auth.authx import auth
 from repositories.users import UserRepository
 
 
-auth_router = APIRouter(prefix="/auth", tags=["auth"])
+auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 @auth_router.get("/get_authorization_url/{provider}/")
