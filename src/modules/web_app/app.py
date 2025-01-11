@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 
 from core.mongo import mongo_manager
 from core.redis import redis_manager
@@ -7,6 +6,7 @@ from core.broker import broker
 
 from .auth.authx import auth
 from .views import routes
+from .utils.static import SPAStaticFiles
 
 
 def get_app() -> FastAPI:
@@ -19,7 +19,7 @@ def get_app() -> FastAPI:
 
     app.mount(
         "/",
-        StaticFiles(
+        SPAStaticFiles(
             directory="modules/web_app/frontend",
             html=True
         ),
