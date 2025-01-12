@@ -5,7 +5,7 @@ from twitchAPI.helper import first
 from core.redis import redis_manager
 from repositories.streamers import StreamerConfigRepository
 
-from .state import State, StateManager
+from .state import State, StateManager, EventType
 from .sent_notifications import SentNotificationRepository, SentNotificationType
 from .notification import delete_penultimate_notification, notify
 from .twitch.authorize import authorize
@@ -79,7 +79,12 @@ class StateWatcher:
         await cls.remove_previous_notifications(streamer_id)
 
     @classmethod
-    async def _on_stream_state_change(cls, streamer_id: int, new_state: State | None = None):
+    async def _on_stream_state_change(
+        cls,
+        streamer_id: int,
+        event_type: EventType,
+        new_state: State | None = None
+    ):
         if new_state is not None:
             current_state = new_state
         else:
@@ -94,12 +99,15 @@ class StateWatcher:
             await StateManager.update(streamer_id, current_state)
             return
 
-        if datetime.now(timezone.utc) - last_state.last_live_at > cls.START_STREAM_THRESHOLD:
+        if (
+            event_type == EventType.STREAM_ONLINE and
+            datetime.now(timezone.utc) - last_state.last_live_at >= cls.START_STREAM_THRESHOLD
+        ):
             await cls.notify_start_stream(streamer_id, current_state)
             await StateManager.update(streamer_id, current_state)
             return
 
-        if last_state.category != current_state.category:
+        if last_state != current_state:
             await cls.notify_change_category(streamer_id, current_state)
             await StateManager.update(streamer_id, current_state)
             return
@@ -107,7 +115,12 @@ class StateWatcher:
         await StateManager.update(streamer_id, current_state)
 
     @classmethod
-    async def on_stream_state_change(cls, streamer_id: int, new_state: State | None = None):
+    async def on_stream_state_change(
+        cls,
+        streamer_id: int,
+        event_type: EventType,
+        new_state: State | None = None
+    ):
         async with redis_manager.connect() as redis:
             async with redis.lock(f"on_stream_state_change:{streamer_id}"):
-                await cls._on_stream_state_change(streamer_id, new_state)
+                await cls._on_stream_state_change(streamer_id, event_type, new_state)

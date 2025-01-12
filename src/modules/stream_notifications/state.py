@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import StrEnum
 
 from pydantic import BaseModel
 
@@ -11,11 +12,23 @@ class State(BaseModel):
 
     last_live_at: datetime
 
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, State):
+            return False
+
+        return self.title == value.title and self.category == value.category
+
 
 class UpdateEvent(BaseModel):
     broadcaster_user_id: str
     title: str
     category_name: str
+
+
+class EventType(StrEnum):
+    STREAM_ONLINE = "stream.online"
+    CHANNEL_UPDATE = "channel.update"
+    UNKNOWN = "unknown"
 
 
 class StateManager:

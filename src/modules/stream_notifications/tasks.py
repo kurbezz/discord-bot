@@ -5,7 +5,7 @@ from twitchAPI.helper import first
 from core.broker import broker
 from repositories.streamers import StreamerConfigRepository
 
-from .state import State, UpdateEvent
+from .state import State, UpdateEvent, EventType
 from .watcher import StateWatcher
 from .twitch.authorize import authorize
 
@@ -14,7 +14,10 @@ from .twitch.authorize import authorize
     "stream_notifications.twitch.on_stream_state_change_with_check",
     retry_on_error=True
 )
-async def on_stream_state_change_with_check(event: UpdateEvent):
+async def on_stream_state_change_with_check(
+    event: UpdateEvent,
+    event_type: EventType
+):
     twitch = await authorize()
 
     stream = await first(twitch.get_streams(user_id=[event.broadcaster_user_id]))
@@ -23,6 +26,7 @@ async def on_stream_state_change_with_check(event: UpdateEvent):
 
     await on_stream_state_change.kiq(
         int(event.broadcaster_user_id),
+        event_type,
         State(
             title=event.title,
             category=event.category_name,
@@ -36,9 +40,15 @@ async def on_stream_state_change_with_check(event: UpdateEvent):
     retry_on_error=True
 )
 async def on_stream_state_change(
-    streamer_id: int, new_state: State | None = None
+    streamer_id: int,
+    event_type: EventType,
+    new_state: State | None = None
 ):
-    await StateWatcher.on_stream_state_change(streamer_id, new_state)
+    await StateWatcher.on_stream_state_change(
+        streamer_id,
+        event_type,
+        new_state,
+    )
 
 
 @broker.task(
@@ -58,4 +68,8 @@ async def check_streams_states():
             last_live_at=datetime.now(timezone.utc)
         )
 
-        await StateWatcher.on_stream_state_change(int(stream.user_id), state)
+        await StateWatcher.on_stream_state_change(
+            int(stream.user_id),
+            EventType.UNKNOWN,
+            state
+        )
