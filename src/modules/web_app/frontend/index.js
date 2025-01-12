@@ -1,6 +1,48 @@
 import { createApp, ref, onMounted } from 'vue';
 import { createRouter, createWebHistory, RouterView, useRouter } from 'vue-router';
 
+import { jwtDecode } from "jwt-decode";
+
+
+class TokenManager {
+    static TOKEN_KEY = "token";
+
+    static getToken() {
+        return localStorage.getItem(this.TOKEN_KEY);
+    }
+
+    static getAndValidate() {
+        const token = this.getToken();
+
+        if (token === null) {
+            return null;
+        }
+
+        let decoded;
+
+        try {
+            decoded = jwtDecode(token);
+        } catch (e) {
+            return null;
+        }
+
+        if (decoded.exp < Date.now() / 1000) {
+            this.removeToken();
+            return null;
+        }
+
+        return token;
+    }
+
+    static setToken(token) {
+        localStorage.setItem(this.TOKEN_KEY, token);
+    }
+
+    static removeToken() {
+        localStorage.removeItem(this.TOKEN_KEY);
+    }
+}
+
 
 const Authorize = {
     setup() {
@@ -19,7 +61,7 @@ const Authorize = {
         }
     },
     template: `
-        <div class="authorize__container">
+        <div class="flex__container__center">
             <a v-if="loginLink" :href="loginLink" class="authorize__twitch_btn">Login with Twitch</a>
             <div v-else>Loading...</div>
         </div>
@@ -28,8 +70,24 @@ const Authorize = {
 
 
 const Settings = {
+    setup() {
+        const router = useRouter();
+
+        const logout = () => {
+            TokenManager.removeToken();
+            router.push('/');
+        }
+
+        return {
+            logout,
+        };
+    },
     template: `
-        <div>Settings</div>
+        <div class="settings__container">
+            <div class="settings__header">
+                <button @click="logout">Logout</button>
+            </div>
+        </div>
     `
 }
 
@@ -40,7 +98,7 @@ const Main = {
         Settings
     },
     setup() {
-        const authorized = localStorage.getItem('token') !== null;
+        const authorized = TokenManager.getAndValidate() !== null;
 
         return {
             authorized
@@ -63,14 +121,16 @@ const AuthCallbackTwitch = {
             fetch('/api/auth/callback/twitch/' + window.location.search)
                 .then(response => response.json())
                 .then(data => {
-                    localStorage.setItem('token', data.token);
+                    localStorage.setItem(TOKEN_KEY, data.token);
 
                     router.push('/');
                 });
         });
     },
     template: `
-        <div>AuthCallbackTwitch</div>
+        <div class="flex__container__center">
+            <div>Loading...</div>
+        </div>
     `
 };
 

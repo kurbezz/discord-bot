@@ -1,4 +1,4 @@
-.authorize__container {
+.flex__container__center {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,4 +13,17 @@ a.authorize__twitch_btn {
     border-radius: 5px;
     text-decoration: none;
     font-size: 1.5rem;
+}
+
+.settings__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.settings__header {
+    display: flex;
+    justify-content: end;
 }
