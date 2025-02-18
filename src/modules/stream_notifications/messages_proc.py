@@ -100,7 +100,8 @@ async def get_completion(message: str) -> str:
         response = await client.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {config.OPENAI_API_KEY}"
+                "Authorization": f"Bearer {config.OPENAI_API_KEY}",
+                "content-type": "application/json"
             },
             data={
                 "model": "google/gemini-2.0-flash-thinking-exp:free",
@@ -139,6 +140,30 @@ class MessagesProc:
                 "ГООООООООООООООООООООООООООООООООООООООООООООООЙДА!",
                 reply_parent_message_id=event.message_id
             )
+
+        if event.message.text.lower().startswith("!ai"):
+            try:
+                completion = await get_completion(event.message.text)
+
+                max_length = 255
+                completion_parts = [completion[i:i + max_length] for i in range(0, len(completion), max_length)]
+
+                for part in completion_parts:
+                    await twitch.send_chat_message(
+                        event.broadcaster_user_id,
+                        config.TWITCH_ADMIN_USER_ID,
+                        part,
+                        reply_parent_message_id=event.message_id
+                    )
+            except Exception as e:
+                logger.error(f"Failed to get completion: {e}")
+
+                await twitch.send_chat_message(
+                    event.broadcaster_user_id,
+                    config.TWITCH_ADMIN_USER_ID,
+                    "Ошибка!",
+                    reply_parent_message_id=event.message_id
+                )
 
         if event.chatter_user_login in cls.IGNORED_USER_LOGINS:
             return
