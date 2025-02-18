@@ -104,6 +104,10 @@ def get_completion(message: str):
         model="deepseek/deepseek-r1:free",
         messages=[
             {
+                "role": "developer",
+                "content": "Отвечай на русском языке!"
+            },
+            {
                 "role": "user",
                 "content": "message"
             }
@@ -114,14 +118,21 @@ def get_completion(message: str):
 
 
 class MessagesProc:
+    IGNORED_USER_LOGINS = [
+        "jeetbot",
+        "kurbezz",
+    ]
+
     @classmethod
     async def on_message(cls, event: MessageEvent):
         logging.info(f"Received message: {event}")
 
+        if event.chatter_user_login in cls.IGNORED_USER_LOGINS:
+            return
+
         if ("kurbezz" in event.message.text.lower() or \
             "курбез" in event.message.text.lower() or \
-            "булат" in event.message.text.lower()) and \
-            event.chatter_user_login != "kurbezz":
+            "булат" in event.message.text.lower()):
 
             twitch = await authorize()
 
