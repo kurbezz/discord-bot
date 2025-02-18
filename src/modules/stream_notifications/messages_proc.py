@@ -93,7 +93,7 @@ class MessageEvent(BaseModel):
 
 
 
-async def get_completion(message: str):
+async def get_completion(message: str) -> str:
     async with AsyncClient() as client:
         response = await client.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -143,15 +143,16 @@ class MessagesProc:
             try:
                 completion = await get_completion(event.message.text)
 
-                if not completion:
-                    completion = "Пошел нахуй!"
+                max_length = 255
+                completion_parts = [completion[i:i + max_length] for i in range(0, len(completion), max_length)]
 
-                await twitch.send_chat_message(
-                    event.broadcaster_user_id,
-                    config.TWITCH_ADMIN_USER_ID,
-                    completion,
-                    reply_parent_message_id=event.message_id
-                )
+                for part in completion_parts:
+                    await twitch.send_chat_message(
+                        event.broadcaster_user_id,
+                        config.TWITCH_ADMIN_USER_ID,
+                        part,
+                        reply_parent_message_id=event.message_id
+                    )
             except Exception as e:
                 logger.error(f"Failed to get completion: {e}")
 
