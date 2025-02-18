@@ -33,6 +33,8 @@ class Config(BaseModel):
 
     SECRET_KEY: str
 
+    OPENAI_API_KEY: str
+
 
 def get_config() -> Config:
     settings = Settings()  # type: ignore

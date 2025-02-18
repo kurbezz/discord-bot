@@ -1,8 +1,10 @@
+import asyncio
 from enum import StrEnum
 import logging
 
 from pydantic import BaseModel
 from twitchAPI.object.eventsub import ChannelChatMessageEvent
+from openai import OpenAI
 
 from core.config import config
 from .twitch.authorize import authorize
@@ -91,6 +93,26 @@ class MessageEvent(BaseModel):
 
 
 
+def get_completion(message: str):
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key="<OPENROUTER_API_KEY>",
+    )
+
+    completion = client.chat.completions.create(
+        extra_body={},
+        model="deepseek/deepseek-r1:free",
+        messages=[
+            {
+                "role": "user",
+                "content": "message"
+            }
+        ]
+    )
+
+    return completion.choices[0].message.content
+
+
 class MessagesProc:
     @classmethod
     async def on_message(cls, event: MessageEvent):
@@ -100,14 +122,36 @@ class MessagesProc:
             "курбез" in event.message.text.lower() or \
             "булат" in event.message.text.lower()) and \
             event.chatter_user_login != "kurbezz":
+
             twitch = await authorize()
 
-            await twitch.send_chat_message(
-                event.broadcaster_user_id,
-                config.TWITCH_ADMIN_USER_ID,
-                "Пошел нахуй!",
-                reply_parent_message_id=event.message_id
-            )
+            try:
+                loop = asyncio.get_event_loop()
+
+                completion = await loop.run_in_executor(
+                    None,
+                    get_completion,
+                    event.message.text
+                )
+
+                if not completion:
+                    completion = "Пошел нахуй!"
+
+                await twitch.send_chat_message(
+                    event.broadcaster_user_id,
+                    config.TWITCH_ADMIN_USER_ID,
+                    completion,
+                    reply_parent_message_id=event.message_id
+                )
+            except Exception as e:
+                logger.error(f"Failed to get completion: {e}")
+
+                await twitch.send_chat_message(
+                    event.broadcaster_user_id,
+                    config.TWITCH_ADMIN_USER_ID,
+                    "Пошел нахуй!",
+                    reply_parent_message_id=event.message_id
+                )
 
         if "гойда" in event.message.text.lower():
             twitch = await authorize()
