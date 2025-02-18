@@ -93,7 +93,10 @@ class TwitchService:
 
         for sub in subs.data:
             if sub.type == sub_type:
-                await self.twitch.delete_eventsub_subscription(sub.id)
+                try:
+                    await self.twitch.delete_eventsub_subscription(sub.id)
+                except Exception as e:
+                    logger.error(f"Failed to delete subscription {sub.id}", exc_info=e)
 
         await sleep(1)
         await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
