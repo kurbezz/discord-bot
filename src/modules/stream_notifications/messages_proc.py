@@ -105,12 +105,7 @@ async def get_completion(message: str) -> str:
                 "messages": [
                     {
                         "role": "user",
-                        "content": [
-                            {
-                                "type": "text",
-                                "text": message
-                            },
-                        ]
+                        "content": message
                     }
                 ]
             }
