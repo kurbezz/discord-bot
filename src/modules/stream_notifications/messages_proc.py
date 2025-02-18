@@ -99,14 +99,12 @@ def get_completion(message: str):
         api_key=config.OPENAI_API_KEY,
     )
 
+    query = f"{message}. Отвечай на русском языке!"
+
     completion = client.chat.completions.create(
         extra_body={},
         model="deepseek/deepseek-r1:free",
         messages=[
-            {
-                "role": "developer",
-                "content": "Отвечай на русском языке!"
-            },
             {
                 "role": "user",
                 "content": message
