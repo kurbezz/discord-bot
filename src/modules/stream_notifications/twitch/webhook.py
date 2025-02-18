@@ -42,7 +42,7 @@ class TwitchService:
         )
 
     async def on_message(self, event: ChannelChatMessageEvent):
-        print(event)
+        logger.debug(event)
 
     async def subscribe_with_retry(
             self,
