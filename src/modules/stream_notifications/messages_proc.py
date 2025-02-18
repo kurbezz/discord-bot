@@ -1,10 +1,14 @@
 from enum import StrEnum
+import logging
 
 from pydantic import BaseModel
 from twitchAPI.object.eventsub import ChannelChatMessageEvent
 
 from core.config import config
 from .twitch.authorize import authorize
+
+
+logger = logging.getLogger(__name__)
 
 
 class ChatMessage(BaseModel):
@@ -90,6 +94,8 @@ class MessageEvent(BaseModel):
 class MessagesProc:
     @classmethod
     async def on_message(cls, event: MessageEvent):
+        logging.info(f"Received message: {event}")
+
         if event.message.text == "!hello":
             twitch = await authorize()
 
