@@ -158,8 +158,8 @@ class MessagesProc:
             return []
 
         return (
-            [message for message in cls.MESSAGE_HISTORY if message["thread_id"] == message_id]
-            + [message for message in cls.MESSAGE_HISTORY if message["id"] == message_id]
+            [m for m in cls.MESSAGE_HISTORY if m["thread_id"] == message_id]
+            + [m for m in cls.MESSAGE_HISTORY if m["id"] == message_id]
         )
 
     @classmethod
