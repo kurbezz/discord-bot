@@ -138,6 +138,7 @@ class MessagesProc:
     IGNORED_USER_LOGINS = [
         "jeetbot",
         "kurbezz",
+        "pahangor",
     ]
 
     @classmethod
