@@ -96,9 +96,10 @@ class MessagesProc:
     async def on_message(cls, event: MessageEvent):
         logging.info(f"Received message: {event}")
 
-        if "kurbezz" in event.message.text.lower() or \
+        if ("kurbezz" in event.message.text.lower() or \
             "курбез" in event.message.text.lower() or \
-            "булат" in event.message.text.lower():
+            "булат" in event.message.text.lower()) and \
+            event.chatter_user_login != "kurbezz":
             twitch = await authorize()
 
             await twitch.send_chat_message(
