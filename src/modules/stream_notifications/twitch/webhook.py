@@ -9,8 +9,9 @@ from twitchAPI.oauth import validate_token
 
 from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
-from modules.stream_notifications.tasks import on_stream_state_change, on_stream_state_change_with_check
+from modules.stream_notifications.tasks import on_stream_state_change, on_stream_state_change_with_check, on_message
 from modules.stream_notifications.state import UpdateEvent, EventType
+from modules.stream_notifications.messages_proc import MessageEvent
 from .authorize import authorize
 
 
@@ -42,7 +43,9 @@ class TwitchService:
         )
 
     async def on_message(self, event: ChannelChatMessageEvent):
-        logger.debug(event)
+        await on_message.kiq(
+            MessageEvent.from_twitch_event(event)
+        )
 
     async def subscribe_with_retry(
             self,

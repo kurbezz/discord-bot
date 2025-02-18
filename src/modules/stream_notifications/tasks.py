@@ -7,6 +7,7 @@ from repositories.streamers import StreamerConfigRepository
 
 from .state import State, UpdateEvent, EventType
 from .watcher import StateWatcher
+from .messages_proc import MessageEvent, MessagesProc
 from .twitch.authorize import authorize
 
 
@@ -73,3 +74,11 @@ async def check_streams_states():
             EventType.UNKNOWN,
             state
         )
+
+
+@broker.task(
+    "stream_notifications.twitch.on_message",
+    retry_on_error=True
+)
+async def on_message(event: MessageEvent):
+    await MessagesProc.on_message(event)
