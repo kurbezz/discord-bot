@@ -107,7 +107,7 @@ def get_completion(message: str):
         messages=[
             {
                 "role": "user",
-                "content": message
+                "content": query
             }
         ]
     )
