@@ -100,7 +100,7 @@ async def get_completion(message: str) -> str:
             headers={
                 "Authorization": f"Bearer {config.OPENAI_API_KEY}"
             },
-            json={
+            data={
                 "model": "google/gemini-2.0-flash-thinking-exp:free",
                 "messages": [
                     {
