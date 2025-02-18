@@ -154,14 +154,7 @@ class MessagesProc:
     def get_message_history_with_thread(cls, message_id: str) -> list[dict]:
         logger.info(f"HISTORY: {cls.MESSAGE_HISTORY}")
 
-        message = next((message for message in cls.MESSAGE_HISTORY if message["id"] == message_id), None)
-        if message is None:
-            return []
-
-        return (
-            [m for m in cls.MESSAGE_HISTORY if m["thread_id"] == message_id]
-            + [m for m in cls.MESSAGE_HISTORY if m["id"] == message_id]
-        )
+        return [m for m in cls.MESSAGE_HISTORY if m["thread_id"] == message_id or m["id"] == message_id]
 
     @classmethod
     async def on_message(cls, event: MessageEvent):
