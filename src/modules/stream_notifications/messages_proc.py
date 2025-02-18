@@ -1,4 +1,3 @@
-import asyncio
 from enum import StrEnum
 import logging
 
@@ -153,6 +152,8 @@ class MessagesProc:
 
     @classmethod
     def get_message_history_with_thread(cls, message_id: str) -> list[dict]:
+        logger.info(f"HISTORY: {cls.MESSAGE_HISTORY}")
+
         message = next((message for message in cls.MESSAGE_HISTORY if message["id"] == message_id), None)
         if message is None:
             return []
