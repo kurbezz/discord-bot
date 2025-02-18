@@ -49,7 +49,7 @@ class MessageEvent(BaseModel):
     color: str
     reply: ChatMessageReplyMetadata | None
 
-    channel_points_custom_reward_id: str
+    channel_points_custom_reward_id: str | None
 
     @classmethod
     def from_twitch_event(cls, event: ChannelChatMessageEvent):
