@@ -99,7 +99,8 @@ def get_completion(message: str):
         api_key=config.OPENAI_API_KEY,
     )
 
-    query = f"Отвечай на русском языке! {message}"
+    message_cleaned = message.replace("курбез", "").replace("булат", "").replace("kurbezz", "")
+    query = f"Отвечай на русском языке! {message_cleaned}"
 
     completion = client.chat.completions.create(
         extra_body={},
