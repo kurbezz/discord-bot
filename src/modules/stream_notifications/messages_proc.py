@@ -96,11 +96,22 @@ class MessagesProc:
     async def on_message(cls, event: MessageEvent):
         logging.info(f"Received message: {event}")
 
-        if event.message.text == "!hello":
+        if "kurbezz" in event.message.text.lower() or \
+            "курбез" in event.message.text.lower() or \
+            "булат" in event.message.text.lower():
             twitch = await authorize()
 
             await twitch.send_chat_message(
                 event.broadcaster_user_id,
                 config.TWITCH_ADMIN_USER_ID,
-                "Hello, world!"
+                "Пошел нахуй!"
+            )
+
+        if "гойда" in event.message.text.lower():
+            twitch = await authorize()
+
+            await twitch.send_chat_message(
+                event.broadcaster_user_id,
+                config.TWITCH_ADMIN_USER_ID,
+                "ГООООООООООООООООООООООООООООООООООООООЙДА!"
             )
