@@ -152,13 +152,7 @@ class MessagesProc:
             cls.MESSAGE_HISTORY = cls.MESSAGE_HISTORY[-cls.MESSAGE_LIMIT:]
 
     @classmethod
-    def get_message_history_with_thread(cls, message_id: str | None, current_deep: int = 5) -> list[dict]:
-        if message_id is None:
-            return []
-
-        if current_deep > 5:
-            return []
-
+    def get_message_history_with_thread(cls, message_id: str) -> list[dict]:
         message = next((message for message in cls.MESSAGE_HISTORY if message["id"] == message_id), None)
         if message is None:
             return []
