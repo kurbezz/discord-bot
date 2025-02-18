@@ -157,7 +157,10 @@ class MessagesProc:
         if message is None:
             return []
 
-        return [message for message in cls.MESSAGE_HISTORY if message["thread_id"] == message_id] + [message]
+        return (
+            [message for message in cls.MESSAGE_HISTORY if message["thread_id"] == message_id]
+            + [message for message in cls.MESSAGE_HISTORY if message["id"] == message_id]
+        )
 
     @classmethod
     async def on_message(cls, event: MessageEvent):
