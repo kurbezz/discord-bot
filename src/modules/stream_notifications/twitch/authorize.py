@@ -7,7 +7,13 @@ from .token_storage import TokenStorage
 
 
 SCOPES = [
-    scope for scope in AuthScope
+    AuthScope.CHAT_READ
+    ,
+    AuthScope.CHANNEL_BOT,
+
+    AuthScope.USER_BOT,
+    AuthScope.USER_READ_CHAT,
+    AuthScope.USER_WRITE_CHAT,
 ]
 
 
