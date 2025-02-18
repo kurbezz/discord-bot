@@ -154,9 +154,14 @@ class MessagesProc:
                 reply_parent_message_id=event.message_id
             )
 
-        if event.message.text.lower().startswith("!ai"):
+        if event.message.text.lower().startswith("!ai") or (
+            event.reply and event.reply.parent_message_body.lower().startswith("!ai")
+        ):
             try:
-                completion = await get_completion(event.message.text.replace("!ai", "").strip())
+                completion = await get_completion(
+                    event.message.text.replace("!ai", "").strip(),
+                    reply_to=event.reply.parent_message_body.replace("!ai", "").strip() if event.reply else None
+                )
 
                 max_length = 255
                 completion_parts = [completion[i:i + max_length] for i in range(0, len(completion), max_length)]
