@@ -112,6 +112,8 @@ def get_completion(message: str):
         ]
     )
 
+    logger.info(f"Got completion: {completion}")
+
     return completion.choices[0].message.content
 
 
