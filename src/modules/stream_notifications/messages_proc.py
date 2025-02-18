@@ -4,7 +4,7 @@ import logging
 
 from pydantic import BaseModel
 from twitchAPI.object.eventsub import ChannelChatMessageEvent
-from openai import OpenAI
+from httpx import AsyncClient
 
 from core.config import config
 from .twitch.authorize import authorize
@@ -94,31 +94,31 @@ class MessageEvent(BaseModel):
 
 
 def get_completion(message: str):
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=config.OPENAI_API_KEY,
-    )
-
-    message_cleaned = message.replace("курбез", "").replace("булат", "").replace("kurbezz", "").replace("@", "")
-
-    completion = client.chat.completions.create(
-        model="google/gemini-2.0-flash-thinking-exp:free",
-        messages=[
-            {
-                "role": "user",
-                "content": [
+    async with AsyncClient() as client:
+        response = await client.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {config.OPENAI_API_KEY}"
+            },
+            json={
+                "model": "google/gemini-2.0-flash-thinking-exp:free",
+                "messages": [
                     {
-                        "type": "text",
-                        "text": message_cleaned
-                    },
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": message
+                            },
+                        ]
+                    }
                 ]
             }
-        ]
-    )
+        )
 
-    logger.info(f"Got completion: {completion}")
+        data = response.json()
 
-    return completion.choices[0].message.content
+        return data["choices"][0]["message"]["content"]
 
 
 class MessagesProc:
