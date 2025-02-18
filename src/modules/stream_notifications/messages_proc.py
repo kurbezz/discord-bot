@@ -138,12 +138,14 @@ class MessagesProc:
     IGNORED_USER_LOGINS = [
         "jeetbot",
         "kurbezz",
-        "pahangor",
     ]
 
     @classmethod
     async def on_message(cls, event: MessageEvent):
         logging.info(f"Received message: {event}")
+
+        if event.chatter_user_name == "pahangor":
+            return
 
         twitch = await authorize()
 
