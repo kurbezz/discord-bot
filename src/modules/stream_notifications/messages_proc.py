@@ -94,7 +94,7 @@ class MessageEvent(BaseModel):
 
 
 async def get_completion(message: str, reply_to: str | None = None) -> str:
-    logger.info(f"Getting completion for message: {message}")
+    logger.info(f"Getting completion for message: {message} with reply to: {reply_to}")
 
     messages = [
         {
