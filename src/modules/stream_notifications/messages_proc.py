@@ -113,6 +113,8 @@ async def get_completion(message: str) -> str:
 
         data = response.json()
 
+        logger.info(f"Got completion: {data}")
+
         return data["choices"][0]["message"]["content"]
 
 
