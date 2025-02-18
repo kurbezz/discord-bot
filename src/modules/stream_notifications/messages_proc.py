@@ -96,7 +96,7 @@ class MessageEvent(BaseModel):
 def get_completion(message: str):
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
-        api_key="<OPENROUTER_API_KEY>",
+        api_key=config.OPENAI_API_KEY,
     )
 
     completion = client.chat.completions.create(
