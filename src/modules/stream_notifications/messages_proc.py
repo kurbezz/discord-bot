@@ -210,8 +210,6 @@ class MessagesProc:
             except Exception as e:
                 logger.error("Failed to get completion: {}", e, exc_info=True)
 
-                raise e
-
                 await twitch.send_chat_message(
                     event.broadcaster_user_id,
                     config.TWITCH_ADMIN_USER_ID,
@@ -228,7 +226,7 @@ class MessagesProc:
 
             try:
                 messages = cls.get_message_history_with_thread(event.message_id)
-                completion = await get_completion(event.message.text)
+                completion = await get_completion(messages)
 
                 max_length = 255
                 completion_parts = [completion[i:i + max_length] for i in range(0, len(completion), max_length)]
