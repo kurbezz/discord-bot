@@ -142,6 +142,8 @@ class MessagesProc:
             )
 
         if event.message.text.lower().startswith("!ai"):
+            twitch = await authorize()
+
             try:
                 completion = await get_completion(event.message.text)
 
