@@ -140,30 +140,30 @@ class MessagesProc:
     MESSAGE_HISTORY = []
 
     @classmethod
-    def update_message_history(cls, id: str, text: str, user: str, reply_to: str | None = None):
+    def update_message_history(cls, id: str, text: str, user: str, thread_id: str | None = None):
         cls.MESSAGE_HISTORY.append({
             "id": id,
             "text": text,
             "user": user,
-            "reply_to": reply_to
+            "thread_id": thread_id
         })
 
         if len(cls.MESSAGE_HISTORY) > cls.MESSAGE_LIMIT:
             cls.MESSAGE_HISTORY = cls.MESSAGE_HISTORY[-cls.MESSAGE_LIMIT:]
 
     @classmethod
-    def get_message_history_with_thread(cls, thread_id: str | None, current_deep: int = 5) -> list[dict]:
-        if thread_id is None:
+    def get_message_history_with_thread(cls, message_id: str | None, current_deep: int = 5) -> list[dict]:
+        if message_id is None:
             return []
 
         if current_deep > 5:
             return []
 
-        message = next((message for message in cls.MESSAGE_HISTORY if message["id"] == thread_id), None)
+        message = next((message for message in cls.MESSAGE_HISTORY if message["id"] == message_id), None)
         if message is None:
             return []
 
-        return cls.get_message_history_with_thread(message["reply_to"], current_deep + 1) + [message]
+        return [message for message in cls.MESSAGE_HISTORY if message["thread_id"] == message_id] + [message]
 
     @classmethod
     async def on_message(cls, event: MessageEvent):
@@ -173,7 +173,7 @@ class MessagesProc:
             id=event.message_id,
             text=event.message.text,
             user=event.chatter_user_login,
-            reply_to=event.reply.parent_message_id if event.reply is not None else None
+            thread_id=event.reply.thread_message_id if event.reply is not None else None
         )
 
         if event.chatter_user_name == "pahangor":
