@@ -109,7 +109,7 @@ def get_completion(message: str):
             },
             {
                 "role": "user",
-                "content": "message"
+                "content": message
             }
         ]
     )
