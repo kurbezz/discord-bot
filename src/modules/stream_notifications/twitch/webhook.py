@@ -4,7 +4,7 @@ from typing import NoReturn, Literal
 
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
-from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent
+from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent, ChannelChatMessageEvent
 from twitchAPI.oauth import validate_token
 
 from core.config import config
@@ -41,33 +41,48 @@ class TwitchService:
             EventType.STREAM_ONLINE,
         )
 
+    async def on_message(self, event: ChannelChatMessageEvent):
+        print(event)
+
     async def subscribe_with_retry(
             self,
-            method: Literal["listen_channel_update_v2"] | Literal["listen_stream_online"],
+            method: Literal["listen_channel_update_v2"]
+                | Literal["listen_stream_online"]
+                | Literal["listen_channel_chat_message"],
             eventsub: EventSubWebhook,
             streamer: StreamerConfig,
             retry: int = 10
         ):
 
         try:
-            if method == "listen_channel_update_v2":
-                await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
-            elif method == "listen_stream_online":
-                await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
-            else:
-                raise ValueError("Unknown method")
+            match method:
+                case "listen_channel_update_v2":
+                    await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
+                case "listen_stream_online":
+                    await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
+                case "listen_channel_chat_message":
+                    await eventsub.listen_channel_chat_message(
+                        str(streamer.twitch.id),
+                        str(config.TWITCH_ADMIN_USER_ID),
+                        self.on_message
+                    )
+                case _:
+                    raise ValueError("Unknown method")
 
             return
         except Exception as e:
             if retry <= 0:
                 raise e
 
-        if method == "listen_channel_update_v2":
-            sub_type = "channel.update"
-        elif method == "listen_stream_online":
-            sub_type = "stream.online"
-        else:
-            raise ValueError("Unknown method")
+        match method:
+            case "listen_channel_update_v2":
+                sub_type = "channel.update"
+            case "listen_stream_online":
+                sub_type = "stream.online"
+            case "listen_channel_chat_message":
+                sub_type = "channel.chat.message"
+            case _:
+                raise ValueError("Unknown method")
 
         subs = await self.twitch.get_eventsub_subscriptions(
             user_id=str(streamer.twitch.id)
@@ -84,7 +99,8 @@ class TwitchService:
         logger.info(f"Subscribe to events for {streamer.twitch.name}")
         await gather(
             self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer),
-            self.subscribe_with_retry("listen_stream_online", eventsub, streamer)
+            self.subscribe_with_retry("listen_stream_online", eventsub, streamer),
+            self.subscribe_with_retry("listen_channel_chat_message", eventsub, streamer),
         )
         logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
