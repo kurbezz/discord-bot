@@ -107,6 +107,10 @@ async def get_completion(message: str) -> str:
                 "model": "google/gemini-2.0-flash-thinking-exp:free",
                 "messages": [
                     {
+                        "role": "system",
+                        "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear!"
+                    },
+                    {
                         "role": "user",
                         "content": message
                     }
