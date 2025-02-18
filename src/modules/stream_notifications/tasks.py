@@ -77,7 +77,7 @@ async def check_streams_states():
 
 
 @broker.task(
-    "stream_notifications.twitch.on_message",
+    "stream_notifications.on_message",
     retry_on_error=True
 )
 async def on_message(event: MessageEvent):
