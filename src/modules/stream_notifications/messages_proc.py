@@ -93,8 +93,26 @@ class MessageEvent(BaseModel):
 
 
 
-async def get_completion(message: str) -> str:
+async def get_completion(message: str, reply_to: str | None = None) -> str:
     logger.info(f"Getting completion for message: {message}")
+
+    messages = [
+        {
+            "role": "system",
+            "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear!"
+        }
+    ]
+
+    if reply_to:
+        messages.append({
+            "role": "assistant",
+            "content": reply_to
+        })
+
+    messages.append({
+        "role": "user",
+        "content": message
+    })
 
     async with AsyncClient() as client:
         response = await client.post(
@@ -105,16 +123,7 @@ async def get_completion(message: str) -> str:
             },
             json={
                 "model": "google/gemini-2.0-flash-thinking-exp:free",
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear!"
-                    },
-                    {
-                        "role": "user",
-                        "content": message
-                    }
-                ]
+                "messages": messages
             }
         )
 
@@ -147,7 +156,7 @@ class MessagesProc:
 
         if event.message.text.lower().startswith("!ai"):
             try:
-                completion = await get_completion(event.message.text)
+                completion = await get_completion(event.message.text.replace("!ai", "").strip())
 
                 max_length = 255
                 completion_parts = [completion[i:i + max_length] for i in range(0, len(completion), max_length)]
