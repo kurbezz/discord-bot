@@ -159,7 +159,7 @@ class MessagesProc:
         if current_deep > 5:
             return []
 
-        message = next((msg for msg in cls.MESSAGE_HISTORY if msg["id"] == thread_id), None)
+        message = next((message for message in cls.MESSAGE_HISTORY if message["id"] == thread_id), None)
         if message is None:
             return []
 
@@ -208,7 +208,7 @@ class MessagesProc:
                         reply_parent_message_id=event.message_id
                     )
             except Exception as e:
-                logger.error(f"Failed to get completion: {e}")
+                logger.error("Failed to get completion: {}", e, exc_info=True)
 
                 await twitch.send_chat_message(
                     event.broadcaster_user_id,
