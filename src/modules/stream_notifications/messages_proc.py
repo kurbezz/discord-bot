@@ -99,16 +99,21 @@ def get_completion(message: str):
         api_key=config.OPENAI_API_KEY,
     )
 
-    message_cleaned = message.replace("курбез", "").replace("булат", "").replace("kurbezz", "")
+    message_cleaned = message.replace("курбез", "").replace("булат", "").replace("kurbezz", "").replace("@", "")
     query = f"Отвечай на русском языке! {message_cleaned}"
 
     completion = client.chat.completions.create(
         extra_body={},
-        model="deepseek/deepseek-r1:free",
+        model="google/gemini-2.0-flash-thinking-exp:free",
         messages=[
             {
                 "role": "user",
-                "content": query
+                "content": [
+                    {
+                        "type": "text",
+                        "text": query
+                    },
+                ]
             }
         ]
     )
