@@ -94,6 +94,8 @@ class MessageEvent(BaseModel):
 
 
 async def get_completion(message: str) -> str:
+    logger.info(f"Getting completion for message: {message}")
+
     async with AsyncClient() as client:
         response = await client.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -128,6 +130,16 @@ class MessagesProc:
     async def on_message(cls, event: MessageEvent):
         logging.info(f"Received message: {event}")
 
+        if "гойда" in event.message.text.lower():
+            twitch = await authorize()
+
+            await twitch.send_chat_message(
+                event.broadcaster_user_id,
+                config.TWITCH_ADMIN_USER_ID,
+                "ГООООООООООООООООООООООООООООООООООООООООООООООЙДА!",
+                reply_parent_message_id=event.message_id
+            )
+
         if event.chatter_user_login in cls.IGNORED_USER_LOGINS:
             return
 
@@ -159,13 +171,3 @@ class MessagesProc:
                     "Пошел нахуй!",
                     reply_parent_message_id=event.message_id
                 )
-
-        if "гойда" in event.message.text.lower():
-            twitch = await authorize()
-
-            await twitch.send_chat_message(
-                event.broadcaster_user_id,
-                config.TWITCH_ADMIN_USER_ID,
-                "ГООООООООООООООООООООООООООООООООООООООООООООООЙДА!",
-                reply_parent_message_id=event.message_id
-            )
