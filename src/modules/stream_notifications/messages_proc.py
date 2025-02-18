@@ -155,6 +155,9 @@ class MessagesProc:
                 reply_parent_message_id=event.message_id
             )
 
+        if "lasqexx" in event.chatter_user_login:
+            pass  # Todo: Здароу
+
         if event.message.text.lower().startswith("!ai") or (
             event.reply and event.reply.parent_message_body.lower().startswith("!ai")
         ):
