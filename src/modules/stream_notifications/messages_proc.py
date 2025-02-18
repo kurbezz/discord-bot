@@ -104,7 +104,8 @@ class MessagesProc:
             await twitch.send_chat_message(
                 event.broadcaster_user_id,
                 config.TWITCH_ADMIN_USER_ID,
-                "Пошел нахуй!"
+                "Пошел нахуй!",
+                reply_parent_message_id=event.message_id
             )
 
         if "гойда" in event.message.text.lower():
@@ -113,5 +114,6 @@ class MessagesProc:
             await twitch.send_chat_message(
                 event.broadcaster_user_id,
                 config.TWITCH_ADMIN_USER_ID,
-                "ГООООООООООООООООООООООООООООООООООООООЙДА!"
+                "ГООООООООООООООООООООООООООООООООООООООООООООООЙДА!",
+                reply_parent_message_id=event.message_id
             )
