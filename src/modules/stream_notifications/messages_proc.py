@@ -102,7 +102,6 @@ def get_completion(message: str):
     message_cleaned = message.replace("курбез", "").replace("булат", "").replace("kurbezz", "").replace("@", "")
 
     completion = client.chat.completions.create(
-        extra_body={},
         model="google/gemini-2.0-flash-thinking-exp:free",
         messages=[
             {
