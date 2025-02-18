@@ -100,7 +100,6 @@ def get_completion(message: str):
     )
 
     message_cleaned = message.replace("курбез", "").replace("булат", "").replace("kurbezz", "").replace("@", "")
-    query = f"Отвечай на русском языке! {message_cleaned}"
 
     completion = client.chat.completions.create(
         extra_body={},
@@ -111,7 +110,7 @@ def get_completion(message: str):
                 "content": [
                     {
                         "type": "text",
-                        "text": query
+                        "text": message_cleaned
                     },
                 ]
             }
