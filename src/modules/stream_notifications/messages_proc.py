@@ -93,7 +93,7 @@ class MessageEvent(BaseModel):
 
 
 
-def get_completion(message: str):
+async def get_completion(message: str):
     async with AsyncClient() as client:
         response = await client.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -141,13 +141,7 @@ class MessagesProc:
             twitch = await authorize()
 
             try:
-                loop = asyncio.get_event_loop()
-
-                completion = await loop.run_in_executor(
-                    None,
-                    get_completion,
-                    event.message.text
-                )
+                completion = await get_completion(event.message.text)
 
                 if not completion:
                     completion = "Пошел нахуй!"
