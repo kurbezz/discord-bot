@@ -10,7 +10,6 @@ SCOPES = [
     AuthScope.CHAT_READ,
 
     AuthScope.CHANNEL_BOT,
-    AuthScope.CHANNEL_SUBSCRIPTIONS,
 
     AuthScope.USER_BOT,
     AuthScope.USER_READ_CHAT,
