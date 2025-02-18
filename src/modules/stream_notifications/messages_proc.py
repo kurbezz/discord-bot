@@ -161,7 +161,7 @@ class MessagesProc:
             try:
                 completion = await get_completion(
                     event.message.text.replace("!ai", "").strip(),
-                    reply_to=event.reply.parent_message_body.replace("!ai", "").strip() if event.reply else None
+                    reply_to=event.reply.parent_message_body.replace("!ai", "").strip() if event.reply is not None else None
                 )
 
                 max_length = 255
