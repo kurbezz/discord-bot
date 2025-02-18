@@ -110,11 +110,6 @@ async def get_completion(messages: list[dict]) -> str:
         }
     ]
 
-    messages.append({
-        "role": "user",
-        "content": data_messages
-    })
-
     async with AsyncClient() as client:
         response = await client.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -124,7 +119,7 @@ async def get_completion(messages: list[dict]) -> str:
             },
             json={
                 "model": "google/gemini-2.0-flash-thinking-exp:free",
-                "messages": messages
+                "messages": data_messages
             }
         )
 
