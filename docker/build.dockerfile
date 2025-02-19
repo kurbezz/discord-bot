@@ -10,6 +10,8 @@ COPY ./uv.lock ./
 
 RUN uv venv && uv sync --frozen
 
+COPY ./src ./src
+
 ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 80
