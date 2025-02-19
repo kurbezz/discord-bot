@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./pyproject.toml ./
 COPY ./uv.lock ./
 
-RUN uv env && uv sync --frozen
+RUN uv venv && uv sync --frozen
 
 ENV PATH="/app/.venv/bin:$PATH"
 
