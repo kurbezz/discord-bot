@@ -96,10 +96,10 @@ async def get_completion(messages: list[dict]) -> str:
     logger.info(f"Getting completion for message: {messages}")
 
     data_messages = [
-        # {
-        #     "role": "system",
-        #     "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear!"
-        # },
+        {
+            "role": "system",
+            "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear!"
+        },
         *(
             {
                 "role": "assistant" if message["user"] == "kurbezz" else "user",
