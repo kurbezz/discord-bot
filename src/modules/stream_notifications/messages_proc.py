@@ -155,11 +155,12 @@ class MessagesProc:
         logger.info(f"HISTORY: {cls.MESSAGE_HISTORY}")
 
         if thread_id is not None:
-            thread_messages = [m for m in cls.MESSAGE_HISTORY if m["thread_id"] == thread_id and m["id"] != message_id]
-        else:
-            thread_messages = []
+            return (
+                [m for m in cls.MESSAGE_HISTORY if m["id"] == thread_id]
+                + [m for m in cls.MESSAGE_HISTORY if m["thread_id"] == thread_id]
+            )
 
-        return thread_messages + [m for m in cls.MESSAGE_HISTORY if m["id"] == message_id]
+        return [m for m in cls.MESSAGE_HISTORY if m["id"] == message_id]
 
     @classmethod
     async def on_message(cls, event: MessageEvent):
