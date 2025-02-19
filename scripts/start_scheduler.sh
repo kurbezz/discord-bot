@@ -1,3 +1,3 @@
 #! /usr/bin/env sh
 
-uv run taskiq scheduler core.broker:scheduler modules.tasks
+uv run --directory src taskiq scheduler core.broker:scheduler modules.tasks

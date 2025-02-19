@@ -1,3 +1,5 @@
 #! /usr/bin/env sh
 
-uv run taskiq worker core.broker:broker modules.tasks
+cd ./src
+
+uv run --directory src taskiq worker core.broker:broker modules.tasks
