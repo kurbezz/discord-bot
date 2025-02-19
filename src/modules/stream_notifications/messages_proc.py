@@ -155,7 +155,7 @@ class MessagesProc:
         logger.info(f"HISTORY: {cls.MESSAGE_HISTORY}")
 
         if thread_id is not None:
-            thread_messages = [m for m in cls.MESSAGE_HISTORY if m["thread_id"] == thread_id]
+            thread_messages = [m for m in cls.MESSAGE_HISTORY if m["thread_id"] == thread_id and m["id"] != message_id]
         else:
             thread_messages = []
 
