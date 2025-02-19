@@ -96,11 +96,17 @@ async def get_completion(messages: list[dict]) -> str:
     logger.info(f"Getting completion for message: {messages}")
 
     data_messages = [
-        {
-            "role": "assistant" if message["user"] == "kurbezz" else "user",
-            "content": message["text"]
-        }
-        for message in messages
+        # {
+        #     "role": "system",
+        #     "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear!"
+        # },
+        *(
+            {
+                "role": "assistant" if message["user"] == "kurbezz" else "user",
+                "content": message["text"]
+            }
+            for message in messages
+        ),
     ]
 
     async with AsyncClient() as client:
