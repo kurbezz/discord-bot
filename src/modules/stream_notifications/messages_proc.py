@@ -98,7 +98,7 @@ async def get_completion(messages: list[dict]) -> str:
     data_messages = [
         {
             "role": "system",
-            "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear!"
+            "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear! Your name is kurbezz!"
         },
         *(
             {
@@ -213,6 +213,13 @@ class MessagesProc:
                         part,
                         reply_parent_message_id=event.message_id
                     )
+
+                    cls.update_message_history(
+                        id="ai",
+                        text=part,
+                        user="kurbezz",
+                        thread_id=event.message_id
+                    )
             except Exception as e:
                 logger.error("Failed to get completion: {}", e, exc_info=True)
 
@@ -246,6 +253,13 @@ class MessagesProc:
                         config.TWITCH_ADMIN_USER_ID,
                         part,
                         reply_parent_message_id=event.message_id
+                    )
+
+                    cls.update_message_history(
+                        id="ai",
+                        text=part,
+                        user="kurbezz",
+                        thread_id=event.message_id
                     )
             except Exception as e:
                 logger.error(f"Failed to get completion: {e}")
