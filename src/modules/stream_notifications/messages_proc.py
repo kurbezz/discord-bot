@@ -186,7 +186,13 @@ class MessagesProc:
             )
 
         if "lasqexx" in event.chatter_user_login:
-            pass  # Todo: Здароу
+            if "здароу" in event.message.text.lower():
+                await twitch.send_chat_message(
+                    event.broadcaster_user_id,
+                    config.TWITCH_ADMIN_USER_ID,
+                    "Здароу, давай иди уже!",
+                    reply_parent_message_id=event.message_id
+                )
 
         if event.message.text.lower().startswith("!ai"):
             try:
