@@ -98,7 +98,7 @@ async def get_completion(messages: list[dict]) -> str:
     data_messages = [
         {
             "role": "system",
-            "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear! Your name is kurbezz!"
+            "content": "Don't use markdown! Don't use blocked words on Twitch! Make answers short and clear! Your name is kurbezz! Don't start answer with @kurbezz!"
         },
         *(
             {
@@ -191,7 +191,23 @@ class MessagesProc:
                 await twitch.send_chat_message(
                     event.broadcaster_user_id,
                     config.TWITCH_ADMIN_USER_ID,
-                    "Здароу, давай иди уже!",
+                    "Здароу, давай иди уже",
+                    reply_parent_message_id=event.message_id
+                )
+
+            if "сосал?" in event.message.text.lower():
+                await twitch.send_chat_message(
+                    event.broadcaster_user_id,
+                    config.TWITCH_ADMIN_USER_ID,
+                    "А ты? Иди уже",
+                    reply_parent_message_id=event.message_id
+                )
+
+            if "лан я пошёл" in event.message.text.lower():
+                await twitch.send_chat_message(
+                    event.broadcaster_user_id,
+                    config.TWITCH_ADMIN_USER_ID,
+                    "да да, иди уже",
                     reply_parent_message_id=event.message_id
                 )
 
