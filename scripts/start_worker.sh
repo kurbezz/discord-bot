@@ -1,3 +1,3 @@
 #! /usr/bin/env sh
 
-/opt/venv/bin/taskiq worker core.broker:broker modules.tasks
+uv run taskiq worker core.broker:broker modules.tasks

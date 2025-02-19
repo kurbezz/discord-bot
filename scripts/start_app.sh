@@ -1,3 +1,3 @@
 #! /usr/bin/env sh
 
-/opt/venv/bin/python main.py $1
+uv run main.py $1
