@@ -1,3 +1,3 @@
 #! /usr/bin/env sh
 
-uv run src/main.py $1
+uv run ./src/main.py $1
