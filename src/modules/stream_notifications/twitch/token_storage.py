@@ -32,6 +32,6 @@ class TokenStorage:
             data = await collection.find_one({"type": TokenStorage.TYPE, "user": user})
 
             if data is None:
-                logging.info(f"Token for user {user} not found")
+                raise RuntimeError(f"Token for user {user} not found")
 
             return data["access_token"], data["refresh_token"]
