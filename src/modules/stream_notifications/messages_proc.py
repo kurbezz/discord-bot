@@ -304,17 +304,6 @@ class MessagesProc:
                 )
 
     @classmethod
-    async def _on_custom_reward(cls, twitch: Twitch, event: MessageEvent):
-        pass
-        # if event.channel_points_custom_reward_id:
-        #     await twitch.send_chat_message(
-        #         event.broadcaster_user_id,
-        #         config.TWITCH_ADMIN_USER_ID,
-        #         "Спасибо за поддержку!",
-        #         reply_parent_message_id=event.message_id
-        #     )
-
-    @classmethod
     async def on_message(cls, received_as: str, event: MessageEvent):
         if event.chatter_user_name in cls.FULL_IGNORED_USER_LOGINS:
             return
@@ -329,4 +318,3 @@ class MessagesProc:
         await cls._lasqexx(twitch, event)
         await cls._ask_ai(twitch, event)
         await cls._kurbezz(twitch, event)
-        await cls._on_custom_reward(twitch, event)
