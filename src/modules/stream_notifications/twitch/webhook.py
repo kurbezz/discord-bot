@@ -56,6 +56,30 @@ class TwitchService:
             MessageEvent.from_twitch_event(event)
         )
 
+    async def _clean_subs(self, method: str, streamer: StreamerConfig):
+        match method:
+            case "listen_channel_update_v2":
+                sub_type = "channel.update"
+            case "listen_stream_online":
+                sub_type = "stream.online"
+            case "listen_channel_chat_message":
+                sub_type = "channel.chat.message"
+            case "listen_channel_points_custom_reward_redemption_add":
+                sub_type = "channel.channel_points_custom_reward_redemption.add"
+            case _:
+                raise ValueError("Unknown method")
+
+        subs = await self.twitch.get_eventsub_subscriptions(
+            user_id=str(streamer.twitch.id)
+        )
+
+        for sub in subs.data:
+            if sub.type == sub_type:
+                try:
+                    await self.twitch.delete_eventsub_subscription(sub.id)
+                except Exception as e:
+                    logger.error(f"Failed to delete subscription {sub.id}", exc_info=e)
+
     async def subscribe_with_retry(
             self,
             method: Literal["listen_channel_update_v2"]
@@ -66,6 +90,7 @@ class TwitchService:
             streamer: StreamerConfig,
             retry: int = 10
         ):
+        await self._clean_subs(method, streamer)
 
         try:
             match method:
@@ -91,29 +116,6 @@ class TwitchService:
         except Exception as e:
             if retry <= 0:
                 raise e
-
-        match method:
-            case "listen_channel_update_v2":
-                sub_type = "channel.update"
-            case "listen_stream_online":
-                sub_type = "stream.online"
-            case "listen_channel_chat_message":
-                sub_type = "channel.chat.message"
-            case "listen_channel_points_custom_reward_redemption_add":
-                sub_type = "channel.channel_points_custom_reward_redemption.add"
-            case _:
-                raise ValueError("Unknown method")
-
-        subs = await self.twitch.get_eventsub_subscriptions(
-            user_id=str(streamer.twitch.id)
-        )
-
-        for sub in subs.data:
-            if sub.type == sub_type:
-                try:
-                    await self.twitch.delete_eventsub_subscription(sub.id)
-                except Exception as e:
-                    logger.error(f"Failed to delete subscription {sub.id}", exc_info=e)
 
         await sleep(1)
         await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
