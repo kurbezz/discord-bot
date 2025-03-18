@@ -127,7 +127,7 @@ class TwitchService:
         await gather(
             self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer),
             self.subscribe_with_retry("listen_stream_online", eventsub, streamer),
-            self.subscribe_with_retry("listen_channel_chat_message", eventsub, streamer),
+            # self.subscribe_with_retry("listen_channel_chat_message", eventsub, streamer),
             self.subscribe_with_retry("listen_channel_points_custom_reward_redemption_add", eventsub, streamer)
         )
         logger.info(f"Subscribe to events for {streamer.twitch.name} done")
