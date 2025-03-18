@@ -6,7 +6,7 @@ from twitchAPI.object.eventsub import ChannelChatMessageEvent
 from httpx import AsyncClient
 
 from core.config import config
-from .twitch.authorize import authorize
+from .twitch.authorize import authorize, Twitch
 
 
 logger = logging.getLogger(__name__)
@@ -139,9 +139,8 @@ async def get_completion(messages: list[dict]) -> str:
 
 
 class MessagesProc:
-    IGNORED_USER_LOGINS = [
+    FULL_IGNORED_USER_LOGINS = [
         "jeetbot",
-        "kurbezz",
     ]
 
     MESSAGE_LIMIT = 1000
@@ -172,9 +171,7 @@ class MessagesProc:
         return [m for m in cls.MESSAGE_HISTORY if m["id"] == message_id]
 
     @classmethod
-    async def on_message(cls, event: MessageEvent):
-        logging.info(f"Received message: {event}")
-
+    async def _update_history(cls, event: MessageEvent):
         cls.update_message_history(
             id=event.message_id,
             text=event.message.text,
@@ -182,11 +179,8 @@ class MessagesProc:
             thread_id=event.reply.thread_message_id if event.reply is not None else None
         )
 
-        if event.chatter_user_name == "pahangor":
-            return
-
-        twitch = await authorize()
-
+    @classmethod
+    async def _goida(cls, twitch: Twitch, event: MessageEvent):
         if "гойда" in event.message.text.lower():
             await twitch.send_chat_message(
                 event.broadcaster_user_id,
@@ -195,67 +189,80 @@ class MessagesProc:
                 reply_parent_message_id=event.message_id
             )
 
-        if "lasqexx" in event.chatter_user_login:
-            if "здароу" in event.message.text.lower():
+    @classmethod
+    async def _lasqexx(cls, twitch: Twitch, event: MessageEvent):
+        if "lasqexx" not in event.chatter_user_login:
+            return
+
+        if "здароу" in event.message.text.lower():
+            await twitch.send_chat_message(
+                event.broadcaster_user_id,
+                config.TWITCH_ADMIN_USER_ID,
+                "Здароу, давай иди уже",
+                reply_parent_message_id=event.message_id
+            )
+            return
+
+        if "сосал?" in event.message.text.lower():
+            await twitch.send_chat_message(
+                event.broadcaster_user_id,
+                config.TWITCH_ADMIN_USER_ID,
+                "А ты? Иди уже",
+                reply_parent_message_id=event.message_id
+            )
+            return
+
+        if "лан я пошёл" in event.message.text.lower():
+            await twitch.send_chat_message(
+                event.broadcaster_user_id,
+                config.TWITCH_ADMIN_USER_ID,
+                "да да, иди уже",
+                reply_parent_message_id=event.message_id
+            )
+            return
+
+    @classmethod
+    async def _ask_ai(cls, twitch: Twitch, event: MessageEvent):
+        if not event.message.text.lower().startswith("!ai"):
+            return
+
+        try:
+            messages = cls.get_message_history_with_thread(
+                event.message_id,
+                thread_id=event.reply.thread_message_id if event.reply is not None else None
+            )
+            completion = await get_completion(messages)
+
+            max_length = 255
+            completion_parts = [completion[i:i + max_length] for i in range(0, len(completion), max_length)]
+
+            for part in completion_parts:
                 await twitch.send_chat_message(
                     event.broadcaster_user_id,
                     config.TWITCH_ADMIN_USER_ID,
-                    "Здароу, давай иди уже",
+                    part,
                     reply_parent_message_id=event.message_id
                 )
 
-            if "сосал?" in event.message.text.lower():
-                await twitch.send_chat_message(
-                    event.broadcaster_user_id,
-                    config.TWITCH_ADMIN_USER_ID,
-                    "А ты? Иди уже",
-                    reply_parent_message_id=event.message_id
+                cls.update_message_history(
+                    id="ai",
+                    text=part,
+                    user="kurbezz",
+                    thread_id=event.message_id
                 )
+        except Exception as e:
+            logger.error("Failed to get completion: {}", e, exc_info=True)
 
-            if "лан я пошёл" in event.message.text.lower():
-                await twitch.send_chat_message(
-                    event.broadcaster_user_id,
-                    config.TWITCH_ADMIN_USER_ID,
-                    "да да, иди уже",
-                    reply_parent_message_id=event.message_id
-                )
+            await twitch.send_chat_message(
+                event.broadcaster_user_id,
+                config.TWITCH_ADMIN_USER_ID,
+                "Ошибка!",
+                reply_parent_message_id=event.message_id
+            )
 
-        if event.message.text.lower().startswith("!ai"):
-            try:
-                messages = cls.get_message_history_with_thread(
-                    event.message_id,
-                    thread_id=event.reply.thread_message_id if event.reply is not None else None
-                )
-                completion = await get_completion(messages)
-
-                max_length = 255
-                completion_parts = [completion[i:i + max_length] for i in range(0, len(completion), max_length)]
-
-                for part in completion_parts:
-                    await twitch.send_chat_message(
-                        event.broadcaster_user_id,
-                        config.TWITCH_ADMIN_USER_ID,
-                        part,
-                        reply_parent_message_id=event.message_id
-                    )
-
-                    cls.update_message_history(
-                        id="ai",
-                        text=part,
-                        user="kurbezz",
-                        thread_id=event.message_id
-                    )
-            except Exception as e:
-                logger.error("Failed to get completion: {}", e, exc_info=True)
-
-                await twitch.send_chat_message(
-                    event.broadcaster_user_id,
-                    config.TWITCH_ADMIN_USER_ID,
-                    "Ошибка!",
-                    reply_parent_message_id=event.message_id
-                )
-
-        if event.chatter_user_login in cls.IGNORED_USER_LOGINS:
+    @classmethod
+    async def _kurbezz(cls, twitch: Twitch, event: MessageEvent):
+        if event.chatter_user_login == "kurbezz":
             return
 
         if ("kurbezz" in event.message.text.lower() or \
@@ -295,3 +302,31 @@ class MessagesProc:
                     "Пошел нахуй!",
                     reply_parent_message_id=event.message_id
                 )
+
+    @classmethod
+    async def _on_custom_reward(cls, twitch: Twitch, event: MessageEvent):
+        pass
+        # if event.channel_points_custom_reward_id:
+        #     await twitch.send_chat_message(
+        #         event.broadcaster_user_id,
+        #         config.TWITCH_ADMIN_USER_ID,
+        #         "Спасибо за поддержку!",
+        #         reply_parent_message_id=event.message_id
+        #     )
+
+    @classmethod
+    async def on_message(cls, event: MessageEvent):
+        if event.chatter_user_name in cls.FULL_IGNORED_USER_LOGINS:
+            return
+
+        logging.info(f"Received message: {event}")
+
+        await cls._update_history(event)
+
+        twitch = await authorize()
+
+        await cls._goida(twitch, event)
+        await cls._lasqexx(twitch, event)
+        await cls._ask_ai(twitch, event)
+        await cls._kurbezz(twitch, event)
+        await cls._on_custom_reward(twitch, event)

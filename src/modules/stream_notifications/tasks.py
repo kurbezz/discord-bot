@@ -9,6 +9,7 @@ from .state import State, UpdateEvent, EventType
 from .watcher import StateWatcher
 from .messages_proc import MessageEvent, MessagesProc
 from .twitch.authorize import authorize
+from .reward_redemption import RewardRedemption, on_redemption_reward_add
 
 
 @broker.task(
@@ -82,3 +83,11 @@ async def check_streams_states():
 )
 async def on_message(event: MessageEvent):
     await MessagesProc.on_message(event)
+
+
+@broker.task(
+    "stream_notifications.on_redemption_reward_add",
+    retry_on_error=True
+)
+async def on_redemption_reward_add_task(event: RewardRedemption):
+    await on_redemption_reward_add(event)

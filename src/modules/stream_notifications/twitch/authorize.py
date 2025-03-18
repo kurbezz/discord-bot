@@ -14,6 +14,8 @@ SCOPES = [
     AuthScope.USER_BOT,
     AuthScope.USER_READ_CHAT,
     AuthScope.USER_WRITE_CHAT,
+
+    AuthScope.CHANNEL_READ_REDEMPTIONS,
 ]
 
 

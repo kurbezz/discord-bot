@@ -4,14 +4,15 @@ from typing import NoReturn, Literal
 
 from twitchAPI.eventsub.webhook import EventSubWebhook
 from twitchAPI.twitch import Twitch
-from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent, ChannelChatMessageEvent
+from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent, ChannelChatMessageEvent, ChannelPointsCustomRewardRedemptionAddEvent
 from twitchAPI.oauth import validate_token
 
 from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
-from modules.stream_notifications.tasks import on_stream_state_change, on_stream_state_change_with_check, on_message
+from modules.stream_notifications.tasks import on_stream_state_change, on_stream_state_change_with_check, on_message, on_redemption_reward_add_task
 from modules.stream_notifications.state import UpdateEvent, EventType
 from modules.stream_notifications.messages_proc import MessageEvent
+from modules.stream_notifications.reward_redemption import RewardRedemption
 from .authorize import authorize
 
 
@@ -42,6 +43,14 @@ class TwitchService:
             EventType.STREAM_ONLINE,
         )
 
+    async def on_channel_points_custom_reward_redemption_add(
+        self,
+        event: ChannelPointsCustomRewardRedemptionAddEvent
+    ):
+        await on_redemption_reward_add_task(
+            RewardRedemption.from_twitch_event(event)
+        )
+
     async def on_message(self, event: ChannelChatMessageEvent):
         await on_message.kiq(
             MessageEvent.from_twitch_event(event)
@@ -51,7 +60,8 @@ class TwitchService:
             self,
             method: Literal["listen_channel_update_v2"]
                 | Literal["listen_stream_online"]
-                | Literal["listen_channel_chat_message"],
+                | Literal["listen_channel_chat_message"]
+                | Literal["listen_channel_points_custom_reward_redemption_add"],
             eventsub: EventSubWebhook,
             streamer: StreamerConfig,
             retry: int = 10
@@ -69,6 +79,11 @@ class TwitchService:
                         str(config.TWITCH_ADMIN_USER_ID),
                         self.on_message
                     )
+                case "listen_channel_points_custom_reward_redemption_add":
+                    await eventsub.listen_channel_points_custom_reward_redemption_add(
+                        str(streamer.twitch.id),
+                        self.on_channel_points_custom_reward_redemption_add
+                    )
                 case _:
                     raise ValueError("Unknown method")
 
@@ -84,6 +99,8 @@ class TwitchService:
                 sub_type = "stream.online"
             case "listen_channel_chat_message":
                 sub_type = "channel.chat.message"
+            case "listen_channel_points_custom_reward_redemption_add":
+                sub_type = "channel.channel_points_custom_reward_redemption.add"
             case _:
                 raise ValueError("Unknown method")
 
@@ -107,6 +124,7 @@ class TwitchService:
             self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer),
             self.subscribe_with_retry("listen_stream_online", eventsub, streamer),
             self.subscribe_with_retry("listen_channel_chat_message", eventsub, streamer),
+            self.subscribe_with_retry("listen_channel_points_custom_reward_redemption_add", eventsub, streamer)
         )
         logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
