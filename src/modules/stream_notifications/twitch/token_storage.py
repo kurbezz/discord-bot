@@ -18,7 +18,7 @@ class TokenStorage:
             collection = db[TokenStorage.COLLECTION_NAME]
 
             await collection.update_one(
-                {"type": TokenStorage.TYPE, "user": user},
+                {"type": TokenStorage.TYPE, "twitch_login": user},
                 {"$set": data},
                 upsert=True
             )
@@ -29,7 +29,7 @@ class TokenStorage:
             db = client.get_default_database()
             collection = db[TokenStorage.COLLECTION_NAME]
 
-            data = await collection.find_one({"type": TokenStorage.TYPE, "user": user})
+            data = await collection.find_one({"type": TokenStorage.TYPE, "twitch_login": user})
 
             if data is None:
                 raise RuntimeError(f"Token for user {user} not found")
