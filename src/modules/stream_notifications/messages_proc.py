@@ -315,7 +315,7 @@ class MessagesProc:
         #     )
 
     @classmethod
-    async def on_message(cls, event: MessageEvent):
+    async def on_message(cls, received_as: str, event: MessageEvent):
         if event.chatter_user_name in cls.FULL_IGNORED_USER_LOGINS:
             return
 
@@ -323,7 +323,7 @@ class MessagesProc:
 
         await cls._update_history(event)
 
-        twitch = await authorize(event.broadcaster_user_login)
+        twitch = await authorize(received_as)
 
         await cls._goida(twitch, event)
         await cls._lasqexx(twitch, event)

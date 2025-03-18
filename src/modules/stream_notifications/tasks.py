@@ -81,8 +81,11 @@ async def check_streams_states():
     "stream_notifications.on_message",
     retry_on_error=True
 )
-async def on_message(event: MessageEvent):
-    await MessagesProc.on_message(event)
+async def on_message(
+    received_as: str,
+    event: MessageEvent
+):
+    await MessagesProc.on_message(received_as, event)
 
 
 @broker.task(

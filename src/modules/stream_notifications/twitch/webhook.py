@@ -54,6 +54,7 @@ class TwitchService:
 
     async def on_message(self, event: ChannelChatMessageEvent):
         await on_message.kiq(
+            self.streamer.twitch.name,
             MessageEvent.from_twitch_event(event)
         )
 
