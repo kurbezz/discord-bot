@@ -30,3 +30,5 @@ class StreamerConfig(BaseModel):
     twitch: TwitchConfig
     notifications: NotificationsConfig
     integrations: IntegrationsConfig
+
+    chatbot_in_chats: list[int] | None = None

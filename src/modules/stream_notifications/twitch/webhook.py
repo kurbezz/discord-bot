@@ -100,17 +100,20 @@ class TwitchService:
                     await eventsub.listen_channel_update_v2(str(streamer.twitch.id), self.on_channel_update)
                 case "listen_stream_online":
                     await eventsub.listen_stream_online(str(streamer.twitch.id), self.on_stream_online)
-                case "listen_channel_chat_message":
-                    await eventsub.listen_channel_chat_message(
-                        str(streamer.twitch.id),
-                        str(config.TWITCH_ADMIN_USER_ID),
-                        self.on_message
-                    )
                 case "listen_channel_points_custom_reward_redemption_add":
                     await eventsub.listen_channel_points_custom_reward_redemption_add(
                         str(streamer.twitch.id),
                         self.on_channel_points_custom_reward_redemption_add
                     )
+                case "listen_channel_chat_message":
+                    chatbot_in_chats = streamer.chatbot_in_chats or []
+
+                    for chat_id in chatbot_in_chats:
+                        await eventsub.listen_channel_chat_message(
+                            str(chat_id),
+                            str(streamer.twitch.id),
+                            self.on_message
+                        )
                 case _:
                     raise ValueError("Unknown method")
 
@@ -127,8 +130,8 @@ class TwitchService:
         await gather(
             self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer),
             self.subscribe_with_retry("listen_stream_online", eventsub, streamer),
-            # self.subscribe_with_retry("listen_channel_chat_message", eventsub, streamer),
-            self.subscribe_with_retry("listen_channel_points_custom_reward_redemption_add", eventsub, streamer)
+            self.subscribe_with_retry("listen_channel_points_custom_reward_redemption_add", eventsub, streamer),
+            self.subscribe_with_retry("listen_channel_chat_message", eventsub, streamer),
         )
         logger.info(f"Subscribe to events for {streamer.twitch.name} done")
 
