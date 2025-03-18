@@ -28,7 +28,7 @@ class RewardRedemption(BaseModel):
 
 
 async def on_redemption_reward_add(reward: RewardRedemption):
-    logger.info(reward)
+    logger.info(f"{reward.user_name} just redeemed {reward.reward_title}!")
 
     twitch = await authorize()
 
