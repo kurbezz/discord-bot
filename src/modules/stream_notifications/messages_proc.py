@@ -323,7 +323,7 @@ class MessagesProc:
 
         await cls._update_history(event)
 
-        twitch = await authorize()
+        twitch = await authorize(event.broadcaster_user_login)
 
         await cls._goida(twitch, event)
         await cls._lasqexx(twitch, event)

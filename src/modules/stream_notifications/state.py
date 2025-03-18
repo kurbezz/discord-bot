@@ -21,6 +21,7 @@ class State(BaseModel):
 
 class UpdateEvent(BaseModel):
     broadcaster_user_id: str
+    broadcaster_user_login: str
     title: str
     category_name: str
 

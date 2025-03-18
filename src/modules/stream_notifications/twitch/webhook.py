@@ -2,7 +2,7 @@ from asyncio import sleep, gather
 import logging
 from typing import NoReturn, Literal
 
-from twitchAPI.eventsub.webhook import EventSubWebhook
+from twitchAPI.eventsub.websocket import EventSubWebsocket
 from twitchAPI.twitch import Twitch
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent, ChannelChatMessageEvent, ChannelPointsCustomRewardRedemptionAddEvent
 from twitchAPI.oauth import validate_token
@@ -22,8 +22,9 @@ logger = logging.getLogger(__name__)
 class TwitchService:
     ONLINE_NOTIFICATION_DELAY = 15 * 60
 
-    def __init__(self, twitch: Twitch):
+    def __init__(self, twitch: Twitch, streamer: StreamerConfig):
         self.twitch = twitch
+        self.streamer = streamer
 
         self.failed = False
 
@@ -31,6 +32,7 @@ class TwitchService:
         await on_stream_state_change_with_check.kiq(
             UpdateEvent(
                 broadcaster_user_id=event.event.broadcaster_user_id,
+                broadcaster_user_login=event.event.broadcaster_user_login,
                 title=event.event.title,
                 category_name=event.event.category_name
             ),
@@ -86,7 +88,7 @@ class TwitchService:
                 | Literal["listen_stream_online"]
                 | Literal["listen_channel_chat_message"]
                 | Literal["listen_channel_points_custom_reward_redemption_add"],
-            eventsub: EventSubWebhook,
+            eventsub: EventSubWebsocket,
             streamer: StreamerConfig,
             retry: int = 10
         ):
@@ -120,7 +122,7 @@ class TwitchService:
         await sleep(1)
         await self.subscribe_with_retry(method, eventsub, streamer, retry - 1)
 
-    async def subscribe_to_streamer(self, eventsub: EventSubWebhook, streamer: StreamerConfig):
+    async def subscribe_to_streamer(self, eventsub: EventSubWebsocket, streamer: StreamerConfig):
         logger.info(f"Subscribe to events for {streamer.twitch.name}")
         await gather(
             self.subscribe_with_retry("listen_channel_update_v2", eventsub, streamer),
@@ -150,24 +152,13 @@ class TwitchService:
                 logger.info("Token refreshed")
 
     async def run(self) -> NoReturn:
-        eventsub = EventSubWebhook(
-            callback_url=config.TWITCH_CALLBACK_URL,
-            port=config.TWITCH_CALLBACK_PORT,
-            twitch=self.twitch,
-            message_deduplication_history_length=50
-        )
-        eventsub.wait_for_subscription_confirm_timeout = 60
-        eventsub.unsubscribe_on_stop = False
-
-        streamers = await StreamerConfigRepository.all()
+        eventsub = EventSubWebsocket(twitch=self.twitch)
 
         try:
             eventsub.start()
 
             logger.info("Subscribe to events...")
-            await gather(
-                *[self.subscribe_to_streamer(eventsub, streamer) for streamer in streamers]
-            )
+            await self.subscribe_to_streamer(eventsub, self.streamer)
             logger.info("Twitch service started")
 
             await self._check_token()
@@ -176,14 +167,22 @@ class TwitchService:
             await eventsub.stop()
 
     @classmethod
+    async def _start_for_streamer(cls, streamer: StreamerConfig):
+        try:
+            twith = await authorize(streamer.twitch.name, auto_refresh_auth=True)
+            await cls(twith, streamer).run()
+        except Exception as e:
+            logger.error("Twitch service failed", exc_info=e)
+
+    @classmethod
     async def start(cls):
         logger.info("Starting Twitch service...")
 
-        try:
-            twith = await authorize(auto_refresh_auth=True)
-            await cls(twith).run()
-        except Exception as e:
-            logger.error("Twitch service failed", exc_info=e)
+        streamers = await StreamerConfigRepository.all()
+
+        await gather(
+            *[cls._start_for_streamer(streamer) for streamer in streamers]
+        )
 
         logger.info("Twitch service stopped")
 

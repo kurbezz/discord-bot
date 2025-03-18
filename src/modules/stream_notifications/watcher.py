@@ -16,7 +16,7 @@ class StateWatcher:
 
     @classmethod
     async def get_twitch_state(cls, streamer_id: int) -> State | None:
-        twitch = await authorize()
+        twitch = await authorize("kurbezz")
 
         stream = await first(
             twitch.get_streams(user_id=[str(streamer_id)])

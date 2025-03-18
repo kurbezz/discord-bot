@@ -19,16 +19,16 @@ SCOPES = [
 ]
 
 
-async def authorize(auto_refresh_auth: bool = False) -> Twitch:
+async def authorize(user: str, auto_refresh_auth: bool = False) -> Twitch:
     twitch = Twitch(
         config.TWITCH_CLIENT_ID,
         config.TWITCH_CLIENT_SECRET
     )
 
-    twitch.user_auth_refresh_callback = TokenStorage.save
+    twitch.user_auth_refresh_callback = lambda a, r: TokenStorage.save(user, a, r)
     twitch.auto_refresh_auth = auto_refresh_auth
 
-    token, refresh_token = await TokenStorage.get()
+    token, refresh_token = await TokenStorage.get(user)
     await twitch.set_user_authentication(
         token,
         SCOPES,

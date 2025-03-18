@@ -20,7 +20,7 @@ async def on_stream_state_change_with_check(
     event: UpdateEvent,
     event_type: EventType
 ):
-    twitch = await authorize()
+    twitch = await authorize(event.broadcaster_user_login)
 
     stream = await first(twitch.get_streams(user_id=[event.broadcaster_user_id]))
     if stream is None:
@@ -61,7 +61,7 @@ async def check_streams_states():
     streamers = await StreamerConfigRepository.all()
     streamers_ids = [str(streamer.twitch.id) for streamer in streamers]
 
-    twitch = await authorize()
+    twitch = await authorize("kurbezz")
 
     async for stream in twitch.get_streams(user_id=streamers_ids):
         state = State(
