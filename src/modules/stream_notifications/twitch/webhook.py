@@ -7,7 +7,6 @@ from twitchAPI.twitch import Twitch
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent, ChannelChatMessageEvent, ChannelPointsCustomRewardRedemptionAddEvent
 from twitchAPI.oauth import validate_token
 
-from core.config import config
 from repositories.streamers import StreamerConfigRepository, StreamerConfig
 from modules.stream_notifications.tasks import on_stream_state_change, on_stream_state_change_with_check, on_message, on_redemption_reward_add_task
 from modules.stream_notifications.state import UpdateEvent, EventType
