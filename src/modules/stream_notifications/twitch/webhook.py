@@ -1,4 +1,4 @@
-from asyncio import sleep, gather
+from asyncio import sleep, gather, wait, FIRST_COMPLETED, create_task
 import logging
 from typing import NoReturn, Literal
 
@@ -179,6 +179,14 @@ class TwitchService:
         logger.info("Starting Twitch service...")
 
         streamers = await StreamerConfigRepository.all()
+
+        await wait(
+            [
+                create_task(cls._start_for_streamer(streamer))
+                for streamer in streamers
+            ],
+            return_when=FIRST_COMPLETED
+        )
 
         await gather(
             *[cls._start_for_streamer(streamer) for streamer in streamers]
