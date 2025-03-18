@@ -7,6 +7,7 @@ class TwitchConfig(BaseModel):
 class NotificationsConfig(BaseModel):
     start_stream: str
     change_category: str | None = None
+    redemption_reward: str | None = None
 
 class GamesListConfig(BaseModel):
     channel_id: int

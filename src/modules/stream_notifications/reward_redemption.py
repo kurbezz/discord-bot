@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from twitchAPI.object.eventsub import ChannelPointsCustomRewardRedemptionAddEvent
 
+from repositories.streamers import StreamerConfigRepository
 from .twitch.authorize import authorize
 
 
@@ -33,8 +34,19 @@ async def on_redemption_reward_add(reward: RewardRedemption):
 
     twitch = await authorize(reward.broadcaster_user_login)
 
+    streamer = await StreamerConfigRepository.get_by_twitch_id(int(reward.broadcaster_user_id))
+
+    if streamer.notifications.redemption_reward is None:
+        return
+
+    message = streamer.notifications.redemption_reward.format(
+        user=reward.user_name,
+        reward_title=reward.reward_title,
+        reward_promt=f" ({reward.reward_prompt})" if reward.reward_prompt else ""
+    )
+
     await twitch.send_chat_message(
         reward.broadcaster_user_id,
         reward.broadcaster_user_id,
-        f"🎉 {reward.user_name} just redeemed {reward.reward_title}! 🎉"
+        message
     )
