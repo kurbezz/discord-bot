@@ -1,4 +1,8 @@
+import logging
+
 from core.mongo import mongo_manager
+
+logger = logging.getLogger(__name__)
 
 
 class TokenStorage:
@@ -26,5 +30,8 @@ class TokenStorage:
             collection = db[TokenStorage.COLLECTION_NAME]
 
             data = await collection.find_one({"type": TokenStorage.TYPE, "user": user})
+
+            if data is None:
+                logging.info(f"Token for user {user} not found")
 
             return data["access_token"], data["refresh_token"]
