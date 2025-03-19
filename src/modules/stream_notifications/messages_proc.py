@@ -262,7 +262,7 @@ class MessagesProc:
 
     @classmethod
     async def _kurbezz(cls, twitch: Twitch, event: MessageEvent):
-        if event.chatter_user_login == "kurbezz":
+        if event.chatter_user_login.lower() in ["kurbezz", "hafmc"]:
             return
 
         if ("kurbezz" in event.message.text.lower() or \
