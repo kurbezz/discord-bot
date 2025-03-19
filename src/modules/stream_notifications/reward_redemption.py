@@ -16,7 +16,7 @@ class RewardRedemption(BaseModel):
     broadcaster_user_login: str
     user_name: str
     reward_title: str
-    reward_prompt: str
+    user_input: str
 
     @classmethod
     def from_twitch_event(cls, event: ChannelPointsCustomRewardRedemptionAddEvent):
@@ -25,7 +25,7 @@ class RewardRedemption(BaseModel):
             broadcaster_user_login=event.event.broadcaster_user_login,
             user_name=event.event.user_name,
             reward_title=event.event.reward.title,
-            reward_prompt=event.event.reward.prompt or "",
+            user_input=event.event.user_input or "",
         )
 
 
@@ -42,7 +42,7 @@ async def on_redemption_reward_add(reward: RewardRedemption):
     message = streamer.notifications.redemption_reward.format(
         user=reward.user_name,
         reward_title=reward.reward_title,
-        reward_promt=f" ({reward.reward_prompt})" if reward.reward_prompt else ""
+        reward_promt=f" ({reward.user_input})" if reward.user_input else ""
     )
 
     await twitch.send_chat_message(
