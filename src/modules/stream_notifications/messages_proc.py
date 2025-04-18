@@ -126,7 +126,7 @@ async def get_completion(messages: list[dict]) -> str:
                 "content-type": "application/json"
             },
             json={
-                "model": "google/gemini-2.0-flash-thinking-exp:free",
+                "model": "deepseek/deepseek-chat-v3-0324:free",
                 "messages": data_messages
             }
         )
