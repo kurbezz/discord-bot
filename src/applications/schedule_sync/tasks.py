@@ -1,5 +1,5 @@
 from core.broker import broker
-from repositories.streamers import StreamerConfigRepository
+from applications.common.repositories.streamers import StreamerConfigRepository
 from .synchronizer import syncronize
 
 

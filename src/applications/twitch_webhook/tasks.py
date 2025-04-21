@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from twitchAPI.helper import first
 
 from core.broker import broker
-from repositories.streamers import StreamerConfigRepository
+from applications.common.repositories.streamers import StreamerConfigRepository
 
 from .state import State, UpdateEvent, EventType
 from .watcher import StateWatcher

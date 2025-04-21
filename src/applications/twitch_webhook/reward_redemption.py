@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from twitchAPI.object.eventsub import ChannelPointsCustomRewardRedemptionAddEvent
 
-from repositories.streamers import StreamerConfigRepository
+from applications.common.repositories.streamers import StreamerConfigRepository
 from .twitch.authorize import authorize
 
 

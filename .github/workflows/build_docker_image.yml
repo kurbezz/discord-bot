@@ -49,14 +49,14 @@ jobs:
         with:
           url: ${{ secrets.WEBHOOK_URL }}
 
-      # -
-      #   name: Invoke deployment hook (worker)
-      #   uses: joelwmale/webhook-action@master
-      #   with:
-      #     url: ${{ secrets.WEBHOOK_URL_2 }}
+      -
+        name: Invoke deployment hook (twitch_webhook)
+        uses: joelwmale/webhook-action@master
+        with:
+          url: ${{ secrets.WEBHOOK_URL_2 }}
 
       # -
-      #   name: Invoke deployment hook (scheduler)
+      #   name: Invoke deployment hook (worker)
       #   uses: joelwmale/webhook-action@master
       #   with:
       #     url: ${{ secrets.WEBHOOK_URL_3 }}

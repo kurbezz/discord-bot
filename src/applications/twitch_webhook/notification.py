@@ -3,7 +3,7 @@ import logging
 from httpx import AsyncClient
 
 from core.config import config
-from domain.streamers import StreamerConfig
+from applications.common.domain.streamers import StreamerConfig
 
 from .state import State
 from .sent_notifications import SentNotification, SentNotificationType, SentResult

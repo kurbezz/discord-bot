@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 from twitchAPI.helper import first
 
 from core.redis import redis_manager
-from repositories.streamers import StreamerConfigRepository
+from applications.common.repositories.streamers import StreamerConfigRepository
 
 from .state import State, StateManager, EventType
 from .sent_notifications import SentNotificationRepository, SentNotificationType

@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from domain.streamers import TwitchConfig
+from applications.common.domain.streamers import TwitchConfig
 
 from .twitch_events import get_twitch_events, TwitchEvent
 from .discord_events import (
