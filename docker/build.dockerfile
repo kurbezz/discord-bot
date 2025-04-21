@@ -17,5 +17,3 @@ COPY ./src ./src
 COPY ./pyproject.toml ./uv.lock ./
 
 COPY --from=builder /opt/.venv /opt/venv
-
-ENTRYPOINT ["uv", "run", "-m"]
