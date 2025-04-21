@@ -11,4 +11,8 @@ async def syncronize(twitch_id: int):
     if streamer.integrations.discord is None:
         return
 
-    await syncronize_internal(streamer.twitch, streamer.integrations.discord.guild_id)
+    try:
+        await syncronize_internal(streamer.twitch, streamer.integrations.discord.guild_id)
+    except Exception as e:
+        activity.logger.error(f"Error during synchronization: {e}")
+        raise e
