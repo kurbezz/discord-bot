@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from temporalio import workflow
 
 from applications.twitch_webhook.activities.on_state_change import on_stream_state_change_activity, OnStreamStateChangeActivity
@@ -15,5 +17,6 @@ class OnStreamOnlineWorkflow:
                 streamer_id=int(broadcaster_user_id),
                 event_type=event_type
             ),
-            task_queue=MAIN_QUEUE
+            task_queue=MAIN_QUEUE,
+            schedule_to_close_timeout=timedelta(minutes=1)
         )

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from temporalio import workflow
 
@@ -33,5 +33,6 @@ class OnChannelUpdateWorkflow:
                     category=event.category_name,
                     last_live_at=datetime.now(timezone.utc)
                 ),
-            )
+            ),
+            schedule_to_close_timeout=timedelta(minutes=1)
         )

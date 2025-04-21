@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from temporalio import workflow
 
 from applications.twitch_webhook.activities.redemption_reward import on_redemption_reward_add_activity
@@ -12,5 +14,6 @@ class OnRewardRedemptionWorkflow:
         await workflow.start_activity(
             on_redemption_reward_add_activity,
             reward,
-            task_queue=MAIN_QUEUE
+            task_queue=MAIN_QUEUE,
+            schedule_to_close_timeout=timedelta(minutes=1)
         )

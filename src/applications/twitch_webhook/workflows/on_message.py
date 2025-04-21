@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from temporalio import workflow
 
 from applications.twitch_webhook.messages_proc import MessageEvent
@@ -13,4 +15,5 @@ class OnMessageWorkflow:
             on_message_activity,
             message,
             task_queue=MAIN_QUEUE,
+            schedule_to_close_timeout=timedelta(minutes=1)
         )

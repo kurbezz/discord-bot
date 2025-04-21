@@ -35,5 +35,6 @@ class ScheduleSyncWorkflow:
 
             await workflow.start_activity(
                 syncronize,
-                streamer.twitch.id
+                streamer.twitch.id,
+                schedule_to_close_timeout=timedelta(minutes=5),
             )
