@@ -15,7 +15,10 @@ from applications.twitch_webhook.reward_redemption import RewardRedemption
 from .authorize import authorize
 
 
+logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class TwitchService:

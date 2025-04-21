@@ -10,6 +10,8 @@ from applications.games_list.games_list import GameList, GameItem
 from core.config import config
 
 
+logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
