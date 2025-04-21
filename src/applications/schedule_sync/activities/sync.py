@@ -5,8 +5,8 @@ from applications.schedule_sync.synchronizer import syncronize
 
 
 class ScheduleSyncActivity:
-    @activity.defn
     @classmethod
+    @activity.defn
     async def syncronize(cls, twitch_id: int):
         streamer = await StreamerConfigRepository.get_by_twitch_id(twitch_id)
 
