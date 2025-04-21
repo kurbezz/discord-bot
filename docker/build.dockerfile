@@ -14,7 +14,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY ./src /app
 COPY --from=builder /opt/.venv /opt/venv
 
-COPY ./docker/*.sh /
+COPY ./scripts/*.sh /
 RUN chmod +x /*.sh
 
 WORKDIR /app
