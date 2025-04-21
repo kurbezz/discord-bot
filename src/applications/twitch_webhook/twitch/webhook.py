@@ -1,17 +1,23 @@
 from asyncio import sleep, gather, wait, FIRST_COMPLETED, create_task
 import logging
-from typing import NoReturn, Literal
+from typing import Literal
 
 from twitchAPI.eventsub.websocket import EventSubWebsocket
 from twitchAPI.twitch import Twitch
 from twitchAPI.object.eventsub import StreamOnlineEvent, ChannelUpdateEvent, ChannelChatMessageEvent, ChannelPointsCustomRewardRedemptionAddEvent
 from twitchAPI.oauth import validate_token
 
+from core.temporal import get_client
+
 from applications.common.repositories.streamers import StreamerConfigRepository, StreamerConfig
-from applications.twitch_webhook.tasks import on_stream_state_change, on_stream_state_change_with_check, on_message, on_redemption_reward_add_task
 from applications.twitch_webhook.state import UpdateEvent, EventType
 from applications.twitch_webhook.messages_proc import MessageEvent
 from applications.twitch_webhook.reward_redemption import RewardRedemption
+from applications.twitch_webhook.workflows.on_message import OnMessageWorkflow
+from applications.twitch_webhook.workflows.on_reward_redemption import OnRewardRedemptionWorkflow
+from applications.twitch_webhook.workflows.on_stream_online import OnStreamOnlineWorkflow
+from applications.twitch_webhook.workflows.on_channel_update import OnChannelUpdateWorkflow
+from applications.temporal_worker.queues import MAIN_QUEUE
 from .authorize import authorize
 
 
@@ -31,34 +37,60 @@ class TwitchService:
         self.failed = False
 
     async def on_channel_update(self, event: ChannelUpdateEvent):
-        await on_stream_state_change_with_check.kiq(
-            UpdateEvent(
-                broadcaster_user_id=event.event.broadcaster_user_id,
-                broadcaster_user_login=event.event.broadcaster_user_login,
-                title=event.event.title,
-                category_name=event.event.category_name
+        client = await get_client()
+
+        await client.start_workflow(
+            OnChannelUpdateWorkflow.run,
+            args=(
+                UpdateEvent(
+                    broadcaster_user_id=event.event.broadcaster_user_id,
+                    broadcaster_user_login=event.event.broadcaster_user_login,
+                    title=event.event.title,
+                    category_name=event.event.category_name
+                ),
+                EventType.CHANNEL_UPDATE,
             ),
-            EventType.CHANNEL_UPDATE,
+            id=f"on-channel-update-{event.event.broadcaster_user_id}",
+            task_queue=MAIN_QUEUE
         )
 
     async def on_stream_online(self, event: StreamOnlineEvent):
-        await on_stream_state_change.kiq(
-            int(event.event.broadcaster_user_id),
-            EventType.STREAM_ONLINE,
+        client = await get_client()
+
+        await client.start_workflow(
+            OnStreamOnlineWorkflow.run,
+            args=(
+                int(event.event.broadcaster_user_id),
+                EventType.STREAM_ONLINE
+            ),
+            id=f"on-stream-online-{event.event.broadcaster_user_id}",
+            task_queue=MAIN_QUEUE
         )
 
     async def on_channel_points_custom_reward_redemption_add(
         self,
         event: ChannelPointsCustomRewardRedemptionAddEvent
     ):
-        await on_redemption_reward_add_task(
-            RewardRedemption.from_twitch_event(event)
+        client = await get_client()
+
+        await client.start_workflow(
+            OnRewardRedemptionWorkflow.run,
+            RewardRedemption.from_twitch_event(event),
+            id=f"on-reward-redemption-{event.event.broadcaster_user_id}-{event.event.reward.id}",
+            task_queue=MAIN_QUEUE
         )
 
     async def on_message(self, event: ChannelChatMessageEvent):
-        await on_message.kiq(
-            self.streamer.twitch.name,
-            MessageEvent.from_twitch_event(event)
+        client = await get_client()
+
+        await client.start_workflow(
+            OnMessageWorkflow.run,
+            MessageEvent.from_twitch_event(
+                self.streamer.twitch.name,
+                event
+            ),
+            id=f"on-message-{event.event.broadcaster_user_id}-{event.event.message_id}",
+            task_queue=MAIN_QUEUE
         )
 
     async def _clean_subs(self, method: str, streamer: StreamerConfig):
@@ -157,7 +189,7 @@ class TwitchService:
                 await self.twitch.refresh_used_token()
                 logger.info("Token refreshed")
 
-    async def run(self) -> NoReturn:
+    async def run(self) -> None:
         eventsub = EventSubWebsocket(twitch=self.twitch)
 
         try:

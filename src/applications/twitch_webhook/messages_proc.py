@@ -39,6 +39,8 @@ class MessageType(StrEnum):
 
 
 class MessageEvent(BaseModel):
+    received_as: str
+
     broadcaster_user_id: str
     broadcaster_user_name: str
     broadcaster_user_login: str
@@ -57,8 +59,10 @@ class MessageEvent(BaseModel):
     channel_points_custom_reward_id: str | None
 
     @classmethod
-    def from_twitch_event(cls, event: ChannelChatMessageEvent):
+    def from_twitch_event(cls, received_as: str, event: ChannelChatMessageEvent):
         return cls(
+            received_as=received_as,
+
             broadcaster_user_id=event.event.broadcaster_user_id,
             broadcaster_user_name=event.event.broadcaster_user_name,
             broadcaster_user_login=event.event.broadcaster_user_login,
@@ -219,7 +223,6 @@ class MessagesProc:
                 "да да, иди уже",
                 reply_parent_message_id=event.message_id
             )
-            return
 
     @classmethod
     async def _ask_ai(cls, twitch: Twitch, event: MessageEvent):
@@ -251,7 +254,7 @@ class MessagesProc:
                     thread_id=event.message_id
                 )
         except Exception as e:
-            logger.error("Failed to get completion: {}", e, exc_info=True)
+            logger.error(f"Failed to get completion: {e}", exc_info=True)
 
             await twitch.send_chat_message(
                 event.broadcaster_user_id,

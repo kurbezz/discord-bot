@@ -1,6 +1,8 @@
 from asyncio import run
 
-from temporalio.client import Client, ScheduleAlreadyRunningError
+from core.temporal import get_client
+
+from temporalio.client import ScheduleAlreadyRunningError
 from temporalio.worker import Worker, UnsandboxedWorkflowRunner
 
 from applications.schedule_sync import activities as schedule_sync_activities
@@ -10,7 +12,7 @@ from .queues import MAIN_QUEUE
 
 
 async def main():
-    client: Client = await Client.connect("temporal:7233", namespace="default")
+    client = await get_client()
 
     for id, schedule in ScheduleSyncWorkflow.get_schedules().items():
         try:
