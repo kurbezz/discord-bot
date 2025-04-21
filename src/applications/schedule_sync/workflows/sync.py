@@ -30,6 +30,9 @@ class ScheduleSyncWorkflow:
         streamers = await StreamerConfigRepository().all()
 
         for streamer in streamers:
+            if streamer.integrations.discord is None:
+                continue
+
             await workflow.start_activity(
                 syncronize,
                 streamer.twitch.id,

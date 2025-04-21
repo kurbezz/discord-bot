@@ -45,8 +45,7 @@ async def delete_telegram_message(chat_id: int, message_id: int):
                 }
             )
 
-            if result.status_code != 200:
-                return False
+            result.raise_for_status()
         except Exception as e:
             logger.error("Failed to delete telegram message", exc_info=e)
             return False
