@@ -11,6 +11,7 @@ from core.config import config
 
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 async def get_game_list_channel_to_message_map() -> dict[int, int]:
