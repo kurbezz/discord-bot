@@ -1,6 +1,4 @@
-from asyncio import run, set_event_loop_policy
-
-import uvloop
+from asyncio import run
 
 from core.temporal import get_client
 
@@ -53,9 +51,6 @@ async def main():
     )
 
     await worker.run()
-
-
-set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 run(main())

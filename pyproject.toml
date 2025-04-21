@@ -3,7 +3,7 @@ name = "discord-bot"
 version = "0.1.0"
 description = ""
 authors = [{ name = "Bulat Kurbanov", email = "kurbanovbul@gmail.com" }]
-requires-python = "~=3.13"
+requires-python = "~=3.12"
 dependencies = [
     "discord-py>=2.4.0,<3",
     "twitchapi>=4.4.0,<5",
@@ -21,7 +21,6 @@ dependencies = [
     "httpx-oauth>=0.16.1,<0.17",
     "uvicorn[standard]>=0.34.0,<0.35",
     "temporalio>=1.10.0",
-    "uvloop>=0.21.0",
 ]
 
 [tool.hatch.build.targets.sdist]
