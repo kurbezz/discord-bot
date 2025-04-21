@@ -1,6 +1,6 @@
 from asyncio import run
 
-from temporalio.client import Client
+from temporalio.client import Client, ScheduleAlreadyRunningError
 from temporalio.worker import Worker
 
 from applications.schedule_sync.activities import ScheduleSyncActivity
@@ -14,9 +14,10 @@ async def main():
     client: Client = await Client.connect("temporal:7233", namespace="default")
 
     for id, schedule in ScheduleSyncWorkflow.get_schedules().items():
-        await client.create_schedule(
-            f"ScheduleSyncWorkflow-{id}", schedule
-        )
+        try:
+            await client.create_schedule(f"ScheduleSyncWorkflow-{id}", schedule)
+        except ScheduleAlreadyRunningError:
+            pass
 
     worker: Worker = Worker(
         client,
