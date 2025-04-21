@@ -13,7 +13,6 @@ COPY --from=builder /opt/.venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY ./src /app/src
-COPY ./pyproject.toml ./uv.lock /app/
+COPY ./app /app
 
-WORKDIR /app/src
+WORKDIR /app
