@@ -7,6 +7,7 @@ from twitchAPI.helper import first
 from applications.twitch_webhook.state import UpdateEvent, EventType, State
 from applications.twitch_webhook.twitch.authorize import authorize
 from applications.twitch_webhook.activities.on_state_change import on_stream_state_change_activity, OnStreamStateChangeActivity
+from applications.temporal_worker.queues import MAIN_QUEUE
 
 
 @workflow.defn
@@ -34,5 +35,6 @@ class OnChannelUpdateWorkflow:
                     last_live_at=datetime.now(timezone.utc)
                 ),
             ),
+            task_queue=MAIN_QUEUE,
             schedule_to_close_timeout=timedelta(minutes=1)
         )

@@ -28,5 +28,6 @@ class StreamsCheckWorkflow:
     async def run(self):
         await workflow.start_activity(
             check_streams_states,
+            task_queue=MAIN_QUEUE,
             schedule_to_close_timeout=timedelta(minutes=1)
         )
