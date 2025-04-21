@@ -19,4 +19,4 @@ RUN chmod +x /*.sh
 
 WORKDIR /app
 
-ENTRYPOINT ["uv", "run"]
+ENTRYPOINT ["uv", "run", "-m"]

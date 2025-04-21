@@ -1,4 +1,4 @@
-from domain.users import CreateUser, User
+from applications.common.domain.users import CreateUser, User
 
 from .base import BaseRepository
 

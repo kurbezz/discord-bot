@@ -1,4 +1,4 @@
-from domain.streamers import StreamerConfig
+from applications.common.domain.streamers import StreamerConfig
 
 from .base import BaseRepository
 
