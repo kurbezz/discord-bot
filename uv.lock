@@ -254,6 +254,7 @@ dependencies = [
     { name = "temporalio" },
     { name = "twitchapi" },
     { name = "uvicorn", extra = ["standard"] },
+    { name = "uvloop" },
 ]
 
 [package.metadata]
@@ -274,6 +275,7 @@ requires-dist = [
     { name = "temporalio", specifier = ">=1.10.0" },
     { name = "twitchapi", specifier = ">=4.4.0,<5" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.34.0,<0.35" },
+    { name = "uvloop", specifier = ">=0.21.0" },
 ]
 
 [[package]]

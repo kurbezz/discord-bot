@@ -21,6 +21,7 @@ dependencies = [
     "httpx-oauth>=0.16.1,<0.17",
     "uvicorn[standard]>=0.34.0,<0.35",
     "temporalio>=1.10.0",
+    "uvloop>=0.21.0",
 ]
 
 [tool.hatch.build.targets.sdist]
