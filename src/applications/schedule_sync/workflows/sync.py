@@ -3,9 +3,8 @@ from datetime import timedelta
 from temporalio import workflow
 from temporalio.client import Schedule, ScheduleActionStartWorkflow, ScheduleSpec, ScheduleIntervalSpec
 
-with workflow.unsafe.imports_passed_through():
-    from applications.common.repositories.streamers import StreamerConfigRepository
-    from applications.schedule_sync.activities import ScheduleSyncActivity
+from applications.common.repositories.streamers import StreamerConfigRepository
+from applications.schedule_sync.activities import ScheduleSyncActivity
 
 
 TASK_QUEUE = "main"

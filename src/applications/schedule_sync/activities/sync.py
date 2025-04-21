@@ -1,8 +1,7 @@
-from temporalio import activity, workflow
+from temporalio import activity
 
-with workflow.unsafe.imports_passed_through():
-    from applications.common.repositories.streamers import StreamerConfigRepository
-    from applications.schedule_sync.synchronizer import syncronize
+from applications.common.repositories.streamers import StreamerConfigRepository
+from applications.schedule_sync.synchronizer import syncronize
 
 
 class ScheduleSyncActivity:
