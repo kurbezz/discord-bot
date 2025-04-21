@@ -11,12 +11,11 @@ FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY ./src /app
-COPY --from=builder /opt/.venv /opt/venv
-
-COPY ./scripts/*.sh /
-RUN chmod +x /*.sh
-
 WORKDIR /app
+
+COPY ./src ./src
+COPY ./pyproject.toml ./uv.lock ./
+
+COPY --from=builder /opt/.venv /opt/venv
 
 ENTRYPOINT ["uv", "run", "-m"]
