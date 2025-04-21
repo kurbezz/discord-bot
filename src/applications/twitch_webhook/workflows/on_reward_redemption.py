@@ -9,7 +9,7 @@ from applications.temporal_worker.queues import MAIN_QUEUE
 class OnRewardRedemptionWorkflow:
     @workflow.run
     async def run(self, reward: RewardRedemption):
-        await workflow.execute_activity(
+        await workflow.start_activity(
             on_redemption_reward_add_activity,
             reward,
             task_queue=MAIN_QUEUE
