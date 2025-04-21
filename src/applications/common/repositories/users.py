@@ -18,10 +18,10 @@ class UserRepository(BaseRepository):
         )
 
     @classmethod
-    async def get_or_create_user(cls, newUser: CreateUser) -> User:
+    async def get_or_create_user(cls, new_user: CreateUser) -> User:
         filter_data = {}
 
-        for provider, data in newUser.oauths.items():
+        for provider, data in new_user.oauths.items():
             filter_data[f"oauths.{provider}.id"] = data.id
 
         async with cls.connect() as collection:
@@ -29,7 +29,7 @@ class UserRepository(BaseRepository):
                 filter_data,
                 {
                     "$setOnInsert": {
-                        **newUser.model_dump(),
+                        **new_user.model_dump(),
                     }
                 },
                 upsert=True,
