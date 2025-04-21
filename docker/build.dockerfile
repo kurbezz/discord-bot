@@ -9,11 +9,11 @@ RUN --mount=type=ssh uv venv \
 
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
+COPY --from=builder /opt/.venv /opt/venv
+
 ENV PATH="/opt/venv/bin:$PATH"
 
-WORKDIR /app
+COPY ./src /app/src
+COPY ./pyproject.toml ./uv.lock /app/
 
-COPY ./src ./src
-COPY ./pyproject.toml ./uv.lock ./
-
-COPY --from=builder /opt/.venv /opt/venv
+WORKDIR /app/src
