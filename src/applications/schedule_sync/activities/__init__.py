@@ -1,6 +1,6 @@
-from .sync import ScheduleSyncActivity
+from .sync import syncronize
 
 
 __all__ = [
-    "ScheduleSyncActivity",
+    "syncronize",
 ]

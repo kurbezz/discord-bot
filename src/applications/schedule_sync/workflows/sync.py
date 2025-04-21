@@ -4,10 +4,8 @@ from temporalio import workflow
 from temporalio.client import Schedule, ScheduleActionStartWorkflow, ScheduleSpec, ScheduleIntervalSpec
 
 from applications.common.repositories.streamers import StreamerConfigRepository
-from applications.schedule_sync.activities import ScheduleSyncActivity
-
-
-TASK_QUEUE = "main"
+from applications.schedule_sync.activities import syncronize
+from applications.temporal_worker.queues import MAIN_QUEUE
 
 
 @workflow.defn
@@ -19,7 +17,7 @@ class ScheduleSyncWorkflow:
                 action=ScheduleActionStartWorkflow(
                     cls.run,
                     id="ScheduleSyncWorkflow",
-                    task_queue=TASK_QUEUE,
+                    task_queue=MAIN_QUEUE,
                 ),
                 spec=ScheduleSpec(
                     intervals=[ScheduleIntervalSpec(every=timedelta(minutes=5))]
@@ -35,7 +33,7 @@ class ScheduleSyncWorkflow:
             if streamer.integrations.discord is None:
                 continue
 
-            await workflow.execute_activity_method(
-                ScheduleSyncActivity.syncronize,
+            await workflow.execute_activity(
+                syncronize,
                 streamer.twitch.id
             )

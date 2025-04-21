@@ -1,16 +1,14 @@
 from temporalio import activity
 
 from applications.common.repositories.streamers import StreamerConfigRepository
-from applications.schedule_sync.synchronizer import syncronize
+from applications.schedule_sync.synchronizer import syncronize as syncronize_internal
 
 
-class ScheduleSyncActivity:
-    @classmethod
-    @activity.defn
-    async def syncronize(cls, twitch_id: int):
-        streamer = await StreamerConfigRepository.get_by_twitch_id(twitch_id)
+@activity.defn
+async def syncronize(twitch_id: int):
+    streamer = await StreamerConfigRepository.get_by_twitch_id(twitch_id)
 
-        if streamer.integrations.discord is None:
-            return
+    if streamer.integrations.discord is None:
+        return
 
-        await syncronize(streamer.twitch, streamer.integrations.discord.guild_id)
+    await syncronize_internal(streamer.twitch, streamer.integrations.discord.guild_id)

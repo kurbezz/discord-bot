@@ -3,11 +3,10 @@ from asyncio import run
 from temporalio.client import Client, ScheduleAlreadyRunningError
 from temporalio.worker import Worker, UnsandboxedWorkflowRunner
 
-from applications.schedule_sync.activities import ScheduleSyncActivity
+from applications.schedule_sync import activities as schedule_sync_activities
 from applications.schedule_sync.workflows import ScheduleSyncWorkflow
 
-
-TASK_QUEUE = "main"
+from .queues import MAIN_QUEUE
 
 
 async def main():
@@ -21,12 +20,12 @@ async def main():
 
     worker: Worker = Worker(
         client,
-        task_queue=TASK_QUEUE,
+        task_queue=MAIN_QUEUE,
         workflows=[
             ScheduleSyncWorkflow
         ],
         activities=[
-            ScheduleSyncActivity.syncronize
+            schedule_sync_activities.syncronize,
         ],
         workflow_runner=UnsandboxedWorkflowRunner(),
     )
