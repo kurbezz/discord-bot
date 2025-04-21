@@ -26,4 +26,7 @@ class StreamsCheckWorkflow:
 
     @workflow.run
     async def run(self):
-        await check_streams_states()
+        await workflow.start_activity(
+            check_streams_states,
+            schedule_to_close_timeout=timedelta(minutes=1)
+        )
