@@ -5,10 +5,9 @@ from discord.abc import Messageable
 from discord import Object
 from discord import app_commands
 
-from modules.games_list.games_list import GameList, GameItem
-
+from applications.common.repositories.streamers import StreamerConfigRepository
+from applications.games_list.games_list import GameList, GameItem
 from core.config import config
-from repositories.streamers import StreamerConfigRepository
 
 
 logger = logging.getLogger(__name__)
@@ -240,9 +239,3 @@ async def replace(interaction: discord.Interaction, game: str, new: str):
     await game_list.save()
 
     await interaction.response.send_message("Игра заменена!", ephemeral=True)
-
-
-async def start_discord_sevice():
-    logger.info("Starting Discord service...")
-
-    await client.start(config.DISCORD_BOT_TOKEN)

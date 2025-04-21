@@ -1,19 +1,22 @@
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
 
-COPY ./scripts/*.sh /
+WORKDIR /opt/
+COPY ./pyproject.toml ./uv.lock ./
+
+RUN --mount=type=ssh uv venv \
+    && uv sync --frozen
+
+
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY ./src /app
+COPY --from=builder /opt/.venv /opt/venv
+
+COPY ./docker/*.sh /
 RUN chmod +x /*.sh
 
 WORKDIR /app
 
-COPY ./pyproject.toml ./
-COPY ./uv.lock ./
-
-RUN uv venv && uv sync --frozen
-
-COPY ./src ./src
-
-ENV PATH="/app/.venv/bin:$PATH"
-
-EXPOSE 80
-
-CMD ["uv", "run", "src/main.py"]
+ENTRYPOINT ["uv", "run"]

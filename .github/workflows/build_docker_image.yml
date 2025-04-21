@@ -49,26 +49,26 @@ jobs:
         with:
           url: ${{ secrets.WEBHOOK_URL }}
 
-      -
-        name: Invoke deployment hook (worker)
-        uses: joelwmale/webhook-action@master
-        with:
-          url: ${{ secrets.WEBHOOK_URL_2 }}
+      # -
+      #   name: Invoke deployment hook (worker)
+      #   uses: joelwmale/webhook-action@master
+      #   with:
+      #     url: ${{ secrets.WEBHOOK_URL_2 }}
 
-      -
-        name: Invoke deployment hook (scheduler)
-        uses: joelwmale/webhook-action@master
-        with:
-          url: ${{ secrets.WEBHOOK_URL_3 }}
+      # -
+      #   name: Invoke deployment hook (scheduler)
+      #   uses: joelwmale/webhook-action@master
+      #   with:
+      #     url: ${{ secrets.WEBHOOK_URL_3 }}
 
-      -
-        name: Invoke deployment hook (stream_notifications)
-        uses: joelwmale/webhook-action@master
-        with:
-          url: ${{ secrets.WEBHOOK_URL_4 }}
+      # -
+      #   name: Invoke deployment hook (stream_notifications)
+      #   uses: joelwmale/webhook-action@master
+      #   with:
+      #     url: ${{ secrets.WEBHOOK_URL_4 }}
 
-      -
-        name: Invoke deployment hook (web_app)
-        uses: joelwmale/webhook-action@master
-        with:
-          url: ${{ secrets.WEBHOOK_URL_5 }}
+      # -
+      #   name: Invoke deployment hook (web_app)
+      #   uses: joelwmale/webhook-action@master
+      #   with:
+      #     url: ${{ secrets.WEBHOOK_URL_5 }}
