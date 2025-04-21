@@ -7,7 +7,7 @@ from applications.temporal_worker.queues import MAIN_QUEUE
 from applications.twitch_webhook.activities.state_checker import check_streams_states
 
 
-workflow.defn()
+@workflow.defn
 class StreamsCheckWorkflow:
     @classmethod
     def get_schedules(cls) -> dict[str, Schedule]:
