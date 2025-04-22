@@ -18,6 +18,7 @@ class ScheduleSyncWorkflow:
                     cls.run,
                     id="ScheduleSyncWorkflow",
                     task_queue=MAIN_QUEUE,
+                    execution_timeout=timedelta(minutes=1),
                 ),
                 spec=ScheduleSpec(
                     intervals=[ScheduleIntervalSpec(every=timedelta(minutes=5))]
