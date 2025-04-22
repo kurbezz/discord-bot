@@ -47,7 +47,7 @@ async def main():
             twitch_activities.check_streams_states,
             twitch_activities.on_redemption_reward_add_activity,
         ],
-        workflow_runner=UnsandboxedWorkflowRunner(),
+        workflow_runner=UnsandboxedWorkflowRunner()
     )
 
     await worker.run()
