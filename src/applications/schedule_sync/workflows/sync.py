@@ -3,8 +3,7 @@ from datetime import timedelta
 from temporalio import workflow
 from temporalio.client import Schedule, ScheduleActionStartWorkflow, ScheduleSpec, ScheduleIntervalSpec
 
-from applications.common.repositories.streamers import StreamerConfigRepository
-from applications.schedule_sync.activities import syncronize
+from applications.schedule_sync.activities import syncronize_all
 from applications.temporal_worker.queues import MAIN_QUEUE
 
 
@@ -28,15 +27,8 @@ class ScheduleSyncWorkflow:
 
     @workflow.run
     async def run(self):
-        streamers = await StreamerConfigRepository().all()
-
-        for streamer in streamers:
-            if streamer.integrations.discord is None:
-                continue
-
-            await workflow.start_activity(
-                syncronize,
-                streamer.twitch.id,
-                task_queue=MAIN_QUEUE,
-                schedule_to_close_timeout=timedelta(minutes=5),
-            )
+        await workflow.execute_activity(
+            syncronize_all,
+            task_queue=MAIN_QUEUE,
+            schedule_to_close_timeout=timedelta(minutes=5),
+        )
