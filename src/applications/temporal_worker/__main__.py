@@ -42,6 +42,7 @@ async def main():
         ],
         activities=[
             schedule_sync_activities.syncronize,
+            schedule_sync_activities.syncronize_all,
             twitch_activities.on_message_activity,
             twitch_activities.on_stream_state_change_activity,
             twitch_activities.check_streams_states,
