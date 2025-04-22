@@ -10,7 +10,7 @@ from applications.temporal_worker.queues import MAIN_QUEUE
 @workflow.defn
 class OnStreamOnlineWorkflow:
     @workflow.run
-    async def run(self, broadcaster_user_id: str, event_type: EventType):
+    async def run(self, broadcaster_user_id: str | int, event_type: EventType):
         await workflow.start_activity(
             on_stream_state_change_activity,
             OnStreamStateChangeActivity(
