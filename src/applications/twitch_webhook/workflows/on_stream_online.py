@@ -14,7 +14,7 @@ class OnStreamOnlineWorkflow:
         await workflow.start_activity(
             on_stream_state_change_activity,
             OnStreamStateChangeActivity(
-                streamer_id=str(broadcaster_user_id),
+                streamer_id=int(broadcaster_user_id),
                 event_type=event_type
             ),
             task_queue=MAIN_QUEUE,

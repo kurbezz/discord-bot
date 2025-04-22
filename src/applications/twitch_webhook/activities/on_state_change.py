@@ -7,7 +7,7 @@ from applications.twitch_webhook.watcher import StateWatcher
 
 
 class OnStreamStateChangeActivity(BaseModel):
-    streamer_id: str
+    streamer_id: int
     event_type: EventType
     new_state: State | None = None
 
@@ -17,7 +17,7 @@ async def on_stream_state_change_activity(
     data: OnStreamStateChangeActivity
 ):
     await StateWatcher.on_stream_state_change(
-        int(data.streamer_id),
+        data.streamer_id,
         data.event_type,
         data.new_state,
     )
