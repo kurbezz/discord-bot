@@ -15,5 +15,5 @@ class OnMessageWorkflow:
             on_message_activity,
             message,
             task_queue=MAIN_QUEUE,
-            schedule_to_close_timeout=timedelta(minutes=1)
+            schedule_to_close_timeout=timedelta(minutes=5)
         )
