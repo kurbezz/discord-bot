@@ -308,6 +308,8 @@ class MessagesProc:
 
     @classmethod
     async def on_message(cls, received_as: str, event: MessageEvent):
+        return
+
         if event.chatter_user_name in cls.FULL_IGNORED_USER_LOGINS:
             return
 
