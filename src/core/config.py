@@ -1,7 +1,6 @@
+from httpx import Client
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
-
-from httpx import Client
 
 
 class Settings(BaseSettings):
@@ -35,6 +34,8 @@ class Config(BaseModel):
 
     OPENAI_API_KEY: str
 
+    TEMPOLAR_URL: str = "temporal:7233"
+
 
 def get_config() -> Config:
     settings = Settings()  # type: ignore
@@ -45,7 +46,7 @@ def get_config() -> Config:
             headers={
                 "X-Vault-Token": settings.VAULT_TOKEN,
                 "Content-Type": "application/json",
-            }
+            },
         )
 
         response.raise_for_status()
